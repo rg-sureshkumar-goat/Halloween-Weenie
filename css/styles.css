@@ -1,0 +1,139 @@
+/* Virtual Hallo-weenie: layout and color tokens.
+   Layout model: one .stage fills the phone screen (or a phone-shaped frame on desktop).
+   Every scene layer inside it is absolutely positioned to fill the stage, and both
+   scene SVGs share viewBox 0 0 390 844 with "slice" scaling, so their coordinates line up. */
+
+:root {
+  /* Palette from Weenie Project-Brief.md › Visual style (final palette decided at CP1) */
+  --sky-top: #0E1230;
+  --sky-bottom: #1B3A4B;
+  --silhouette: #070A14;
+  --moonlight: #DCE6F2;
+  --window-glow: #FFB547;
+  --cauldron-magic: #7CFF6B;
+  --spell-accent: #B46CFF;
+
+  --page-bg: #05070F;      /* around the desktop phone frame */
+  --dev-accent: #FF5577;   /* dev view only (?dev=1) */
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--page-bg);
+}
+
+body {
+  height: 100vh;           /* fallback for browsers without dvh */
+  height: 100dvh;
+  overscroll-behavior: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  color: var(--moonlight);
+}
+
+/* The stage: full screen on phones. */
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--sky-top);
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Every scene layer fills the stage exactly. */
+.stage > .layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Layers above the scene objects never take taps (spec.md › Layer stack). */
+.scene-front {
+  pointer-events: none;
+}
+
+/* Desktop: show the scene in a centered phone-shaped frame at the design aspect ratio. */
+@media (min-width: 700px) {
+  body {
+    display: grid;
+    place-items: center;
+  }
+  .stage {
+    position: relative;
+    inset: auto;
+    height: min(844px, calc(100dvh - 48px));
+    aspect-ratio: 390 / 844;
+    border-radius: 36px;
+    box-shadow: 0 0 0 10px #1A1F2E, 0 24px 64px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Rough-layout (blockout) styling: faint outlines so positions read clearly.
+   Removed when the detailed art replaces the blockout. */
+.blk {
+  stroke: var(--moonlight);
+  stroke-opacity: 0.35;
+  stroke-width: 1;
+}
+.blk-label {
+  fill: var(--moonlight);
+  font-size: 11px;
+  font-family: inherit;
+  text-anchor: middle;
+}
+
+/* Dev view (?dev=1): visible-area guide, tappable outlines, and readout. */
+.dev-only {
+  display: none;
+}
+.dev .dev-only {
+  display: block;
+}
+.dev-guide {
+  fill: none;
+  stroke: var(--dev-accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+.dev-guide-label {
+  fill: var(--dev-accent);
+  font-size: 10px;
+  font-family: ui-monospace, Menlo, monospace;
+}
+.dev-hit {
+  fill: none;
+  stroke: var(--cauldron-magic);
+  stroke-width: 1;
+  stroke-dasharray: 3 2;
+}
+.dev-hit.clipped {
+  stroke: var(--dev-accent);
+  stroke-width: 2;
+}
+.dev-readout {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 8px);
+  left: 8px;
+  right: 8px;
+  margin: 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.7);
+  font: 12px/1.45 ui-monospace, Menlo, monospace;
+  white-space: pre-wrap;
+  pointer-events: none;
+}
+
+/* Probe element: CSS resolves env() insets so the script can read them as pixels. */
+#inset-probe {
+  position: fixed;
+  visibility: hidden;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}

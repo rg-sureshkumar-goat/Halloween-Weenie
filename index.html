@@ -5,67 +5,174 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0E1230">
   <title>Virtual Hallo-weenie</title>
-  <!-- Checkpoint 0 placeholder. Replaced by the real scene from Checkpoint 1 on. -->
-  <style>
-    :root {
-      --sky-top: #0E1230;
-      --sky-bottom: #1B3A4B;
-      --moonlight: #DCE6F2;
-      --window-glow: #FFB547;
-    }
-    html, body {
-      margin: 0;
-      height: 100%;
-      overflow: hidden;
-    }
-    body {
-      height: 100dvh;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(var(--sky-top), var(--sky-bottom));
-      color: var(--moonlight);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-      text-align: center;
-      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
-      box-sizing: border-box;
-    }
-    h1 { font-size: 2rem; margin: 0 0 0.25rem; }
-    .subtitle { color: var(--window-glow); font-size: 1.125rem; margin: 0 0 1.5rem; }
-    .status { font-size: 1rem; margin: 0 0 2rem; }
-    /* Device readout: lets the Developer measure Safari's real viewport on the iPhone (spec.md, Layout). */
-    .readout { font: 0.875rem/1.5 ui-monospace, Menlo, monospace; opacity: 0.85; }
-    /* Probe element: CSS resolves env() insets so the script can read them as pixel values. */
-    #inset-probe {
-      position: fixed;
-      visibility: hidden;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-    }
-  </style>
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="module" src="js/main.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Virtual Hallo-weenie</h1>
-    <p class="subtitle">The Witch's Hollow</p>
-    <p class="status">Something is brewing. Check back soon.</p>
-    <p class="readout" id="readout" aria-live="polite"></p>
-  </main>
+  <noscript><p>Virtual Hallo-weenie needs JavaScript to run.</p></noscript>
+
+  <!-- CHECKPOINT 1 ROUGH LAYOUT: plain labeled shapes at the proposed positions.
+       Detailed art replaces these shapes once the layout is approved.
+       Layer order follows spec.md › Layer stack. The particle canvas (CP3) will sit
+       between the two SVGs, so fog-front and foreground live in a second SVG on top. -->
+  <div class="stage" id="stage">
+
+    <!-- BACK SVG: sky, forest, ground, fog (behind), scene objects (the only tappable layer) -->
+    <svg class="layer scene-back" id="scene-back" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice"
+         role="img" aria-label="The Witch's Hollow: a crooked witch's cottage in a moonlit forest clearing">
+      <defs>
+        <linearGradient id="sky-gradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0E1230"/>
+          <stop offset="1" stop-color="#1B3A4B"/>
+        </linearGradient>
+      </defs>
+
+      <!-- 1. Sky, stars, moon -->
+      <g id="layer-sky">
+        <rect width="390" height="844" fill="url(#sky-gradient)"/>
+        <g fill="#DCE6F2" opacity="0.6">
+          <circle cx="40" cy="150" r="1.2"/><circle cx="95" cy="110" r="1"/><circle cx="150" cy="170" r="1.4"/>
+          <circle cx="190" cy="95" r="1"/><circle cx="225" cy="200" r="1.1"/><circle cx="70" cy="240" r="1"/>
+          <circle cx="360" cy="230" r="1.2"/><circle cx="120" cy="280" r="0.9"/><circle cx="250" cy="120" r="1"/>
+          <circle cx="20" cy="300" r="1"/>
+        </g>
+        <circle class="blk" cx="300" cy="140" r="46" fill="#DCE6F2"/>
+        <text class="blk-label" x="300" y="144" style="fill:#0E1230">Moon</text>
+      </g>
+
+      <!-- 2. Far forest: three tree-line bands, paler with distance -->
+      <g id="layer-far-forest">
+        <rect class="blk" x="0" y="330" width="390" height="230" fill="#22465A"/>
+        <rect class="blk" x="0" y="390" width="390" height="170" fill="#163142"/>
+        <rect class="blk" x="0" y="440" width="390" height="120" fill="#0E2030"/>
+        <text class="blk-label" x="330" y="352">Far forest (3 bands)</text>
+      </g>
+
+      <!-- Ground: a low hill the cottage sits on -->
+      <g id="layer-ground">
+        <path class="blk" d="M0 520 Q195 440 390 520 L390 844 L0 844 Z" fill="#0A1622"/>
+      </g>
+
+      <!-- 3. Fog band, behind the objects (CP3) -->
+      <g id="layer-fog-back"></g>
+
+      <!-- 4. Scene objects. data-tappable marks everything Users will tap (CP2 adds buttons and hit areas). -->
+      <g id="layer-objects">
+
+        <!-- Crooked tree with branch, left edge -->
+        <g id="tree">
+          <path class="blk" d="M0 600 L0 250 L30 240 L48 300 L52 420 L40 600 Z" fill="#070A14"/>
+          <path d="M40 330 Q90 300 150 335" stroke="#070A14" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <text class="blk-label" x="8" y="232" style="text-anchor:start">Crooked tree</text>
+        </g>
+        <!-- Spider web hanging from the branch (ingredient 3) -->
+        <g id="web" data-tappable="Spider web">
+          <line x1="100" y1="317" x2="100" y2="363" stroke="#DCE6F2" stroke-opacity="0.6"/>
+          <circle cx="100" cy="385" r="22" fill="none" stroke="#DCE6F2" stroke-opacity="0.7"/>
+          <circle cx="100" cy="385" r="12" fill="none" stroke="#DCE6F2" stroke-opacity="0.5"/>
+          <path d="M78 385 H122 M100 363 V407 M84 369 L116 401 M116 369 L84 401" stroke="#DCE6F2" stroke-opacity="0.5"/>
+        </g>
+        <text class="blk-label" x="100" y="424">Web</text>
+
+        <!-- Cottage: focal point -->
+        <g id="cottage">
+          <rect class="blk" x="150" y="255" width="18" height="55" fill="#070A14" transform="rotate(-10 159 282)"/>
+          <polygon class="blk" points="120,340 195,232 270,340" fill="#070A14"/>
+          <rect class="blk" x="135" y="335" width="120" height="145" fill="#070A14"/>
+          <rect class="blk" x="180" y="420" width="30" height="60" fill="#2A1D12"/>
+          <text class="blk-label" x="195" y="500">Cottage (focal point)</text>
+        </g>
+        <!-- Three windows: Phase 2 story "The Cottage Wakes" -->
+        <rect id="window-left" data-tappable="Left window" x="152" y="360" width="26" height="32" fill="#FFB547"/>
+        <rect id="window-right" data-tappable="Right window" x="212" y="360" width="26" height="32" fill="#FFB547"/>
+        <rect id="window-attic" data-tappable="Attic window" x="185" y="290" width="20" height="24" fill="#FFB547"/>
+
+        <!-- Raven on the roof peak: hint giver -->
+        <g id="raven" data-tappable="Raven">
+          <ellipse cx="195" cy="222" rx="12" ry="9" fill="#070A14" stroke="#DCE6F2" stroke-opacity="0.5"/>
+          <polygon points="205,219 214,222 205,225" fill="#3A3A3A"/>
+        </g>
+        <text class="blk-label" x="195" y="205">Raven</text>
+
+        <!-- Broom by the door: Phase 2 story "Broomstick Flight" -->
+        <g id="broom" data-tappable="Broom">
+          <line x1="270" y1="410" x2="262" y2="462" stroke="#8A6A3A" stroke-width="3"/>
+          <polygon points="252,462 272,462 276,482 248,482" fill="#B08A4A"/>
+        </g>
+        <text class="blk-label" x="300" y="438">Broom</text>
+
+        <!-- Cauldron over a small fire, front center -->
+        <g id="cauldron" data-tappable="Cauldron">
+          <ellipse cx="195" cy="648" rx="30" ry="10" fill="#FF7A1A" opacity="0.8"/>
+          <ellipse class="blk" cx="195" cy="610" rx="44" ry="36" fill="#070A14"/>
+          <ellipse cx="195" cy="578" rx="40" ry="9" fill="#7CFF6B" opacity="0.85"/>
+          <circle cx="175" cy="600" r="4" fill="#B46CFF" opacity="0.5"/>
+          <circle cx="195" cy="604" r="4" fill="#B46CFF" opacity="0.5"/>
+          <circle cx="215" cy="600" r="4" fill="#B46CFF" opacity="0.5"/>
+        </g>
+        <text class="blk-label" x="195" y="676">Cauldron + 3 runes</text>
+
+        <!-- Mushroom ring, lower left; the biggest mushroom is ingredient 1 -->
+        <g id="mushroom-ring">
+          <ellipse cx="85" cy="702" rx="48" ry="15" fill="none" stroke="#DCE6F2" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+          <g fill="#C9B8A0" opacity="0.6">
+            <ellipse cx="42" cy="700" rx="6" ry="4"/><ellipse cx="60" cy="689" rx="6" ry="4"/>
+            <ellipse cx="88" cy="687" rx="7" ry="4"/><ellipse cx="62" cy="715" rx="6" ry="4"/>
+            <ellipse cx="100" cy="716" rx="6" ry="4"/>
+          </g>
+          <text class="blk-label" x="80" y="740">Mushroom ring</text>
+        </g>
+        <g id="toadstool" data-tappable="Toadstool">
+          <rect x="124" y="696" width="8" height="14" fill="#C9B8A0"/>
+          <ellipse cx="128" cy="694" rx="14" ry="9" fill="#7CFF6B" opacity="0.8"/>
+        </g>
+        <text class="blk-label" x="128" y="678">Toadstool</text>
+
+        <!-- Pond with a moonflower at its edge, lower right; the moonflower is ingredient 2 -->
+        <g id="pond">
+          <ellipse class="blk" cx="300" cy="702" rx="62" ry="18" fill="#1B3A4B"/>
+          <ellipse cx="318" cy="700" rx="10" ry="3" fill="#DCE6F2" opacity="0.4"/>
+          <text class="blk-label" x="318" y="745">Pond</text>
+        </g>
+        <g id="moonflower" data-tappable="Moonflower">
+          <line x1="246" y1="705" x2="246" y2="690" stroke="#4A7A5A" stroke-width="2"/>
+          <circle cx="246" cy="685" r="7" fill="#DCE6F2"/>
+        </g>
+        <text class="blk-label" x="246" y="730">Moonflower</text>
+      </g>
+    </svg>
+
+    <!-- 5. Particle canvas goes here at CP3 -->
+
+    <!-- FRONT SVG: fog (in front), foreground framing, dev guides. Never takes taps. -->
+    <svg class="layer scene-front" id="scene-front" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice"
+         aria-hidden="true">
+      <!-- 6. Fog band, in front of the objects (CP3) -->
+      <g id="layer-fog-front"></g>
+
+      <!-- 7. Foreground framing: dark branches in the top corners, tall grass along the bottom -->
+      <g id="layer-foreground" fill="#070A14">
+        <path class="blk" d="M0 0 L0 110 Q40 70 90 60 Q60 50 30 20 Q50 10 70 0 Z"/>
+        <path class="blk" d="M390 0 L390 120 Q350 80 300 70 Q330 55 355 25 Q340 10 320 0 Z"/>
+        <path class="blk" d="M0 844 L0 745 L10 770 L18 740 L28 772 L40 752 L52 778 L70 765 L90 784 L120 775 L150 790
+                             L195 782 L240 790 L270 775 L300 784 L320 765 L338 778 L350 752 L362 772 L372 740
+                             L380 770 L390 745 L390 844 Z"/>
+        <text class="blk-label" x="195" y="820">Foreground: branches + grass</text>
+      </g>
+
+      <!-- Dev view (?dev=1): the region still visible at 375×667, plus tappable outlines drawn by js/main.js -->
+      <g id="dev-overlay" class="dev-only">
+        <rect class="dev-guide" x="10" y="80" width="370" height="685"/>
+        <text class="dev-guide-label" x="14" y="76">safe region (visible at 375×667)</text>
+        <g id="dev-hit-outlines"></g>
+      </g>
+    </svg>
+
+    <!-- 8. UI layer goes here at CP2 -->
+
+    <pre class="dev-readout dev-only" id="dev-readout" aria-hidden="true"></pre>
+  </div>
+
   <div id="inset-probe"></div>
-  <script>
-    // Show viewport size, safe-area insets, and the reduced-motion setting,
-    // so the iPhone check at Checkpoint 0 also records the numbers Checkpoint 1 needs.
-    function showReadout() {
-      const probe = getComputedStyle(document.getElementById('inset-probe'));
-      const insets = ['Top', 'Right', 'Bottom', 'Left']
-        .map(side => parseFloat(probe['padding' + side]) || 0);
-      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      document.getElementById('readout').innerHTML =
-        `viewport ${innerWidth} × ${innerHeight}<br>` +
-        `safe area t${insets[0]} r${insets[1]} b${insets[2]} l${insets[3]}<br>` +
-        `reduced motion: ${reducedMotion ? 'on' : 'off'}`;
-    }
-    showReadout();
-    addEventListener('resize', showReadout);
-    matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', showReadout);
-  </script>
 </body>
 </html>
