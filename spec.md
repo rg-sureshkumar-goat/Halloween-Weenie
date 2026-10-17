@@ -35,22 +35,22 @@ The User opens the URL, reads a short start screen, and taps **Enter**. Sound an
 
 - One full-screen portrait page with no scrolling: `100dvh`, `viewport-fit=cover`, and safe-area insets.
 - The scene is one inline SVG with `viewBox="0 0 390 844"` and `preserveAspectRatio="xMidYMid slice"`.
-- **Interactive safe region:** every tappable object sits within viewBox y ≈ 80–765 and x ≈ 10–380. That is the part still visible at 375×667 under `slice` (rows 0–75 and 769–844 are cropped). *(provisional: recheck once Safari's real viewport height is measured on the iPhone at CP1)*
+- **Interactive safe region:** every tappable object sits within viewBox y ≈ 80–765 and x ≈ 10–380. That is the part still visible at 375×667 under `slice` (rows 0–75 and 769–844 are cropped). Confirmed Oct 17 on the Developer's iPhone: the `?dev=1` view showed no tappable object clipped.
 - UI (Play/Pause, hint bubble, overlays) is HTML above the SVG, positioned with `env(safe-area-inset-*)`, never under the notch or home bar.
 - Desktop: the scene sits in a centered phone-shaped frame. Phone in landscape: a "turn your phone upright" message.
 
 ### Layer stack (back to front)
 
 1. Sky, stars, moon
-2. Far forest silhouettes
+2. Far forest silhouettes, then the ground hill
 3. Fog band (behind)
 4. Scene objects (cottage, raven, tree and web, cauldron, mushroom ring, pond), the **only** layer that takes taps
 5. Particle canvas (fireflies, sparkles, bubbles)
 6. Fog band (in front)
-7. Foreground framing (branches, grass)
+7. Foreground framing (branches, grass) and the edge vignette
 8. UI layer
 
-Layers 5–7 use `pointer-events: none`, so effects never block taps.
+Layers 1–4 are one SVG and layers 6–7 a second SVG above the canvas. Both use the same viewBox, so their coordinates match. Layers 5–7 use `pointer-events: none`, so effects never block taps. Glows on scene objects sit outside their tappable groups, so they don't enlarge tap targets.
 
 ### States and shared rules
 

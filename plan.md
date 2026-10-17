@@ -67,6 +67,7 @@ Keep implementation progress and verification here. Update `research.md` when ev
 | Date | Checkpoint | Evidence (screenshots, console, behavior observed) | Commit |
 | --- | --- | --- | --- |
 | Oct 16, 2026 | 0 | Pages run "pages build and deployment" succeeded about 35 s after the push. Live URL returns HTTP 200 over HTTPS (HTTP redirects with a 301), and the live HTML matches local `index.html` byte for byte. Built-in browser at 390×844 and 375×667: readout matches each size, no scroll, no console errors. | `8f56872` |
+| Oct 17, 2026 | 1 | Rough layout approved first (`3bccc51`), then the detailed art (`3e1ab06`). `?dev=1` reported no tappable object clipped at 390×844, 375×667, and 390×664. At an estimated SE-size viewport (375×548) the toadstool clips. Desktop frame shows the whole scene at exactly 390:844. No console errors. The Developer reported no clipping on their iPhone and approved the look and the brief's palette in chat. Found: Pages caches files for 10 min (see `research.md`). | this commit |
 
 ### Playtest observations
 

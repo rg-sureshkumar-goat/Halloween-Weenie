@@ -43,7 +43,7 @@ Reasons recorded in the brief: SVG stays sharp at any phone size, and a static s
 
 - **Concept: "The Witch's Hollow."** A moonlit clearing with a glowing crooked cottage and a simmering cauldron, where the forest "waits for someone to stir things up." The tone is storybook-spooky and playful for ages 10+, with no gore, no menace toward people, and no branding.
 - **Why it serves the client's weenie goal:** the warm cottage glow pulls the eye first. The three ingredients sit in three different corners (ring, pond, tree), so finding them rewards looking beyond the focal point.
-- **Style:** layered "cut-paper storybook" silhouettes, made of flat shapes, soft gradients, and glows. Light comes only from the moon (cool) and from magic (warm windows, green cauldron). The palette is in `Weenie Project-Brief.md` › *Visual style*. The final palette will be chosen from the Checkpoint 1 screenshots.
+- **Style:** layered "cut-paper storybook" silhouettes, made of flat shapes, soft gradients, and glows. Light comes only from the moon (cool) and from magic (warm windows, green cauldron). The palette is in `Weenie Project-Brief.md` › *Visual style*. **Approved Oct 17** after the Developer reviewed the CP1 art on the iPhone. Only the three ingredients glow (toadstool, moonflower, web), which backs up the first raven hint ("hungry for things that glow").
 - **Environmental features (4):** cauldron, mushroom ring, pond with moonflower, crooked tree with web.
 - **Ambient effects:** 5 candidates (fog, fireflies, bats, candle flicker, smoke and bubbles). Build them and keep the best 3+ after seeing them on the iPhone.
 - **Alternatives considered:** the brief records only the chosen direction. *Developer: add any scenes or stories you rejected and why, if you want that reasoning on record.*
@@ -59,7 +59,8 @@ Reasons recorded in the brief: SVG stays sharp at any phone size, and a static s
 | `AudioBufferSourceNode.loop` is gapless; `<audio loop>` is not | Well established; untested here | CP4, by ear |
 | iOS Reduce Motion is exposed as `prefers-reduced-motion: reduce` | Well established; untested here | CP4 on iPhone |
 | Animating SVG blur filters is slow on iPhone, while `transform`/`opacity` stay smooth | Assumption | CP3 on iPhone |
-| Safari's toolbars make the real viewport shorter than the screen (390×844 phone ≠ 390×844 viewport) | Likely; exact height unknown | CP0: the placeholder's readout shows `innerHeight` on the iPhone |
+| Safari's toolbars make the real viewport shorter than the screen (390×844 phone ≠ 390×844 viewport) | **Checked Oct 17:** the `?dev=1` view on the Developer's iPhone reported no tappable object clipped. Exact viewport numbers were not recorded. In emulation, an estimated SE-size Safari viewport (375×548) would clip the toadstool | Resolved for the Developer's iPhone; recheck on other phones at the playtest |
+| GitHub Pages caching | **Observed Oct 17:** `cache-control: max-age=600`. For up to 10 min after a deploy, browsers can show the previous files, and can mix a new page with an old stylesheet | For now, add a new `?v=…` when checking a fresh deploy. Versioned asset links proposed at CP4 |
 | Headless Chrome CLI (`--screenshot --window-size=390,844`) gives phone-width screenshots | **Failed Oct 16, 2026:** new headless mode laid the page out 500 px wide and cropped it. The built-in browser's viewport emulation reported exactly 390×844 and 375×667, so it's the screenshot tool for now | Resolved |
 
 ### Sound sources
@@ -85,7 +86,7 @@ System fonts for UI and hints. A display font for the title is optional; if used
 | Ingredient order: required or any order | Required, revisit after playtest | CP6 |
 | Hint timing and final rhymes | 20 s / +45 s / +45 s; rhymes in brief | CP6 |
 | Start-screen title | "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | CP4 |
-| Final palette and look | Brief palette | CP1 |
+| Final palette and look | **Decided Oct 17:** the brief's palette, approved on the Developer's iPhone | — |
 | Which ambient effects to keep | Decide on iPhone | CP3 |
 | Commit original sound files or only processed MP3s | Undecided | CP3 |
 | Phase 2 due date | Unknown | — |
