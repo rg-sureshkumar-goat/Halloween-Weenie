@@ -1,66 +1,81 @@
-// Virtual Hallo-weenie: boot and wiring.
-// Checkpoint 1: only the dev view exists so far. Open the page with ?dev=1 to see
-// which part of the 390×844 scene this screen shows, and whether any object that
-// Users will tap is cropped off (spec.md › Layout, interactive safe region).
+// Virtual Hallo-weenie: boot, app state, and input wiring.
+// Checkpoint 2: state machine skeleton, Enter, Play/Pause (visual + input lock only), and one
+// input path for every scene object. Sound, motion, and the pausable clock arrive at CP3–CP4.
 
-const VIEWBOX = { width: 390, height: 844 };
-const SVG_NS = 'http://www.w3.org/2000/svg';
-const isDev = new URLSearchParams(location.search).get('dev') === '1';
+import { showHint, positionHint } from './hints.js';
+import { applyShowParam, initDevView } from './dev.js';
 
-if (isDev) {
-  document.documentElement.classList.add('dev');
-  updateDevView();
-  addEventListener('resize', updateDevView);
+const stage = document.getElementById('stage');
+const sceneInteractive = document.getElementById('scene-interactive');
+const playPauseButton = document.getElementById('play-pause');
+const enterButton = document.getElementById('enter-button');
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+// App state: START → SCENE → STORY → SCENE, with `paused` layered over SCENE or STORY.
+const state = { mode: 'START', paused: false };
+
+// The one place state changes. The stage's data attributes drive which UI shows (styles.css),
+// and the scene is made inert whenever objects must not respond, so the lock rule lives here only.
+function setState(changes) {
+  Object.assign(state, changes);
+  stage.dataset.mode = state.mode;
+  stage.dataset.paused = String(state.paused);
+  sceneInteractive.inert = !canInteract();
+  playPauseButton.setAttribute('aria-label', state.paused ? 'Play' : 'Pause');
+  positionHint();
 }
 
-// With preserveAspectRatio="xMidYMid slice", the scene scales up until it covers the
-// stage, then crops equally from both sides of the longer axis. Returns the visible
-// part of the scene in viewBox units.
-function visibleSceneArea(stageWidth, stageHeight) {
-  const scale = Math.max(stageWidth / VIEWBOX.width, stageHeight / VIEWBOX.height);
-  const width = stageWidth / scale;
-  const height = stageHeight / scale;
-  return {
-    left: (VIEWBOX.width - width) / 2,
-    right: (VIEWBOX.width + width) / 2,
-    top: (VIEWBOX.height - height) / 2,
-    bottom: (VIEWBOX.height + height) / 2,
-  };
+function canInteract() {
+  return state.mode === 'SCENE' && !state.paused;
 }
 
-// Reads the CSS env() safe-area insets through a hidden probe element.
-function safeAreaInsets() {
-  const probe = getComputedStyle(document.getElementById('inset-probe'));
-  return ['Top', 'Right', 'Bottom', 'Left'].map(side => parseFloat(probe['padding' + side]) || 0);
+// ---------- Start screen and Play/Pause ----------
+
+document.getElementById('motion-note').hidden = !reducedMotion.matches;
+reducedMotion.addEventListener('change', () => {
+  document.getElementById('motion-note').hidden = !reducedMotion.matches;
+});
+
+enterButton.addEventListener('click', () => {
+  setState({ mode: 'SCENE' });
+  playPauseButton.focus({ preventScroll: true });
+});
+
+playPauseButton.addEventListener('click', () => {
+  setState({ paused: !state.paused });
+});
+
+// ---------- Scene input: one path for touch, mouse, and keyboard ----------
+
+sceneInteractive.addEventListener('click', event => {
+  const object = event.target.closest('.scene-object');
+  if (object) activateObject(object);
+});
+
+sceneInteractive.addEventListener('keydown', event => {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  const object = event.target.closest('.scene-object');
+  if (!object) return;
+  event.preventDefault();
+  activateObject(object);
+});
+
+function activateObject(object) {
+  if (!canInteract()) return;
+  pokeObject(object);
 }
 
-function updateDevView() {
-  const stage = document.getElementById('stage').getBoundingClientRect();
-  const visible = visibleSceneArea(stage.width, stage.height);
-  const outlines = document.getElementById('dev-hit-outlines');
-  outlines.replaceChildren();
-
-  // Outline every tappable object and note any that fall outside the visible area.
-  const clipped = [];
-  for (const object of document.querySelectorAll('[data-tappable]')) {
-    const box = object.getBBox();
-    const isClipped = box.x < visible.left || box.x + box.width > visible.right ||
-                      box.y < visible.top || box.y + box.height > visible.bottom;
-    if (isClipped) clipped.push(object.dataset.tappable);
-
-    const rect = document.createElementNS(SVG_NS, 'rect');
-    rect.setAttribute('class', isClipped ? 'dev-hit clipped' : 'dev-hit');
-    for (const [attr, value] of Object.entries({ x: box.x, y: box.y, width: box.width, height: box.height })) {
-      rect.setAttribute(attr, value.toFixed(1));
-    }
-    outlines.append(rect);
-  }
-
-  const [top, right, bottom, left] = safeAreaInsets();
-  const round = n => Math.round(n);
-  document.getElementById('dev-readout').textContent =
-    `viewport ${innerWidth} × ${innerHeight}  (stage ${round(stage.width)} × ${round(stage.height)})\n` +
-    `safe area t${top} r${right} b${bottom} l${left}\n` +
-    `visible scene y ${round(visible.top)}–${round(visible.bottom)}, x ${round(visible.left)}–${round(visible.right)}\n` +
-    `tappables clipped: ${clipped.length ? clipped.join(', ') : 'none'}`;
+// Placeholder feedback until each object gets its own at CP6: a quick wiggle,
+// or a brief dim-and-return when the device asks for reduced motion.
+function pokeObject(object) {
+  const keyframes = reducedMotion.matches
+    ? [{ opacity: 1 }, { opacity: 0.5 }, { opacity: 1 }]
+    : [{ transform: 'scale(1)' }, { transform: 'scale(1.08) rotate(-2deg)' }, { transform: 'scale(1)' }];
+  object.animate(keyframes, { duration: 320, easing: 'ease-out' });
 }
+
+// ---------- Boot ----------
+
+setState({});
+applyShowParam({ setState, showHint });
+if (new URLSearchParams(location.search).get('dev') === '1') initDevView();

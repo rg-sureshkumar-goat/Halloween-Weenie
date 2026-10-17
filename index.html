@@ -16,11 +16,37 @@
        Layer order follows spec.md › Layer stack. The particle canvas (CP3) will sit between the two SVGs,
        so fog-front and the foreground live in a second SVG on top. Glows are radial gradients, not blur
        filters, which are slow to animate on iPhone. -->
-  <div class="stage" id="stage">
+  <div class="stage" id="stage" data-mode="START" data-paused="false">
 
-    <!-- BACK SVG: sky, forest, ground, fog (behind), scene objects (the only tappable layer) -->
-    <svg class="layer scene-back" id="scene-back" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice"
-         role="img" aria-label="The Witch's Hollow: a crooked witch's cottage in a moonlit forest clearing">
+    <!-- 8. UI layer. Listed first so Play/Pause comes first in tab order; z-index stacks it above the scene.
+         Which overlay shows is driven by the stage's data-mode and data-paused attributes (styles.css). -->
+    <button class="play-pause" id="play-pause" type="button" aria-label="Pause">
+      <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5 L19 12 L8 19 Z"/></svg>
+    </button>
+
+    <section class="start-screen" id="start-screen" aria-labelledby="start-title">
+      <h1 class="start-title" id="start-title">Virtual Hallo-weenie</h1>
+      <p class="start-subtitle">The Witch's Hollow</p>
+      <p class="start-invite">Something is stirring in the witch's clearing. Look around, tap what you find, and see what wakes.</p>
+      <button class="enter-button" id="enter-button" type="button">Enter</button>
+      <p class="motion-note" id="motion-note" hidden>Reduced motion is on, so the magic will move gently.</p>
+    </section>
+
+    <div class="pause-overlay" id="pause-overlay">
+      <p class="pause-title">Paused</p>
+      <p class="pause-help">Tap Play at the top left to continue.</p>
+    </div>
+
+    <div class="hint-bubble" id="hint-bubble" data-side="left">
+      <p class="hint-text" id="hint-text" aria-live="polite"></p>
+    </div>
+
+    <!-- BACK SVG: sky, forest, ground, fog (behind), scene objects (the only tappable layer).
+         The wrapper div lets main.js set `inert` on the whole scene when input is locked. -->
+    <div class="layer scene-interactive" id="scene-interactive">
+    <svg class="scene-back" id="scene-back" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice"
+         role="group" aria-label="The Witch's Hollow: a crooked witch's cottage in a moonlit forest clearing">
       <defs>
         <linearGradient id="sky-gradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#0E1230"/>
@@ -201,8 +227,12 @@
       <!-- 3. Fog band, behind the objects (CP3) -->
       <g id="layer-fog-back"></g>
 
-      <!-- 4. Scene objects. data-tappable marks everything Users will tap (CP2 adds buttons and hit areas).
-           Glows sit outside the tappable groups so they don't enlarge the tap targets. -->
+      <!-- 4. Scene objects: the only layer that takes taps.
+           Each tappable object is a focusable button (.scene-object) holding an invisible tap area (.hit,
+           at least 50×50 scene units = 44+ CSS px on phones) and its drawing (.art). Static transforms live
+           on .art, never on the object, so animations on the object can't clobber them.
+           DOM order is tab order: top to bottom, left to right. Glows sit outside the objects so they
+           don't enlarge tap areas. -->
       <g id="layer-objects">
 
         <!-- Crooked tree, left edge, with a branch reaching toward the cottage -->
@@ -214,25 +244,6 @@
                 fill="none" stroke="#070A14" stroke-width="2.5" stroke-linecap="round"/>
           <ellipse cx="28" cy="420" rx="5" ry="8" fill="#03050B"/>
           <path d="M46 318 L52 330 Q50 360 44 380 Q40 420 48 470" fill="none" stroke="#DCE6F2" stroke-opacity="0.18" stroke-width="1.2"/>
-        </g>
-        <circle cx="100" cy="385" r="34" fill="url(#moonlight-glow)" opacity="0.5"/>
-        <!-- Spider web hanging from the branch (ingredient 3) -->
-        <g id="web" data-tappable="Spider web" fill="none" stroke="#DCE6F2" stroke-linejoin="round">
-          <line x1="100" y1="314" x2="100" y2="364" stroke-opacity="0.55" stroke-width="0.8"/>
-          <path d="M100 385 L122 385 M100 385 L115.6 400.6 M100 385 L100 407 M100 385 L84.4 400.6
-                   M100 385 L78 385 M100 385 L84.4 369.4 M100 385 L100 363 M100 385 L115.6 369.4"
-                stroke-opacity="0.75" stroke-width="0.8"/>
-          <g stroke-opacity="0.6" stroke-width="0.7">
-            <polygon points="107,385 105,390 100,392 95,390 93,385 95,380 100,378 105,380"/>
-            <polygon points="112,385 108.5,393.5 100,397 91.5,393.5 88,385 91.5,376.5 100,373 108.5,376.5"/>
-            <polygon points="117,385 112,397 100,402 88,397 83,385 88,373 100,368 112,373"/>
-            <polygon points="121,385 114.8,399.8 100,406 85.2,399.8 79,385 85.2,370.2 100,364 114.8,370.2"/>
-          </g>
-          <g fill="#070A14" stroke="none">
-            <circle cx="106" cy="391" r="2"/>
-            <circle cx="108" cy="394" r="2.8"/>
-          </g>
-          <path d="M104 389 L101 387 M104 392 L101 393 M110 392 L113 390 M110 396 L113 397" stroke="#070A14" stroke-width="0.8"/>
         </g>
 
         <!-- Footpath from the cottage door down to the cauldron -->
@@ -276,69 +287,112 @@
           <circle id="window-glow-right" cx="225" cy="376" r="34" fill="url(#window-glow)"/>
           <circle id="window-glow-attic" cx="195" cy="302" r="26" fill="url(#window-glow)"/>
         </g>
-        <!-- Three windows: Phase 2 story "The Cottage Wakes" -->
-        <g id="window-left" data-tappable="Left window" transform="rotate(-3 165 376)">
-          <rect x="152" y="360" width="26" height="32" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
-          <path d="M165 360 V392 M152 376 H178" stroke="#070A14" stroke-width="2.5"/>
-        </g>
-        <g id="window-right" data-tappable="Right window" transform="rotate(2 225 376)">
-          <rect x="212" y="360" width="26" height="32" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
-          <path d="M225 360 V392 M212 376 H238" stroke="#070A14" stroke-width="2.5"/>
-        </g>
-        <g id="window-attic" data-tappable="Attic window">
-          <path d="M185 314 L185 298 Q195 286 205 298 L205 314 Z" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
-          <path d="M195 290 V314 M185 303 H205" stroke="#070A14" stroke-width="2"/>
-        </g>
 
         <!-- Raven perched on the roof peak: the hint giver -->
-        <g id="raven" data-tappable="Raven" fill="#070A14">
-          <path d="M186 226 L176 232 L178 226 L175 221 L186 222 Z"/>
-          <path d="M184 226 Q186 214 198 214 Q206 214 207 221 Q206 229 196 231 Q188 232 184 226 Z"/>
-          <circle cx="205" cy="214" r="6"/>
-          <polygon points="210,212 218,215 210,217"/>
-          <circle cx="206.5" cy="212.5" r="1.2" fill="#FFB547"/>
-          <path d="M194 231 V235 M198 231 V235" stroke="#070A14" stroke-width="1.2"/>
-          <path d="M188 218 Q196 212 204 210" fill="none" stroke="#DCE6F2" stroke-opacity="0.35" stroke-width="1"/>
+        <g id="raven" class="scene-object" role="button" tabindex="0" aria-label="Raven">
+          <rect class="hit" x="171" y="197" width="50" height="50" rx="10"/>
+          <g class="art" fill="#070A14">
+            <path d="M186 226 L176 232 L178 226 L175 221 L186 222 Z"/>
+            <path d="M184 226 Q186 214 198 214 Q206 214 207 221 Q206 229 196 231 Q188 232 184 226 Z"/>
+            <circle cx="205" cy="214" r="6"/>
+            <polygon points="210,212 218,215 210,217"/>
+            <circle cx="206.5" cy="212.5" r="1.2" fill="#FFB547"/>
+            <path d="M194 231 V235 M198 231 V235" stroke="#070A14" stroke-width="1.2"/>
+            <path d="M188 218 Q196 212 204 210" fill="none" stroke="#DCE6F2" stroke-opacity="0.35" stroke-width="1"/>
+          </g>
+        </g>
+
+        <!-- Three windows: Phase 2 story "The Cottage Wakes" -->
+        <g id="window-attic" class="scene-object" role="button" tabindex="0" aria-label="Attic window">
+          <rect class="hit" x="170" y="275" width="50" height="50" rx="10"/>
+          <g class="art">
+            <path d="M185 314 L185 298 Q195 286 205 298 L205 314 Z" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
+            <path d="M195 290 V314 M185 303 H205" stroke="#070A14" stroke-width="2"/>
+          </g>
+        </g>
+
+        <!-- Spider web hanging from the branch: ingredient 3 -->
+        <circle cx="100" cy="385" r="34" fill="url(#moonlight-glow)" opacity="0.5"/>
+        <g id="web" class="scene-object" role="button" tabindex="0" aria-label="Spider web">
+          <rect class="hit" x="74" y="310" width="52" height="102" rx="10"/>
+          <g class="art" fill="none" stroke="#DCE6F2" stroke-linejoin="round">
+            <line x1="100" y1="314" x2="100" y2="364" stroke-opacity="0.55" stroke-width="0.8"/>
+            <path d="M100 385 L122 385 M100 385 L115.6 400.6 M100 385 L100 407 M100 385 L84.4 400.6
+                     M100 385 L78 385 M100 385 L84.4 369.4 M100 385 L100 363 M100 385 L115.6 369.4"
+                  stroke-opacity="0.75" stroke-width="0.8"/>
+            <g stroke-opacity="0.6" stroke-width="0.7">
+              <polygon points="107,385 105,390 100,392 95,390 93,385 95,380 100,378 105,380"/>
+              <polygon points="112,385 108.5,393.5 100,397 91.5,393.5 88,385 91.5,376.5 100,373 108.5,376.5"/>
+              <polygon points="117,385 112,397 100,402 88,397 83,385 88,373 100,368 112,373"/>
+              <polygon points="121,385 114.8,399.8 100,406 85.2,399.8 79,385 85.2,370.2 100,364 114.8,370.2"/>
+            </g>
+            <g fill="#070A14" stroke="none">
+              <circle cx="106" cy="391" r="2"/>
+              <circle cx="108" cy="394" r="2.8"/>
+            </g>
+            <path d="M104 389 L101 387 M104 392 L101 393 M110 392 L113 390 M110 396 L113 397" stroke="#070A14" stroke-width="0.8"/>
+          </g>
+        </g>
+
+        <g id="window-left" class="scene-object" role="button" tabindex="0" aria-label="Left window">
+          <rect class="hit" x="140" y="351" width="50" height="50" rx="10"/>
+          <g class="art" transform="rotate(-3 165 376)">
+            <rect x="152" y="360" width="26" height="32" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
+            <path d="M165 360 V392 M152 376 H178" stroke="#070A14" stroke-width="2.5"/>
+          </g>
+        </g>
+        <g id="window-right" class="scene-object" role="button" tabindex="0" aria-label="Right window">
+          <rect class="hit" x="200" y="351" width="50" height="50" rx="10"/>
+          <g class="art" transform="rotate(2 225 376)">
+            <rect x="212" y="360" width="26" height="32" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
+            <path d="M225 360 V392 M212 376 H238" stroke="#070A14" stroke-width="2.5"/>
+          </g>
         </g>
 
         <!-- Broom leaning by the door: Phase 2 story "Broomstick Flight" -->
-        <g id="broom" data-tappable="Broom">
-          <path d="M271 408 Q268 436 263 462" fill="none" stroke="#3E2C1C" stroke-width="3.5" stroke-linecap="round"/>
-          <polygon points="252,463 273,463 277,482 247,482" fill="#6E5530"/>
-          <path d="M255 466 L251 481 M260 466 L258 481 M265 466 L265 481 M270 466 L272 481" stroke="#4A3820" stroke-width="1"/>
-          <rect x="253" y="460" width="19" height="4" rx="1" fill="#2E2014"/>
+        <g id="broom" class="scene-object" role="button" tabindex="0" aria-label="Broom">
+          <rect class="hit" x="237" y="404" width="50" height="82" rx="10"/>
+          <g class="art">
+            <path d="M271 408 Q268 436 263 462" fill="none" stroke="#3E2C1C" stroke-width="3.5" stroke-linecap="round"/>
+            <polygon points="252,463 273,463 277,482 247,482" fill="#6E5530"/>
+            <path d="M255 466 L251 481 M260 466 L258 481 M265 466 L265 481 M270 466 L272 481" stroke="#4A3820" stroke-width="1"/>
+            <rect x="253" y="460" width="19" height="4" rx="1" fill="#2E2014"/>
+          </g>
         </g>
 
         <!-- Cauldron over a small fire, front center -->
         <circle cx="195" cy="656" r="62" fill="url(#fire-glow)"/>
-        <g id="cauldron" data-tappable="Cauldron">
-          <!-- Fire sits low between long legs so its flame tongues show beneath the pot -->
-          <g id="fire">
-            <rect x="168" y="658" width="56" height="8" rx="4" fill="#2A1C12" transform="rotate(-7 196 662)"/>
-            <rect x="168" y="658" width="56" height="8" rx="4" fill="#24180F" transform="rotate(7 196 662)"/>
-            <path d="M166 662 Q162 650 170 642 Q172 652 178 652 Q176 638 186 632 Q188 646 194 646 Q194 634 202 628
-                     Q204 642 210 644 Q212 636 220 632 Q226 646 224 662 Z" fill="#FF7A1A"/>
-            <path d="M178 662 Q178 652 186 646 Q188 654 194 654 Q196 646 202 642 Q208 654 210 662 Z" fill="#FFB547"/>
-          </g>
-          <g fill="#070A14">
-            <rect x="161" y="632" width="6" height="28" rx="2"/>
-            <rect x="192" y="640" width="6" height="24" rx="2"/>
-            <rect x="223" y="632" width="6" height="28" rx="2"/>
-          </g>
-          <path d="M152 582 Q146 620 170 640 Q195 652 220 640 Q244 620 238 582 Z" fill="#070A14"/>
-          <path d="M224 594 Q236 604 232 622" fill="none" stroke="#DCE6F2" stroke-opacity="0.25" stroke-width="1.5"/>
-          <ellipse id="cauldron-glow" cx="195" cy="578" rx="46" ry="14" fill="url(#brew-glow)"/>
-          <ellipse cx="195" cy="580" rx="44" ry="10" fill="#10151F" stroke="#2A3448" stroke-width="3"/>
-          <ellipse id="cauldron-brew" cx="195" cy="580" rx="38" ry="7" fill="url(#brew-dark)"/>
-          <g fill="#5A8A4A" opacity="0.8">
-            <circle cx="183" cy="579" r="2"/>
-            <circle cx="206" cy="581" r="1.5"/>
-          </g>
-          <!-- Three rim runes, unlit. They light one by one as ingredients land. -->
-          <g fill="none" stroke="#3B2F5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path id="rune-1" d="M171 611 L175 601 L179 611 Z"/>
-            <path id="rune-2" d="M195 604 V620 M190 609 L195 613 L200 609"/>
-            <path id="rune-3" d="M211 602 L216 607 L211 611 L219 611"/>
+        <g id="cauldron" class="scene-object" role="button" tabindex="0" aria-label="Cauldron">
+          <rect class="hit" x="144" y="558" width="102" height="112" rx="12"/>
+          <g class="art">
+            <!-- Fire sits low between long legs so its flame tongues show beneath the pot -->
+            <g id="fire">
+              <rect x="168" y="658" width="56" height="8" rx="4" fill="#2A1C12" transform="rotate(-7 196 662)"/>
+              <rect x="168" y="658" width="56" height="8" rx="4" fill="#24180F" transform="rotate(7 196 662)"/>
+              <path d="M166 662 Q162 650 170 642 Q172 652 178 652 Q176 638 186 632 Q188 646 194 646 Q194 634 202 628
+                       Q204 642 210 644 Q212 636 220 632 Q226 646 224 662 Z" fill="#FF7A1A"/>
+              <path d="M178 662 Q178 652 186 646 Q188 654 194 654 Q196 646 202 642 Q208 654 210 662 Z" fill="#FFB547"/>
+            </g>
+            <g fill="#070A14">
+              <rect x="161" y="632" width="6" height="28" rx="2"/>
+              <rect x="192" y="640" width="6" height="24" rx="2"/>
+              <rect x="223" y="632" width="6" height="28" rx="2"/>
+            </g>
+            <path d="M152 582 Q146 620 170 640 Q195 652 220 640 Q244 620 238 582 Z" fill="#070A14"/>
+            <path d="M224 594 Q236 604 232 622" fill="none" stroke="#DCE6F2" stroke-opacity="0.25" stroke-width="1.5"/>
+            <ellipse id="cauldron-glow" cx="195" cy="578" rx="46" ry="14" fill="url(#brew-glow)"/>
+            <ellipse cx="195" cy="580" rx="44" ry="10" fill="#10151F" stroke="#2A3448" stroke-width="3"/>
+            <ellipse id="cauldron-brew" cx="195" cy="580" rx="38" ry="7" fill="url(#brew-dark)"/>
+            <g fill="#5A8A4A" opacity="0.8">
+              <circle cx="183" cy="579" r="2"/>
+              <circle cx="206" cy="581" r="1.5"/>
+            </g>
+            <!-- Three rim runes, unlit. They light one by one as ingredients land. -->
+            <g fill="none" stroke="#3B2F5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path id="rune-1" d="M171 611 L175 601 L179 611 Z"/>
+              <path id="rune-2" d="M195 604 V620 M190 609 L195 613 L200 609"/>
+              <path id="rune-3" d="M211 602 L216 607 L211 611 L219 611"/>
+            </g>
           </g>
         </g>
 
@@ -353,13 +407,16 @@
         </g>
         <!-- The biggest mushroom glows: ingredient 1 -->
         <circle cx="128" cy="694" r="28" fill="url(#toadstool-glow)"/>
-        <g id="toadstool" data-tappable="Toadstool">
-          <path d="M124 710 L125 698 L131 698 L132 710 Z" fill="#CFC6B0"/>
-          <path d="M113 698 Q114 684 128 683 Q142 684 143 698 Q128 702 113 698 Z" fill="#6FE25E"/>
-          <g fill="#E6FFE0">
-            <circle cx="122" cy="690" r="1.8"/>
-            <circle cx="131" cy="688" r="1.5"/>
-            <circle cx="137" cy="694" r="1.3"/>
+        <g id="toadstool" class="scene-object" role="button" tabindex="0" aria-label="Toadstool">
+          <rect class="hit" x="103" y="672" width="50" height="50" rx="10"/>
+          <g class="art">
+            <path d="M124 710 L125 698 L131 698 L132 710 Z" fill="#CFC6B0"/>
+            <path d="M113 698 Q114 684 128 683 Q142 684 143 698 Q128 702 113 698 Z" fill="#6FE25E"/>
+            <g fill="#E6FFE0">
+              <circle cx="122" cy="690" r="1.8"/>
+              <circle cx="131" cy="688" r="1.5"/>
+              <circle cx="137" cy="694" r="1.3"/>
+            </g>
           </g>
         </g>
 
@@ -383,17 +440,22 @@
         </g>
         <!-- Moonflower bud at the pond's edge: ingredient 2 -->
         <circle cx="246" cy="686" r="22" fill="url(#moonlight-glow)"/>
-        <g id="moonflower" data-tappable="Moonflower">
-          <path d="M246 706 Q244 698 246 690" fill="none" stroke="#3E6B4A" stroke-width="2"/>
-          <path d="M246 700 Q238 696 236 700 Q240 703 246 700 Z M246 698 Q254 694 256 698 Q252 701 246 698 Z" fill="#3E6B4A"/>
-          <path d="M246 677 Q240 682 241 688 Q246 692 251 688 Q252 682 246 677 Z" fill="#DCE6F2"/>
-          <path d="M246 678 Q244 684 246 691 M246 678 Q249 684 248 690" fill="none" stroke="#B8C4D8" stroke-width="0.7"/>
-          <ellipse cx="246" cy="689" rx="4" ry="2" fill="#B46CFF" opacity="0.5"/>
+        <g id="moonflower" class="scene-object" role="button" tabindex="0" aria-label="Moonflower">
+          <rect class="hit" x="222" y="672" width="50" height="50" rx="10"/>
+          <g class="art">
+            <path d="M246 706 Q244 698 246 690" fill="none" stroke="#3E6B4A" stroke-width="2"/>
+            <path d="M246 700 Q238 696 236 700 Q240 703 246 700 Z M246 698 Q254 694 256 698 Q252 701 246 698 Z" fill="#3E6B4A"/>
+            <path d="M246 677 Q240 682 241 688 Q246 692 251 688 Q252 682 246 677 Z" fill="#DCE6F2"/>
+            <path d="M246 678 Q244 684 246 691 M246 678 Q249 684 248 690" fill="none" stroke="#B8C4D8" stroke-width="0.7"/>
+            <ellipse cx="246" cy="689" rx="4" ry="2" fill="#B46CFF" opacity="0.5"/>
+          </g>
         </g>
       </g>
     </svg>
+    </div>
 
-    <!-- 5. Particle canvas goes here at CP3 -->
+    <!-- 5. Particle canvas (drawn from CP3). Never takes taps. -->
+    <canvas class="layer particles" id="particles" aria-hidden="true"></canvas>
 
     <!-- FRONT SVG: fog (in front), foreground framing, vignette, dev guides. Never takes taps. -->
     <svg class="layer scene-front" id="scene-front" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice"
@@ -427,17 +489,18 @@
       <!-- Storybook vignette: darkens the edges to pull the eye to the cottage -->
       <rect width="390" height="844" fill="url(#vignette)"/>
 
-      <!-- Dev view (?dev=1): the region still visible at 375×667, plus tappable outlines drawn by js/main.js -->
+      <!-- Dev view (?dev=1): the region still visible at 375×667. Tap areas are outlined by styles.css. -->
       <g id="dev-overlay" class="dev-only">
         <rect class="dev-guide" x="10" y="80" width="370" height="685"/>
         <text class="dev-guide-label" x="14" y="76">safe region (visible at 375×667)</text>
-        <g id="dev-hit-outlines"></g>
       </g>
     </svg>
 
-    <!-- 8. UI layer goes here at CP2 -->
-
     <pre class="dev-readout dev-only" id="dev-readout" aria-hidden="true"></pre>
+  </div>
+
+  <div class="rotate-message" id="rotate-message">
+    <p>Turn your phone upright to enter the Witch's Hollow.</p>
   </div>
 
   <div id="inset-probe"></div>

@@ -1,10 +1,12 @@
-/* Virtual Hallo-weenie: layout and color tokens.
+/* Virtual Hallo-weenie: layout, color tokens, UI shell, focus styles.
    Layout model: one .stage fills the phone screen (or a phone-shaped frame on desktop).
-   Every scene layer inside it is absolutely positioned to fill the stage, and both
-   scene SVGs share viewBox 0 0 390 844 with "slice" scaling, so their coordinates line up. */
+   Scene layers (.layer) are absolutely positioned to fill the stage, and both scene SVGs share
+   viewBox 0 0 390 844 with "slice" scaling, so their coordinates line up. UI pieces are positioned
+   inside the stage above the scene. Which UI shows follows the stage's data-mode / data-paused
+   attributes, which only main.js's setState() changes. */
 
 :root {
-  /* Palette from Weenie Project-Brief.md › Visual style (final palette decided at CP1) */
+  /* Palette from Weenie Project-Brief.md › Visual style (approved at CP1) */
   --sky-top: #0E1230;
   --sky-bottom: #1B3A4B;
   --silhouette: #070A14;
@@ -12,6 +14,12 @@
   --window-glow: #FFB547;
   --cauldron-magic: #7CFF6B;
   --spell-accent: #B46CFF;
+
+  /* UI */
+  --parchment: #F3EBD3;    /* hint bubble background */
+  --ink: #1A1424;          /* hint bubble and Enter button text */
+  --scrim: rgba(7, 10, 20, 0.6);
+  --edge: 10px;            /* gap between UI and the safe-area edge */
 
   --page-bg: #05070F;      /* around the desktop phone frame */
   --dev-accent: #FF5577;   /* dev view only (?dev=1) */
@@ -33,7 +41,9 @@ body {
   color: var(--moonlight);
 }
 
-/* The stage: full screen on phones. */
+/* ---------- Stage and scene layers ---------- */
+
+/* The stage: full screen on phones. Blocks double-tap zoom, long-press menus, and selection. */
 .stage {
   position: fixed;
   inset: 0;
@@ -43,6 +53,7 @@ body {
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Every scene layer fills the stage exactly. */
@@ -53,8 +64,14 @@ body {
   height: 100%;
   display: block;
 }
+.scene-interactive > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
 /* Layers above the scene objects never take taps (spec.md › Layer stack). */
+.particles,
 .scene-front {
   pointer-events: none;
 }
@@ -75,7 +92,219 @@ body {
   }
 }
 
-/* Dev view (?dev=1): visible-area guide, tappable outlines, and readout. */
+/* ---------- Scene objects (tappable) ---------- */
+
+.scene-object {
+  cursor: pointer;
+  outline: none;               /* focus is shown on the tap area instead (below) */
+  transform-box: fill-box;     /* placeholder poke animation scales around the object's centre */
+  transform-origin: center;
+}
+.scene-object .hit {
+  fill: transparent;           /* invisible, but still catches taps */
+}
+.scene-object:focus-visible .hit {
+  stroke: var(--spell-accent);
+  stroke-width: 2.5;
+  fill: rgba(180, 108, 255, 0.12);
+}
+
+/* ---------- UI: Play/Pause ---------- */
+
+.play-pause {
+  position: absolute;
+  z-index: 30;
+  top: calc(env(safe-area-inset-top) + var(--edge));
+  left: calc(env(safe-area-inset-left) + var(--edge));
+  width: 44px;
+  height: 44px;
+  display: none;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(220, 230, 242, 0.35);
+  border-radius: 50%;
+  background: rgba(7, 10, 20, 0.55);
+  color: var(--moonlight);
+  cursor: pointer;
+}
+.stage:not([data-mode="START"]) .play-pause {
+  display: grid;
+}
+.play-pause svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+.play-pause .icon-play,
+.stage[data-paused="true"] .play-pause .icon-pause {
+  display: none;
+}
+.stage[data-paused="true"] .play-pause .icon-play {
+  display: block;
+}
+.play-pause:focus-visible {
+  outline: 3px solid var(--moonlight);
+  outline-offset: 2px;
+}
+
+/* ---------- UI: start screen ---------- */
+
+.start-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: calc(env(safe-area-inset-top) + 24px) 24px calc(env(safe-area-inset-bottom) + 24px);
+  text-align: center;
+  background: radial-gradient(ellipse at 50% 45%, rgba(7, 10, 20, 0.55), rgba(7, 10, 20, 0.9));
+}
+.stage[data-mode="START"] .start-screen {
+  display: flex;
+}
+.start-title {
+  margin: 0;
+  font-size: 2.25rem;
+  line-height: 1.1;
+  color: var(--moonlight);
+  text-shadow: 0 0 18px rgba(255, 181, 71, 0.35);
+}
+.start-subtitle {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--window-glow);
+}
+.start-invite {
+  max-width: 18rem;
+  margin: 0.75rem 0 1.25rem;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.enter-button {
+  min-width: 10rem;
+  min-height: 3rem;
+  padding: 0 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--window-glow);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 24px rgba(255, 181, 71, 0.45);
+}
+.enter-button:focus-visible {
+  outline: 3px solid var(--moonlight);
+  outline-offset: 3px;
+}
+.motion-note {
+  margin: 0.75rem 0 0;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* ---------- UI: pause overlay (passive: only Play/Pause resumes) ---------- */
+
+.pause-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  place-content: center;
+  gap: 0.25rem;
+  text-align: center;
+  background: var(--scrim);
+}
+.stage[data-paused="true"] .pause-overlay {
+  display: grid;
+}
+.pause-title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.pause-help {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* ---------- UI: raven's hint bubble (placed by hints.js) ---------- */
+
+.hint-bubble {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border: 2px solid var(--silhouette);
+  border-radius: 14px;
+  background: var(--parchment);
+  color: var(--ink);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;        /* taps pass through to the scene */
+}
+.hint-bubble.is-visible {
+  visibility: visible;
+  opacity: 1;
+}
+.hint-text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+/* Tail: a rotated square with two borders, pointing at the raven (--tail is set by hints.js). */
+.hint-bubble::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--parchment);
+  border: 2px solid var(--silhouette);
+  transform: rotate(45deg);
+}
+.hint-bubble[data-side="left"]::after {
+  right: -8px;
+  top: calc(var(--tail, 50%) - 7px);
+  border-left: 0;
+  border-bottom: 0;
+}
+.hint-bubble[data-side="above"]::after {
+  bottom: -8px;
+  left: calc(var(--tail, 50%) - 7px);
+  border-left: 0;
+  border-top: 0;
+}
+
+/* ---------- Landscape on a phone ---------- */
+
+.rotate-message {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  place-items: center;
+  padding: 24px;
+  background: var(--sky-top);
+  text-align: center;
+  font-size: 1.125rem;
+}
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .rotate-message {
+    display: grid;
+  }
+}
+
+/* ---------- Dev view (?dev=1) ---------- */
+
 .dev-only {
   display: none;
 }
@@ -93,31 +322,37 @@ body {
   font-size: 10px;
   font-family: ui-monospace, Menlo, monospace;
 }
-.dev-hit {
-  fill: none;
+.dev .scene-object .hit {
   stroke: var(--cauldron-magic);
   stroke-width: 1;
   stroke-dasharray: 3 2;
 }
-.dev-hit.clipped {
+.dev .scene-object .hit.dev-problem {
   stroke: var(--dev-accent);
   stroke-width: 2;
+  stroke-dasharray: none;
+}
+.dev .scene-object:focus-visible .hit {
+  stroke: var(--spell-accent);
+  stroke-width: 2.5;
+  stroke-dasharray: none;
 }
 .dev-readout {
   position: absolute;
-  top: calc(env(safe-area-inset-top) + 8px);
+  z-index: 50;
+  bottom: calc(env(safe-area-inset-bottom) + 8px);
   left: 8px;
   right: 8px;
   margin: 0;
   padding: 6px 8px;
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   font: 12px/1.45 ui-monospace, Menlo, monospace;
   white-space: pre-wrap;
   pointer-events: none;
 }
 
-/* Probe element: CSS resolves env() insets so the script can read them as pixels. */
+/* Probe element: CSS resolves env() insets so scripts can read them as pixels. */
 #inset-probe {
   position: fixed;
   visibility: hidden;
