@@ -6,10 +6,13 @@
 //   &bubble=left|above   force the hint bubble's placement (to compare the two)
 //   ?motion=reduce       force the reduced-motion versions of every effect (read by motion.js)
 //   ?dev=1        readout (viewport, safe area, visible part of the scene), tap-area checks
-//                 (every tap area outlined, problems in red and listed), frame-rate stats, and
-//                 window.devClock for fast-forwarding time from the console
+//                 (every tap area outlined, problems in red and listed), frame-rate stats, an audio
+//                 line (context state, output level, recent one-shots), and window.devClock for
+//                 fast-forwarding time from the console
 
 import { clock } from './clock.js';
+import { audioContext, masterOutput } from './audio.js';
+import { oneShotLog } from './soundscape.js';
 import { forceHintSide } from './hints.js';
 
 const VIEWBOX = { width: 390, height: 844 };
@@ -29,6 +32,8 @@ export function applyShowParam({ setState, showHint }) {
 
 let layoutText = '';
 let framesText = 'frames: measuring…';
+let audioText = 'audio: not started (tap Enter)';
+let levelMeter = null;
 
 export function initDevView() {
   document.documentElement.classList.add('dev');
@@ -39,7 +44,7 @@ export function initDevView() {
 }
 
 function renderReadout() {
-  document.getElementById('dev-readout').textContent = `${layoutText}\n${framesText}`;
+  document.getElementById('dev-readout').textContent = `${layoutText}\n${framesText}\n${audioText}`;
 }
 
 // Frame-rate stats over the last 2 s while the clock runs: average fps and the longest frame.
@@ -67,9 +72,28 @@ function measureFrames(timestamp) {
       const longest = Math.max(...frameLog.map(frame => frame.length));
       framesText = `frames: ${fps.toFixed(0)} fps avg · longest ${longest.toFixed(0)} ms (last 2 s)`;
     }
+    describeAudio();
     renderReadout();
   }
   requestAnimationFrame(measureFrames);
+}
+
+// Context state, the master output level (proof that sound is actually being produced), and the
+// last few ambient one-shots with whether each came from a file or was generated.
+function describeAudio() {
+  const ctx = audioContext();
+  if (!ctx) return;
+  if (!levelMeter) {
+    levelMeter = ctx.createAnalyser();
+    levelMeter.fftSize = 2048;
+    masterOutput().connect(levelMeter);
+  }
+  const samples = new Float32Array(levelMeter.fftSize);
+  levelMeter.getFloatTimeDomainData(samples);
+  const rms = Math.sqrt(samples.reduce((sum, v) => sum + v * v, 0) / samples.length);
+  const level = rms > 0 ? `${(20 * Math.log10(rms)).toFixed(0)} dB` : 'silent';
+  const recent = oneShotLog.map(shot => `${shot.name}@${shot.atSeconds}s(${shot.source})`).join(' ') || 'none yet';
+  audioText = `audio: ${ctx.state} · level ${level} · one-shots: ${recent}`;
 }
 
 function updateDevView() {

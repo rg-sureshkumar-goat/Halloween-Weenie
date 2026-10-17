@@ -5,8 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0E1230">
   <title>Virtual Hallo-weenie</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <script type="module" src="js/main.js"></script>
+  <!-- Every CSS and JS file carries the same version number (ASSET_VERSION), bumped with each deploy.
+       GitHub Pages lets browsers cache files for 10 minutes, so this makes a phone fetch all the new
+       files together instead of mixing a new page with an old script. The import map applies the
+       version to module imports inside the scripts. -->
+  <link rel="stylesheet" href="css/styles.css?v=4">
+  <script type="importmap">
+    {
+      "imports": {
+        "./js/audio.js": "./js/audio.js?v=4",
+        "./js/clock.js": "./js/clock.js?v=4",
+        "./js/dev.js": "./js/dev.js?v=4",
+        "./js/effects.js": "./js/effects.js?v=4",
+        "./js/hints.js": "./js/hints.js?v=4",
+        "./js/motion.js": "./js/motion.js?v=4",
+        "./js/soundscape.js": "./js/soundscape.js?v=4",
+        "./js/synth.js": "./js/synth.js?v=4"
+      }
+    }
+  </script>
+  <script type="module" src="js/main.js?v=4"></script>
 </head>
 <body>
   <noscript><p>Virtual Hallo-weenie needs JavaScript to run.</p></noscript>
@@ -30,6 +48,7 @@
       <p class="start-subtitle">The Witch's Hollow</p>
       <p class="start-invite">Something is stirring in the witch's clearing. Look around, tap what you find, and see what wakes.</p>
       <button class="enter-button" id="enter-button" type="button">Enter</button>
+      <p class="sound-note" id="sound-note">Best with sound on.</p>
       <p class="motion-note" id="motion-note" hidden>Reduced motion is on, so the magic will move gently.</p>
     </section>
 

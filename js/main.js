@@ -1,10 +1,12 @@
 // Virtual Hallo-weenie: boot, app state, and input wiring.
-// So far: state machine, Enter, Play/Pause (input lock + the clock that drives every effect),
-// ambient effects (CP3), and one input path for every scene object. Sound arrives at CP4.
+// So far: state machine, Enter (starts sound and motion), Play/Pause of everything, auto-pause,
+// ambient effects and soundscape, and one input path for every scene object.
 
 import { clock } from './clock.js';
 import { startEffects } from './effects.js';
 import { reducedMotion, onReducedMotionChange } from './motion.js';
+import { startAudio, pauseAudio, resumeAudio, onAudioInterrupted } from './audio.js';
+import { startAmbience, playUiSound } from './soundscape.js';
 import { showHint, positionHint } from './hints.js';
 import { applyShowParam, initDevView } from './dev.js';
 
@@ -13,12 +15,14 @@ const sceneInteractive = document.getElementById('scene-interactive');
 const playPauseButton = document.getElementById('play-pause');
 const enterButton = document.getElementById('enter-button');
 const motionNote = document.getElementById('motion-note');
+const soundNote = document.getElementById('sound-note');
 
 // App state: START → SCENE → STORY → SCENE, with `paused` layered over SCENE or STORY.
 const state = { mode: 'START', paused: false };
 
 // The one place state changes. The stage's data attributes drive which UI shows (styles.css),
-// and the scene is made inert whenever objects must not respond, so the lock rule lives here only.
+// the scene is made inert whenever objects must not respond, and everything that moves or makes
+// sound runs only while the scene is showing and not paused. Lock and pause rules live here only.
 function setState(changes) {
   Object.assign(state, changes);
   stage.dataset.mode = state.mode;
@@ -26,13 +30,17 @@ function setState(changes) {
   sceneInteractive.inert = !canInteract();
   playPauseButton.setAttribute('aria-label', state.paused ? 'Play' : 'Pause');
 
-  // Effects begin with the first Enter. The clock, and so every effect and timer, runs only
-  // while the scene is showing and not paused.
   const inScene = state.mode !== 'START';
   if (inScene) startEffects();
-  if (inScene && !state.paused) clock.start();
-  else clock.stop();
-
+  if (inScene && !state.paused) {
+    clock.start();
+    resumeAudio();
+    setAnimationsPaused(false);
+  } else {
+    clock.stop();
+    pauseAudio();
+    setAnimationsPaused(true);
+  }
   positionHint();
 }
 
@@ -40,19 +48,54 @@ function canInteract() {
   return state.mode === 'SCENE' && !state.paused;
 }
 
-// ---------- Start screen and Play/Pause ----------
+// Freezes or resumes any running Web Animations (object feedback; story animations later).
+function setAnimationsPaused(paused) {
+  for (const animation of document.getAnimations()) {
+    if (paused) animation.pause();
+    else animation.play();
+  }
+}
+
+// ---------- Start screen ----------
 
 motionNote.hidden = !reducedMotion();
 onReducedMotionChange(reduced => { motionNote.hidden = !reduced; });
+// Where iOS can't keep Web Audio playing on silent, say so up front.
+soundNote.textContent = 'audioSession' in navigator
+  ? 'Best with sound on.'
+  : 'Best with sound on and silent mode off.';
 
+// The AudioContext must be created inside this tap: iOS only starts audio from a user gesture.
 enterButton.addEventListener('click', () => {
+  startAudio();
   setState({ mode: 'SCENE' });
+  startAmbience();
+  playUiSound('enter');
   playPauseButton.focus({ preventScroll: true });
 });
 
+// ---------- Play/Pause and auto-pause ----------
+
 playPauseButton.addEventListener('click', () => {
-  setState({ paused: !state.paused });
+  if (state.paused) {
+    setState({ paused: false });
+    playUiSound('play');
+  } else {
+    playUiSound('pause');       // its tick finishes before audio suspends
+    setState({ paused: true });
+  }
 });
+
+// Locking the phone or switching apps pauses everything; returning shows the paused screen.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) pauseFromOutside();
+});
+// So does the system taking the audio away (a phone call, Siri).
+onAudioInterrupted(pauseFromOutside);
+
+function pauseFromOutside() {
+  if (state.mode !== 'START' && !state.paused) setState({ paused: true });
+}
 
 // ---------- Scene input: one path for touch, mouse, and keyboard ----------
 
@@ -86,5 +129,5 @@ function pokeObject(object) {
 // ---------- Boot ----------
 
 setState({});
-applyShowParam({ setState, showHint });
+applyShowParam({ setState, showHint });   // dev shortcuts skip Enter, so they run without sound
 if (new URLSearchParams(location.search).get('dev') === '1') initDevView();
