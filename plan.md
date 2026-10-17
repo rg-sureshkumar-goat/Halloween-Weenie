@@ -20,11 +20,65 @@ Create your own checklist for the next few results, using the workflow in `brief
 
 Test each result before continuing, including related behavior that already works. Update priorities as evidence emerges and preserve meaningful working checkpoints in git. Before delivery, verify the deployed app against the brief and specification.
 
+> **Status (Oct 16, 2026):** **Phase 1 (due Mon, Oct 19, 2026)** plan seeded from `Weenie Project-Brief.md` and approved by the Developer. Each checkpoint follows the same loop: Agent presents the plan → Developer approves → Agent builds and shows evidence → Developer checks → commit and push.
+
+| # | Target | Produces | Main risk | Verify by | Spec checks |
+| --- | --- | --- | --- | --- | --- |
+| 0 | Fri Oct 16 | Git repo, public GitHub repo, Pages URL, placeholder page, docs seeded, AGENTS.md Project section | GitHub CLI missing; Pages permissions | Placeholder loads at the HTTPS URL on the iPhone | A15 (partial) |
+| 1 | Sat AM | Static scene: sky, moon, forest, cottage, raven, tree, cauldron, ring, pond, framing | Composition crops badly on short phones / Safari toolbars | Screenshots at 390×844 and 375×667; iPhone `innerHeight` logged; Developer approves the look | A1, A2 |
+| 2 | Sat AM | Layer stack, effects layers, static UI shell (Play/Pause, hint bubble, start and pause overlays) | Layer order or hit areas overlap | Screenshot; tab through every object | A12, A13 |
+| 3 | Sat PM | Ambient effects one at a time, each with its reduced-motion version; sound shortlist in `research.md` | Mobile performance | Smooth on the iPhone; Developer picks the effects to keep and downloads the sounds | A3 |
+| 4 | Sun AM | Start screen and Enter, ambient audio, Play/Pause of everything, auto-pause on hide, reduced motion before Enter | iOS audio unlock; silent switch | On the iPhone: sound after Enter; pause freezes everything | A4–A7 |
+| 5 | Sun PM | Cauldron Brew sequence, fired by a dev-only `?dev=1` trigger | Pacing flat or longer than 10 s | Measured duration; Developer approves pacing | A8 |
+| 6 | Sun PM | Ingredient triggers, unique feedback, progress, wrong-order reset, lock and return, raven hints | Users can't find the triggers | From a fresh load, reach the story by touch and by keyboard; pause mid-story; replay 3× | A6, A9–A12 |
+| 7 | Sun night–Mon AM | `CREDITS.md` and Credits panel, full Phase 1 check, docs current, `git-log.txt`, final deploy | Last-minute regressions | Every acceptance check passes on the iPhone at the live URL | A1–A15 |
+
+**Regression rule:** at each checkpoint, re-run the checks of the earlier checkpoints before committing.
+
+### Checkpoint 0 steps
+
+1. ✅ Confirm `git` and `gh auth status`: git 2.50.1 OK; `gh` not installed. The Developer chose to create the repo and enable Pages by hand, so `gh` isn't needed.
+2. ✅ Add `.gitignore` (`.DS_Store`, editor folders, `node_modules/`).
+3. ✅ `git init` on `main`; commits use the GitHub noreply address (repo-local config, Developer's choice). Commit 1 holds the template files exactly as they were. The approved versions of these three docs follow in a later commit.
+4. ✅ Developer created the **public** repo [`rg-sureshkumar-goat/Halloween-Weenie`](https://github.com/rg-sureshkumar-goat/Halloween-Weenie); Agent pushed `main`.
+5. ✅ Add a placeholder `index.html` (with a viewport, safe-area, and reduced-motion readout for the iPhone) and `.nojekyll`. Checked at 390×844 and 375×667 with no console errors, then pushed.
+6. ✅ Developer enabled Pages (Settings → Pages → Deploy from a branch → `main`, `/ (root)`). No build started from the Settings save; the next push triggered one. Live at https://rg-sureshkumar-goat.github.io/Halloween-Weenie/.
+7. ✅ Fill in the Project section of `AGENTS.md` (run locally, test, deploy). Committed and pushed (`8f56872`).
+8. Developer opens the URL on the iPhone and records the model, iOS version, and readout numbers below.
+
+### Status
+
+- [ ] CP0 · [ ] CP1 · [ ] CP2 · [ ] CP3 · [ ] CP4 · [ ] CP5 · [ ] CP6 · [ ] CP7 *(Developer ticks after verifying)*
+
 ## Evidence and revisions
 
 Record non-identifying playtest observations, separating what Users did or said from your interpretation. Use the findings to choose revision priorities and record what changed and how you verified the improvement.
 
 Keep implementation progress and verification here. Update `research.md` when evidence changes a decision and `spec.md` when intended behavior changes; link to those updates rather than duplicating them. Record consequential changes, not every small adjustment.
+
+### iPhone verification log (Developer only)
+
+| Date | Checkpoint | iPhone model / iOS version | Result | Notes |
+| --- | --- | --- | --- | --- |
+| | | | | |
+
+### Agent evidence log
+
+| Date | Checkpoint | Evidence (screenshots, console, behavior observed) | Commit |
+| --- | --- | --- | --- |
+| Oct 16, 2026 | 0 | Pages run "pages build and deployment" succeeded about 35 s after the push. Live URL returns HTTP 200 over HTTPS (HTTP redirects with a 301), and the live HTML matches local `index.html` byte for byte. Built-in browser at 390×844 and 375×667: readout matches each size, no scroll, no console errors. | `8f56872` |
+
+### Playtest observations
+
+Optional for Phase 1: one cold try after CP6. Required in Phase 2.
+
+| # | What the User did or said | Interpretation | Priority |
+| --- | --- | --- | --- |
+| | | | |
+
+### Revisions
+
+*None yet.*
 
 ## Saving transcripts
 
