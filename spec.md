@@ -84,9 +84,10 @@ Triggers, feedback, sequence beats, and hint rhymes follow `Weenie Project-Brief
 - **Order:** toadstool → moonflower → spider silk. *(provisional: required order is an open decision for CP6)*
 - **Progress:** each correct ingredient changes the brew color (dark → green → purple → gold), grows the bubbles and fire, and lights one of 3 rim runes.
 - **Wrong order:** a sour puff and a "blorp", then the runes go dark, the brew resets, and the ingredients reappear. Nothing else is penalized.
-- **Sequence:** Beginning 0–2 s, Middle 2–6 s, End 6–8.5 s *(timings provisional; the 5–10 s limit is fixed)*. Measured from the third ingredient landing to interaction returning.
-- **Return:** a brief shimmer and the raven's caw. Keyboard focus moves to the cauldron *(provisional)*. Replays without reloading, any number of times.
-- **Reduced motion:** the same beats and length, using crossfades, glows, and pulses instead of travel, with no shaking.
+- **Sequence (approved Oct 17 on the iPhone):** 8.5 s on the pausable timeline (`js/timeline.js`, `js/stories/cauldron.js`). Beginning 0–2 s: gold flash, scene dims, brew swells gold and boils over, 0.35 s shake. Middle 2–6 s: a friendly, mischievous grinning smoke spirit bursts out, loops the cottage, and crosses the moon with a sparkle trail. End 6–8.5 s: it spirals back into the pot, POP and puff, brew and fire settle, a shimmer sweeps the scene, and the raven bobs and caws twice. Sounds are generated (rumble, panned whooshes, shimmer, fwoop, pop); the cackle and caws use the recordings once processed. Ambience ducks to 40% for the story. Measured from the story starting to interaction returning.
+- **Lock and return:** story mode (`setState({ mode: 'STORY' })`) makes the scene inert, so only Play/Pause works. At the end the scene unlocks and keyboard focus moves to the cauldron. Every story element is reset to rest, so it replays without reloading, any number of times.
+- **Reduced motion:** the same beats and length. The spirit fades up above the pot and pulses instead of flying; flash, puff, and shimmer only fade; no swell, spill travel, shake, or raven bob.
+- **Dev trigger:** with `?dev=1`, a "Brew (dev)" button plays the story, and the readout lists each run's measured length. CP6 replaces it with the ingredient triggers.
 
 ### Hints
 
