@@ -41,6 +41,20 @@ Fill in as the project takes shape: how to run it locally, how to test it, and a
 - **Repo:** https://github.com/rg-sureshkumar-goat/Halloween-Weenie (public). Commits use the GitHub noreply address, set in this repo's local git config. Check `git config user.email` before committing from another machine.
 - **Docs:** `brief.md` holds the class requirements (source of truth). `Weenie Project-Brief.md` is the Developer's build brief and planned file layout. `research.md`, `spec.md`, and `plan.md` hold current decisions, behavior, and progress.
 
+**Code map** (plain ES modules, no build step):
+
+- `index.html`: the scene (two SVGs around the particle canvas), UI, import map with the asset version.
+- `css/styles.css`: layout, color tokens, UI, focus and dev styles.
+- `js/main.js`: `setState()` (the one place state changes: lock, pause, UI), Enter, Play/Pause, auto-pause, input routing, credits.
+- `js/clock.js`: the one pausable clock. `js/timeline.js`: timelines on it for stories and short animations.
+- `js/effects.js`: ambient effects, plus sparkles, window flares, and brew bubbles.
+- `js/audio.js`: AudioContext, channels, file loading. `js/synth.js`: every generated sound. `js/soundscape.js`: ambience, one-shots, and sound helpers.
+- `js/hints.js`: raven hint ladders and the speech bubble. `js/objects.js`: windows and broom.
+- `js/stories/cauldron.js`: ingredients, progress, and the Cauldron Brew sequence. Phase 2 stories go beside it.
+- `js/motion.js`: the reduced-motion preference. `js/dev.js`: developer tools.
+
+**Dev switches** (add to the URL): `?dev=1` shows the readout (viewport, visible scene, tap-area checks, fps, audio level and one-shots, story lengths), a **Brew (dev)** button, and `devClock.advance(ms)` in the console to fast-forward time. `?show=scene|pause|hint` opens straight to that state (no sound, since Enter is skipped). `?motion=reduce` forces reduced motion.
+
 **Run locally.** From the project root, then open http://localhost:8000/:
 
 ```

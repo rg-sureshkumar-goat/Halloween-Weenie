@@ -25,11 +25,11 @@ Define only enough to build and verify the current direction:
 
 Reference the brief's fixed requirements rather than copying them. Specify your decisions precisely enough that the Developer and Agent can judge the same result. Leave untested details open until they are needed, and distinguish provisional ideas from approved behavior.
 
-> **Status (Oct 16, 2026):** **Phase 1** contract seeded from `Weenie Project-Brief.md` and approved by the Developer. *(provisional)* marks details that still need testing or a Developer decision. Full creative detail lives in that brief; this file holds the rules and the checks.
+> **Status (Oct 18, 2026):** **Phase 1** contract, built and approved checkpoint by checkpoint (see `plan.md`). Everything below describes the shipped Phase 1 behavior. Full creative detail lives in `Weenie Project-Brief.md`; this file holds the rules and the checks.
 
 ### User experience
 
-The User opens the URL, reads a short start screen, and taps **Enter**. Sound and motion begin in "The Witch's Hollow" *(provisional title)*. They explore by tapping objects. If they stall, the raven on the roof offers rhyming hints. Bringing three ingredients to the cauldron in order plays **Cauldron Brew** (about 8.5 s). The scene then returns, ready to explore or replay.
+The User opens the URL, reads a short start screen, and taps **Enter**. Sound and motion begin in "The Witch's Hollow". They explore by tapping objects. If they stall, the raven on the roof offers rhyming hints. Bringing three ingredients to the cauldron in order plays **Cauldron Brew** (about 8.5 s). The scene then returns, ready to explore or replay.
 
 ### Layout
 
@@ -70,11 +70,11 @@ Layers 1–4 are one SVG and layers 6–7 a second SVG above the canvas. Both us
 
 ### Audio
 
-- One `AudioContext` (`js/audio.js`), created inside the Enter tap after setting `navigator.audioSession.type = "playback"` where supported, so the silent switch doesn't mute it. Three gain channels feed a master gain: ambience 0.35, interactions 0.9, story 0.9. Ambience ducks slightly during the story *(amount provisional, CP5)*.
+- One `AudioContext` (`js/audio.js`), created inside the Enter tap after setting `navigator.audioSession.type = "playback"` where supported, so the silent switch doesn't mute it. Three gain channels feed a master gain: ambience 0.35, interactions 0.9, story 0.9. Ambience ducks to 40% during the story.
 - Hybrid sound design (`research.md` › *Sound sources*). `js/synth.js` generates the wind, the cauldron bubbling loop, the UI clicks, and, until the downloads are processed, stand-ins for the five recordings. `js/soundscape.js` lists processed recordings in `RECORDINGS`; each empty slot uses its stand-in, so the app never requests a missing file. A file that fails to load is logged once and replaced by its stand-in.
 - The night bed and bubbling loop through `AudioBufferSourceNode.loop` (gapless). A random ambient one-shot plays every 15–40 s on the clock, never the same one twice in a row. The raven caw is skipped while a hint is showing (hook `setOneShotFilter`, wired at CP6).
 - **Pause** (in `setState()`) stops the clock, suspends audio (a Pause click still playing finishes first), and pauses Web Animations. **Play** reverses all three. Hiding the page (`visibilitychange`) or the system interrupting audio pauses automatically. The start screen says "Best with sound on.", plus "and silent mode off" where `navigator.audioSession` is unavailable.
-- Recorded files: about 2 MB total. AAC (`.m4a`) via macOS `afconvert` is the proposed format; MP3 via ffmpeg is the alternative. Decide when the files arrive.
+- **Phase 1 ships with generated sound only** (decided Oct 17): no recorded files, so nothing to load, cache, or credit beyond the developer. To add recordings later, process them into `assets/audio/` (about 2 MB total; AAC via macOS `afconvert`, or MP3 via ffmpeg), list them in `RECORDINGS` in `js/soundscape.js`, and credit each in `CREDITS.md` and the Credits panel.
 - Every CSS and JS link in `index.html` carries `?v=N`, and an import map applies it to module imports. Bump N on every deploy that changes CSS or JS, so phones never mix cached and new files.
 
 ### Cauldron Brew (Phase 1 story)
@@ -113,6 +113,10 @@ Structure rules (CP2):
 - **Visuals:** all original, code-drawn SVG/CSS (plus a canvas for particles).
 - **Sounds:** CC0 or public domain only, chosen in `research.md` › *Sound sources*. Source files go in `assets/audio/source/` and processed MP3s in `assets/audio/`.
 - **Credits:** `CREDITS.md` and a Credits panel on the start screen.
+
+### Credits
+
+`CREDITS.md` and a Credits panel on the start screen (a dialog: Close button or Escape, focus moves in and back, the start screen is inert behind it) credit the Developer and Claude Code and state that all art and sound are original and generated in code, with system fonts and no libraries.
 
 ### Failure behavior
 

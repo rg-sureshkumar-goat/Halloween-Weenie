@@ -24,7 +24,7 @@ Record only what informs the next build decisions:
 
 Investigate unfamiliar techniques or asset sources as needed. Verify usage terms and keep source links and required credits here. Distinguish evidence from assumptions; the Agent's recommendation alone is not evidence.
 
-> **Status (Oct 16, 2026):** Seeded from `Weenie Project-Brief.md` and approved by the Developer as the starting direction. **Approved** marks settled decisions. **Proposed** items are each settled at the checkpoint listed under *Open decisions*.
+> **Status (Oct 18, 2026):** Seeded from `Weenie Project-Brief.md`; every Phase 1 decision below is now settled (see *Open decisions*). Items still open are for Phase 2.
 
 ### Approved direction
 
@@ -39,7 +39,7 @@ These are the Developer decisions from `Weenie Project-Brief.md` › *Developer 
 
 Reasons recorded in the brief: SVG stays sharp at any phone size, and a static site with no build step leaves the fewest moving parts before a weekend deadline.
 
-### Proposed creative direction
+### Creative direction (approved through CP1–CP6)
 
 - **Concept: "The Witch's Hollow."** A moonlit clearing with a glowing crooked cottage and a simmering cauldron, where the forest "waits for someone to stir things up." The tone is storybook-spooky and playful for ages 10+, with no gore, no menace toward people, and no branding.
 - **Why it serves the client's weenie goal:** the warm cottage glow pulls the eye first. The three ingredients sit in three different corners (ring, pond, tree), so finding them rewards looking beyond the focal point.
@@ -90,19 +90,19 @@ Downloads go in `assets/audio/source/`. Processing (trim, fade, convert, level) 
 
 ### Fonts
 
-System fonts for UI and hints. A display font for the title is optional; if used, it must be OFL and credited. *Undecided.*
+**Decided Oct 18:** system fonts throughout, so there is nothing to load or credit. A display font for the title (OFL, credited) remains a Phase 2 polish option.
 
 ### Open decisions (raise at the checkpoint where each matters)
 
-| Decision | Proposed | Raise at |
+| Decision | Decision or proposal | Raise at |
 | --- | --- | --- |
 | Ingredient order: required or any order | **Decided Oct 17:** required (toadstool, moonflower, web); revisit after the playtest | Phase 2 playtest |
 | Hint timing and final rhymes | **Decided Oct 17:** 20 s / +45 s / +45 s, each shown 8 s; the brief's three rhymes | Phase 2 playtest |
-| Hint bubble placement | **Decided Oct 17:** above the raven (3 lines for the longest hint vs 7 beside it); `?bubble=left` remains for comparison | — |
+| Hint bubble placement | **Decided Oct 17:** above the raven (3 lines for the longest hint vs 7 beside it); the left option was removed at CP7 | — |
 | Start-screen title | **Decided Oct 17:** "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | — |
 | Final palette and look | **Decided Oct 17:** the brief's palette, approved on the Developer's iPhone | — |
 | Which ambient effects to keep | **Decided Oct 17:** all five (fog, candlelight, smoke and bubbles, fireflies, bats); the Developer checked them on the iPhone and said "this is good" | — |
-| Commit original sound files or only processed MP3s | Proposed: commit only processed files; keep `assets/audio/source/` out of git | When the files arrive |
+| Recorded sounds in Phase 1 | **Decided Oct 17:** ship Phase 1 with generated sound only; the CC0 shortlist stays ready for Phase 2. If recordings are added, commit only the processed files and keep `assets/audio/source/` out of git (proposed) | Phase 2 |
 | Phase 2 due date | Unknown | — |
 
 ## Revisions

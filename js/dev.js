@@ -3,7 +3,6 @@
 //   ?show=scene   skip the start screen
 //   ?show=pause   open on the paused scene
 //   ?show=hint    open on the scene with the longest hint in the raven's bubble
-//   &bubble=left|above   force the hint bubble's placement (to compare the two)
 //   ?motion=reduce       force the reduced-motion versions of every effect (read by motion.js)
 //   ?dev=1        readout (viewport, safe area, visible part of the scene), tap-area checks
 //                 (every tap area outlined, problems in red and listed), frame-rate stats, an audio
@@ -14,21 +13,16 @@
 import { clock } from './clock.js';
 import { audioContext, masterOutput } from './audio.js';
 import { oneShotLog } from './soundscape.js';
-import { forceHintSide } from './hints.js';
+import { longestHint } from './hints.js';
 
 const VIEWBOX = { width: 390, height: 844 };
 const MIN_TAP_PX = 44;
-// Longest hint in the brief (Weenie Project-Brief.md › Hints, level 2), for layout checks.
-const LONGEST_HINT = 'Three gifts the forest keeps: one in the ring, one where water sleeps, one where the spider creeps.';
 
 export function applyShowParam({ setState, showHint }) {
-  const params = new URLSearchParams(location.search);
-  const show = params.get('show');
-  const bubble = params.get('bubble');
-  if (bubble === 'left' || bubble === 'above') forceHintSide(bubble);
+  const show = new URLSearchParams(location.search).get('show');
   if (show === 'scene' || show === 'hint') setState({ mode: 'SCENE' });
   if (show === 'pause') setState({ mode: 'SCENE', paused: true });
-  if (show === 'hint') showHint(LONGEST_HINT);
+  if (show === 'hint') showHint(longestHint());
 }
 
 let layoutText = '';

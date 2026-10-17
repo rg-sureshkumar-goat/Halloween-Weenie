@@ -78,6 +78,11 @@ export function tapRaven() {
   say(lastHint ?? flavor[flavorCount++ % flavor.length], HINT_SHOW_MS, { caw: false });
 }
 
+// The longest hint text, for the dev view's layout check (?show=hint).
+export function longestHint() {
+  return Object.values(LADDERS).flat().map(step => step.text).reduce((a, b) => (b.length > a.length ? b : a));
+}
+
 function currentStory() {
   return STORY_ORDER.find(story => !playedStories.has(story)) ?? null;
 }
@@ -116,16 +121,7 @@ const playPauseButton = document.getElementById('play-pause');
 
 const GAP = 10;               // px between the bubble's tail and the raven
 const EDGE = 12;              // px kept clear of the stage edges
-const MAX_ABOVE_WIDTH = 320;  // px
-const MAX_SIDE_WIDTH = 260;   // px
-
-// 'above' (approved at CP6: three lines for the longest hint) or 'left' (dev comparison only).
-let side = 'above';
-
-export function forceHintSide(newSide) {
-  side = newSide;
-  positionHint();
-}
+const MAX_WIDTH = 320;        // px
 
 export function showHint(message) {
   hintText.textContent = message;
@@ -133,11 +129,11 @@ export function showHint(message) {
   positionHint();
 }
 
-export function hideHint() {
+function hideHint() {
   bubble.classList.remove('is-visible');
 }
 
-export function isHintShowing() {
+function isHintShowing() {
   return bubble.classList.contains('is-visible');
 }
 
@@ -150,25 +146,8 @@ export function positionHint() {
   const stageBox = stage.getBoundingClientRect();
   const bird = toStage(ravenArt.getBoundingClientRect(), stageBox);
   const button = toStage(playPauseButton.getBoundingClientRect(), stageBox);
-  const buttonShown = button.height > 0;
-
-  if (side === 'left') {
-    const width = Math.min(MAX_SIDE_WIDTH, bird.left - GAP - EDGE);
-    bubble.dataset.side = 'left';
-    bubble.style.width = `${width}px`;
-    const height = bubble.offsetHeight;
-    const birdMiddle = (bird.top + bird.bottom) / 2;
-    const minTop = buttonShown ? button.bottom + 8 : EDGE;
-    const top = clamp(birdMiddle - height / 2, minTop, stageBox.height - EDGE - height);
-    bubble.style.left = `${bird.left - GAP - width}px`;
-    bubble.style.top = `${top}px`;
-    bubble.style.setProperty('--tail', `${clamp(birdMiddle - top, 14, height - 14)}px`);
-    return;
-  }
-
-  const left = buttonShown ? Math.max(EDGE, button.right + 8) : EDGE;
-  const width = Math.min(MAX_ABOVE_WIDTH, stageBox.width - left - EDGE);
-  bubble.dataset.side = 'above';
+  const left = button.height > 0 ? Math.max(EDGE, button.right + 8) : EDGE;
+  const width = Math.min(MAX_WIDTH, stageBox.width - left - EDGE);
   bubble.style.width = `${width}px`;
   const height = bubble.offsetHeight;
   const top = Math.max(EDGE, bird.top - GAP - height);

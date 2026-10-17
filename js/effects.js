@@ -1,4 +1,5 @@
-// Ambient effects (CP3): fog, candlelight, chimney smoke and cauldron bubbles, fireflies, bats.
+// Ambient effects: fog, candlelight, chimney smoke and cauldron bubbles, fireflies, bats, plus the
+// sparkles, window flares, and brew bubbles that the story and objects trigger.
 // Every effect moves on the shared clock, so stopping the clock freezes all of them at once.
 // Each has a reduced-motion version, chosen on every frame so a settings change applies live.
 // Motion uses only transform and opacity (no blur filters), and particle counts are capped.

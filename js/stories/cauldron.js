@@ -13,7 +13,7 @@ import { playStorySound, playTapSound, playVoice } from '../soundscape.js';
 import { noteProgress, showReaction } from '../hints.js';
 import { reducedMotion } from '../motion.js';
 
-export const STORY_LENGTH_MS = 8500;
+const STORY_LENGTH_MS = 8500;
 
 const POT = { x: 195, y: 575 };
 const BREW = { x: 195, y: 580 };

@@ -9,33 +9,33 @@
        GitHub Pages lets browsers cache files for 10 minutes, so this makes a phone fetch all the new
        files together instead of mixing a new page with an old script. The import map applies the
        version to module imports inside the scripts. -->
-  <link rel="stylesheet" href="css/styles.css?v=6">
+  <link rel="stylesheet" href="css/styles.css?v=7">
   <script type="importmap">
     {
       "imports": {
-        "./js/audio.js": "./js/audio.js?v=6",
-        "./js/clock.js": "./js/clock.js?v=6",
-        "./js/dev.js": "./js/dev.js?v=6",
-        "./js/effects.js": "./js/effects.js?v=6",
-        "./js/hints.js": "./js/hints.js?v=6",
-        "./js/motion.js": "./js/motion.js?v=6",
-        "./js/objects.js": "./js/objects.js?v=6",
-        "./js/soundscape.js": "./js/soundscape.js?v=6",
-        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=6",
-        "./js/synth.js": "./js/synth.js?v=6",
-        "./js/timeline.js": "./js/timeline.js?v=6"
+        "./js/audio.js": "./js/audio.js?v=7",
+        "./js/clock.js": "./js/clock.js?v=7",
+        "./js/dev.js": "./js/dev.js?v=7",
+        "./js/effects.js": "./js/effects.js?v=7",
+        "./js/hints.js": "./js/hints.js?v=7",
+        "./js/motion.js": "./js/motion.js?v=7",
+        "./js/objects.js": "./js/objects.js?v=7",
+        "./js/soundscape.js": "./js/soundscape.js?v=7",
+        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=7",
+        "./js/synth.js": "./js/synth.js?v=7",
+        "./js/timeline.js": "./js/timeline.js?v=7"
       }
     }
   </script>
-  <script type="module" src="js/main.js?v=6"></script>
+  <script type="module" src="js/main.js?v=7"></script>
 </head>
 <body>
   <noscript><p>Virtual Hallo-weenie needs JavaScript to run.</p></noscript>
 
   <!-- The Witch's Hollow. Cut-paper storybook style: flat silhouettes, soft gradients, glows.
        Light comes only from the moon (cool, upper right) and from magic (amber windows, cauldron, glowing ingredients).
-       Layer order follows spec.md › Layer stack. The particle canvas (CP3) will sit between the two SVGs,
-       so fog-front and the foreground live in a second SVG on top. Glows are radial gradients, not blur
+       Layer order follows spec.md › Layer stack. The particle canvas sits between the two SVGs,
+       so fog-front, the foreground, and the story layer live in a second SVG on top. Glows are radial gradients, not blur
        filters, which are slow to animate on iPhone. -->
   <div class="stage" id="stage" data-mode="START" data-paused="false">
 
@@ -47,20 +47,40 @@
     </button>
 
     <section class="start-screen" id="start-screen" aria-labelledby="start-title">
-      <h1 class="start-title" id="start-title">Virtual Hallo-weenie</h1>
+      <h1 class="start-title" id="start-title">Virtual Hallo‑weenie</h1>
       <p class="start-subtitle">The Witch's Hollow</p>
       <p class="start-invite">Something is stirring in the witch's clearing. Look around, tap what you find, and see what wakes.</p>
       <button class="enter-button" id="enter-button" type="button">Enter</button>
       <p class="sound-note" id="sound-note">Best with sound on.</p>
       <p class="motion-note" id="motion-note" hidden>Reduced motion is on, so the magic will move gently.</p>
+      <button class="credits-button" id="credits-button" type="button">Credits</button>
     </section>
+
+    <!-- Credits panel (opened from the start screen). Matches CREDITS.md. -->
+    <div class="credits-panel" id="credits-panel" role="dialog" aria-modal="true" aria-labelledby="credits-title" hidden>
+      <div class="credits-card">
+        <h2 id="credits-title">Credits</h2>
+        <p>Designed and developed by <strong>RG Sureshkumar</strong>, with <strong>Claude Code</strong> (Anthropic).</p>
+        <dl>
+          <dt>Art</dt>
+          <dd>Original, drawn in code for this project (SVG, CSS, and canvas).</dd>
+          <dt>Sound</dt>
+          <dd>Every sound is generated in code with the Web Audio API. No recorded audio is used.</dd>
+          <dt>Fonts</dt>
+          <dd>Your device's system font.</dd>
+          <dt>Code</dt>
+          <dd>Plain HTML, CSS, and JavaScript. No libraries.</dd>
+        </dl>
+        <button class="credits-close" id="credits-close" type="button">Close</button>
+      </div>
+    </div>
 
     <div class="pause-overlay" id="pause-overlay">
       <p class="pause-title">Paused</p>
       <p class="pause-help">Tap Play at the top left to continue.</p>
     </div>
 
-    <div class="hint-bubble" id="hint-bubble" data-side="left">
+    <div class="hint-bubble" id="hint-bubble">
       <p class="hint-text" id="hint-text" aria-live="polite"></p>
     </div>
 
@@ -573,7 +593,7 @@
     </svg>
     </div>
 
-    <!-- 5. Particle canvas (drawn from CP3). Never takes taps. -->
+    <!-- 5. Particle canvas: fireflies and sparkles (js/effects.js). Never takes taps. -->
     <canvas class="layer particles" id="particles" aria-hidden="true"></canvas>
 
     <!-- FRONT SVG: fog (in front), foreground framing, vignette, dev guides. Never takes taps. -->

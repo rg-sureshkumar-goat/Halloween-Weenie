@@ -72,7 +72,8 @@ Keep implementation progress and verification here. Update `research.md` when ev
 | Oct 17, 2026 | 3 | Five effects on the clock. Before Enter the clock stays at 0 with no effects. First bat flight at 6 s crossed the moon (screenshot); later gaps over 2 min of fast-forwarded time were 34.8, 18.7, 26.0, and 27.0 s. Pause stops the clock and Play restarts it. `?motion=reduce`: fog stays put, bats don't move, smoke doesn't rise, bubbles off. 120 fps on the Mac (longest frame 9 ms). Tap areas unchanged (smallest 48 px at 375×667). No console errors. Live files match `e09a3e3`. The Developer checked it on the iPhone and said "this is good"; all five effects kept. | `cca993c` |
 | Oct 17, 2026 | 4 | Before Enter: no AudioContext, clock at 0. After a real click on Enter: context `running`, master output −39 dB (quiet ambience playing), focus on Pause. Pause: context `suspended`, audio and app clocks both still for 0.8 s, scene inert, Web Animation paused; Play resumed all of it. Simulated hide auto-paused with the overlay shown. One-shots over 3 min of fast-forwarded time: first at 14 s, then gaps 39, 25, 16, 29, 30, 35 s, no repeats (all generated stand-ins). All 10 CSS/JS files load as `?v=4`. No console errors or warnings. Live files match `5f89b49`. The Developer asked to commit CP4; the iPhone listening test (silent switch, lock and unlock, Reduce Motion) was **not reported**, so it is still owed. | `e21ab0f` |
 | Oct 17, 2026 | 5 | Cauldron Brew on the pausable timeline. Real-time runs measured 8.53, 8.53, 8.50 s; fast-forwarded replays 8.51 ×3 (all within 5–10 s). Screenshots at 1.6 s (gold boil-over), 3.5 s (spirit looping the cottage), 5.4 s (crossing the moon), 6.9 s (spiral), 7.4 s (POP). Paused at about 2.5 s: frozen for 2 s; Play finished at 8.50 s of story time. A toadstool tap during the story did nothing. Return: scene unlocked, focus on the cauldron, all story elements at rest. `?motion=reduce`: no swell, spill travel, scaling, or shake; spirit hovers and pulses. No console errors. Live files match `a112d8c`. The Developer checked it on the iPhone and said "everything is good" (pacing, spirit, and dimming kept as built). | `8eeda0c` |
-| Oct 17, 2026 | 6 | Touch path from a fresh load (real clicks): toadstool → green brew + rune 1, moonflower → purple + rune 2, web → rune 3 and the story on landing, 8.50 s to unlock; afterwards focus on the cauldron, all ingredients back and tappable, runes dark, brew cleared. Keyboard path from a fresh load: Enter → 8 Tabs → Toadstool → (focus to Cauldron) → Moonflower → Cauldron → 4 Shift+Tabs → Web → story. Wrong order (toadstool then web): burp, "Hrk. Not like that." above the raven, full reset and regrow. Hints with no progress at 20.0, 65.0, 110.0 s, 8 s each, then none; an ingredient landing at 31.2 s moved the next to 76.2 s; raven tap repeats it; no hints for 130 s after the story, then "Caw! Again! Again!". Window flare (glow r 34 → 44), broom twitch, cauldron bubble. `?motion=reduce`: ingredients fade in place, no scaling. Tap areas unchanged; no console errors. Live files match `9a39a5a`. The Developer played it on the iPhone: "cp6 is all good". | this commit |
+| Oct 17, 2026 | 6 | Touch path from a fresh load (real clicks): toadstool → green brew + rune 1, moonflower → purple + rune 2, web → rune 3 and the story on landing, 8.50 s to unlock; afterwards focus on the cauldron, all ingredients back and tappable, runes dark, brew cleared. Keyboard path from a fresh load: Enter → 8 Tabs → Toadstool → (focus to Cauldron) → Moonflower → Cauldron → 4 Shift+Tabs → Web → story. Wrong order (toadstool then web): burp, "Hrk. Not like that." above the raven, full reset and regrow. Hints with no progress at 20.0, 65.0, 110.0 s, 8 s each, then none; an ingredient landing at 31.2 s moved the next to 76.2 s; raven tap repeats it; no hints for 130 s after the story, then "Caw! Again! Again!". Window flare (glow r 34 → 44), broom twitch, cauldron bubble. `?motion=reduce`: ingredients fade in place, no scaling. Tap areas unchanged; no console errors. Live files match `9a39a5a`. The Developer played it on the iPhone: "cp6 is all good". | `a2c2ad2` |
+| Oct 18, 2026 | 7 | Credits: `CREDITS.md` plus a Credits panel (opens with focus on Close, start screen inert behind it; Escape and Close both close it and return focus). Cleanup: left-of-raven bubble code and `?bubble=` removed, the dev view reads the longest hint from the real ladders, unused exports made private, stale checkpoint notes rewritten; title kept on one line at 375 px. Full regression on asset version 7: touch path with audio running (story 8.50 s, all ingredients back, focus on the cauldron); pause mid-story frozen 2 s with audio suspended, then 8.50 s; keyboard path to the story; hints at 20 / 65 / 110 s; longest hint 3 lines above the raven at 375×667; tap areas smallest 48 / 50 / 45 px at 375×667 / 390×664 / desktop, none clipped or overlapping; landscape message; no console errors. | this commit |
 
 ### Playtest observations
 
@@ -85,6 +86,43 @@ Optional for Phase 1: one cold try after CP6. Required in Phase 2.
 ### Revisions
 
 *None yet.*
+
+### Phase 1 delivery checklist (`Weenie Project-Brief.md` › Deliverables)
+
+Agent evidence is in the log above; boxes marked *Developer* are yours to tick.
+
+| Requirement | Evidence | Status |
+| --- | --- | --- |
+| One vertical scene, no scrolling or page changes | CP1, CP2, CP7: fits 390×844, 375×667, 390×664; landscape message | Agent verified |
+| Focal point (cottage) and 3+ environmental features | CP1: cauldron, mushroom ring, pond and moonflower, crooked tree and web | Developer approved (CP1) |
+| 3+ ambient effects | CP3: fog, candlelight, smoke and bubbles, fireflies, bats | Developer approved (CP3) |
+| Looping ambient background sound | CP4: generated crickets, wind, and bubbling, looped gaplessly | Agent verified; **Developer: listen on iPhone** |
+| Start screen whose Enter starts audio and animation | CP4: no audio or effects before Enter; running after | Agent verified |
+| Reduced motion honored before the experience begins | CP4–CP6: note on the start screen; every effect and the story have reduced versions | Agent verified; **Developer: Reduce Motion on iPhone** |
+| One Play/Pause for motion, sound, effects, timers, interaction | CP4, CP5, CP7: clock, audio, animations, and input freeze and resume together | Agent verified |
+| Story: beginning, middle, end; 5–10 s; replays | CP5–CP7: 8.50 s every run; replays without reloading | Developer approved (CP5) |
+| Triggered by interaction; every tap gives feedback; unique triggers; progress | CP6: 9 objects, each with its own response; brew colors and runes | Developer approved (CP6) |
+| Raven hints progress over time and hint rather than instruct | CP6, CP7: 20 / 65 / 110 s, reset by progress | Developer approved (CP6) |
+| Other interactions disabled during the story; clear return | CP5–CP7: scene inert in story mode; shimmer, caw, focus to the cauldron | Agent verified |
+| Touch and keyboard; readable text; contrast; 44 px targets | CP2, CP6, CP7: keyboard path to the story; hint text 15.1:1; targets 45–50 px | Agent verified |
+| Developer and all external assets credited | CP7: `CREDITS.md` and the Credits panel (no external assets used) | Agent verified |
+| Public HTTPS GitHub Pages URL | https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ | Agent verified |
+| Verified on the physical iPhone (date and iOS version) | iPhone log below | **Developer** |
+| Code and assets pushed; docs current; brief, AGENTS.md, CREDITS.md; git log; transcripts | Final commit, `git-log.txt`, `transcripts/` | Agent (git log) and **Developer** (doc approval, transcripts) |
+
+### iPhone Safari checklist (Developer, at the live URL)
+
+| # | Check (`Weenie Project-Brief.md` › iPhone Safari checklist) | Result |
+| --- | --- | --- |
+| 1 | Audio starts only after Enter and is audible at normal volume | |
+| 2 | With the ringer switch on silent, sound still plays (or the start screen says to turn silent mode off) | |
+| 3 | Sound files are MP3 for Safari | n/a: no audio files ship; all sound is generated |
+| 4 | Locking the phone or switching apps pauses; returning shows the paused state and resumes cleanly | |
+| 5 | No scrolling, rubber-banding, accidental zoom, or text-selection pop-ups | |
+| 6 | Nothing hidden under the notch, Dynamic Island, or home bar | |
+| 7 | Reduce Motion (Settings › Accessibility › Motion) changes the experience before Enter | |
+| 8 | Every object registers taps reliably on the first try | |
+| 9 | Animation stays smooth during the story | |
 
 ## Saving transcripts
 

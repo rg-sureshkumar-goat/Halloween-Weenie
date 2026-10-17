@@ -19,7 +19,7 @@ const LEVELS = { bed: 0.7, bubbling: 0.45, oneShot: 0.8 };   // within the ambie
 
 let started = false;
 let lastOneShot = null;
-let skipOneShot = () => false;    // CP6: skips the raven's caw while a hint is showing
+let skipOneShot = () => false;    // set by hints.js: skips the raven's caw while a hint is showing
 export const oneShotLog = [];     // recent one-shots, shown in the dev readout
 
 // Starts the ambience once, right after Enter has created the AudioContext.

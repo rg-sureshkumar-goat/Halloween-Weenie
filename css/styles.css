@@ -99,8 +99,6 @@ body {
 .scene-object {
   cursor: pointer;
   outline: none;               /* focus is shown on the tap area instead (below) */
-  transform-box: fill-box;     /* placeholder poke animation scales around the object's centre */
-  transform-origin: center;
 }
 .scene-object .hit {
   fill: transparent;           /* invisible, but still catches taps */
@@ -176,7 +174,7 @@ body {
 }
 .start-title {
   margin: 0;
-  font-size: 2.25rem;
+  font-size: clamp(1.75rem, 8.5vw, 2.25rem);   /* one line from 320 px wide up */
   line-height: 1.1;
   color: var(--moonlight);
   text-shadow: 0 0 18px rgba(255, 181, 71, 0.35);
@@ -218,6 +216,82 @@ body {
 }
 .sound-note {
   margin-top: 1rem;
+}
+
+.credits-button {
+  min-height: 44px;
+  margin-top: 0.25rem;
+  padding: 0 1rem;
+  border: 0;
+  background: none;
+  color: var(--moonlight);
+  font-family: inherit;
+  font-size: 1rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.credits-button:focus-visible,
+.credits-close:focus-visible {
+  outline: 3px solid var(--moonlight);
+  outline-offset: 2px;
+}
+
+/* ---------- UI: credits panel ---------- */
+
+.credits-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 45;
+  display: grid;
+  place-items: center;
+  padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px);
+  background: rgba(7, 10, 20, 0.85);
+}
+.credits-panel[hidden] {
+  display: none;
+}
+.credits-card {
+  max-width: 22rem;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 1.25rem 1.25rem 1rem;
+  border-radius: 14px;
+  background: var(--parchment);
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.credits-card h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.375rem;
+}
+.credits-card p {
+  margin: 0 0 0.75rem;
+}
+.credits-card dl {
+  margin: 0 0 1rem;
+}
+.credits-card dt {
+  font-weight: 700;
+}
+.credits-card dd {
+  margin: 0 0 0.5rem;
+}
+.credits-close {
+  min-width: 6rem;
+  min-height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--parchment);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.credits-close:focus-visible {
+  outline-color: var(--ink);
 }
 
 /* ---------- UI: pause overlay (passive: only Play/Pause resumes) ---------- */
@@ -274,27 +348,19 @@ body {
   font-size: 1rem;
   line-height: 1.35;
 }
-/* Tail: a rotated square with two borders, pointing at the raven (--tail is set by hints.js). */
+/* Tail: a rotated square with two borders, pointing down at the raven (--tail is set by hints.js). */
 .hint-bubble::after {
   content: "";
   position: absolute;
+  bottom: -8px;
+  left: calc(var(--tail, 50%) - 7px);
   width: 12px;
   height: 12px;
   background: var(--parchment);
   border: 2px solid var(--silhouette);
-  transform: rotate(45deg);
-}
-.hint-bubble[data-side="left"]::after {
-  right: -8px;
-  top: calc(var(--tail, 50%) - 7px);
-  border-left: 0;
-  border-bottom: 0;
-}
-.hint-bubble[data-side="above"]::after {
-  bottom: -8px;
-  left: calc(var(--tail, 50%) - 7px);
   border-left: 0;
   border-top: 0;
+  transform: rotate(45deg);
 }
 
 /* ---------- Landscape on a phone ---------- */

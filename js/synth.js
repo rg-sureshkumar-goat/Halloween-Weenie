@@ -8,7 +8,7 @@ const TAU = Math.PI * 2;
 // ---------- Rendered loops ----------
 
 // A 4 s chorus of three crickets at different pitches and rhythms. Each rhythm divides 4 s
-// evenly, so the loop repeats seamlessly. Stand-in until the recorded night bed arrives.
+// evenly, so the loop repeats seamlessly. Used unless a recorded night bed is added to soundscape.js.
 export function cricketLoop(ctx) {
   const seconds = 4;
   const rate = ctx.sampleRate;
@@ -110,7 +110,7 @@ export const uiSounds = {
   },
 };
 
-// Stand-ins for the five recordings until the downloaded files are processed.
+// Generated owl, creak, cackle, and caw, used unless recordings are added to soundscape.js.
 export const placeholders = {
   // Two soft hoots, the second longer and a little lower.
   owl(ctx, out) {
@@ -138,7 +138,7 @@ export const placeholders = {
   },
 };
 
-// Tap feedback sounds (CP6). Each returns its last source node.
+// Tap feedback sounds. Each returns its last source node.
 export const tapSounds = {
   // Toadstool: a soft, bouncy "poink".
   poink(ctx, out) {

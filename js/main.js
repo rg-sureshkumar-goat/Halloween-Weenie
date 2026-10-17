@@ -80,6 +80,25 @@ enterButton.addEventListener('click', () => {
   playPauseButton.focus({ preventScroll: true });
 });
 
+// ---------- Credits panel ----------
+
+const startScreen = document.getElementById('start-screen');
+const creditsButton = document.getElementById('credits-button');
+const creditsPanel = document.getElementById('credits-panel');
+const creditsClose = document.getElementById('credits-close');
+
+function setCreditsOpen(open) {
+  creditsPanel.hidden = !open;
+  startScreen.inert = open;              // nothing behind the panel can be reached while it's open
+  (open ? creditsClose : creditsButton).focus({ preventScroll: true });
+}
+
+creditsButton.addEventListener('click', () => setCreditsOpen(true));
+creditsClose.addEventListener('click', () => setCreditsOpen(false));
+creditsPanel.addEventListener('keydown', event => {
+  if (event.key === 'Escape') setCreditsOpen(false);
+});
+
 // ---------- Play/Pause and auto-pause ----------
 
 playPauseButton.addEventListener('click', () => {
