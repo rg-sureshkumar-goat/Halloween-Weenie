@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0E1230">
+  <title>Virtual Hallo-weenie</title>
+  <!-- Checkpoint 0 placeholder. Replaced by the real scene from Checkpoint 1 on. -->
+  <style>
+    :root {
+      --sky-top: #0E1230;
+      --sky-bottom: #1B3A4B;
+      --moonlight: #DCE6F2;
+      --window-glow: #FFB547;
+    }
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    body {
+      height: 100dvh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(var(--sky-top), var(--sky-bottom));
+      color: var(--moonlight);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      text-align: center;
+      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+      box-sizing: border-box;
+    }
+    h1 { font-size: 2rem; margin: 0 0 0.25rem; }
+    .subtitle { color: var(--window-glow); font-size: 1.125rem; margin: 0 0 1.5rem; }
+    .status { font-size: 1rem; margin: 0 0 2rem; }
+    /* Device readout: lets the Developer measure Safari's real viewport on the iPhone (spec.md, Layout). */
+    .readout { font: 0.875rem/1.5 ui-monospace, Menlo, monospace; opacity: 0.85; }
+    /* Probe element: CSS resolves env() insets so the script can read them as pixel values. */
+    #inset-probe {
+      position: fixed;
+      visibility: hidden;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Virtual Hallo-weenie</h1>
+    <p class="subtitle">The Witch's Hollow</p>
+    <p class="status">Something is brewing. Check back soon.</p>
+    <p class="readout" id="readout" aria-live="polite"></p>
+  </main>
+  <div id="inset-probe"></div>
+  <script>
+    // Show viewport size, safe-area insets, and the reduced-motion setting,
+    // so the iPhone check at Checkpoint 0 also records the numbers Checkpoint 1 needs.
+    function showReadout() {
+      const probe = getComputedStyle(document.getElementById('inset-probe'));
+      const insets = ['Top', 'Right', 'Bottom', 'Left']
+        .map(side => parseFloat(probe['padding' + side]) || 0);
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.getElementById('readout').innerHTML =
+        `viewport ${innerWidth} × ${innerHeight}<br>` +
+        `safe area t${insets[0]} r${insets[1]} b${insets[2]} l${insets[3]}<br>` +
+        `reduced motion: ${reducedMotion ? 'on' : 'off'}`;
+    }
+    showReadout();
+    addEventListener('resize', showReadout);
+    matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', showReadout);
+  </script>
+</body>
+</html>
