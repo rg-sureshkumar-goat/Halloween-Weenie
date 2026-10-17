@@ -96,9 +96,9 @@ System fonts for UI and hints. A display font for the title is optional; if used
 
 | Decision | Proposed | Raise at |
 | --- | --- | --- |
-| Ingredient order: required or any order | Required, revisit after playtest | CP6 |
-| Hint timing and final rhymes | 20 s / +45 s / +45 s; rhymes in brief | CP6 |
-| Hint bubble placement | Left of the raven (approved at CP2); compare with `?show=hint&bubble=above` | CP6 |
+| Ingredient order: required or any order | **Decided Oct 17:** required (toadstool, moonflower, web); revisit after the playtest | Phase 2 playtest |
+| Hint timing and final rhymes | **Decided Oct 17:** 20 s / +45 s / +45 s, each shown 8 s; the brief's three rhymes | Phase 2 playtest |
+| Hint bubble placement | **Decided Oct 17:** above the raven (3 lines for the longest hint vs 7 beside it); `?bubble=left` remains for comparison | — |
 | Start-screen title | **Decided Oct 17:** "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | — |
 | Final palette and look | **Decided Oct 17:** the brief's palette, approved on the Developer's iPhone | — |
 | Which ambient effects to keep | **Decided Oct 17:** all five (fog, candlelight, smoke and bubbles, fireflies, bats); the Developer checked them on the iPhone and said "this is good" | — |
