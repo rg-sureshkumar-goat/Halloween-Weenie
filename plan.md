@@ -60,7 +60,7 @@ Keep implementation progress and verification here. Update `research.md` when ev
 
 | Date | Checkpoint | iPhone model / iOS version | Result | Notes |
 | --- | --- | --- | --- | --- |
-| Oct 17, 2026 | Phase 1 final build (CP0–CP7), live URL | Not provided | **Pass:** all applicable checks | Developer tested the final build at https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ and reported: "everything looks exactly as it is supposed to look" and "all checks passed today". Recorded by the Agent at the Developer's request. |
+| Oct 17, 2026 | Phase 1 final build (CP0–CP7), live URL | iOS 26.6.2 (model not given) | **Pass:** all applicable checks | Developer tested the final build at https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ and reported: "everything looks exactly as it is supposed to look" and "all checks passed today". Recorded by the Agent at the Developer's request. |
 
 ### Agent evidence log
 
@@ -107,7 +107,7 @@ Agent evidence is in the log above; boxes marked *Developer* are yours to tick.
 | Touch and keyboard; readable text; contrast; 44 px targets | CP2, CP6, CP7: keyboard path to the story; hint text 15.1:1; targets 45–50 px | Agent verified |
 | Developer and all external assets credited | CP7: `CREDITS.md` and the Credits panel (no external assets used) | Agent verified |
 | Public HTTPS GitHub Pages URL | https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ | Agent verified |
-| Verified on the physical iPhone (date and iOS version) | iPhone log below: Oct 17, 2026; iOS version not provided | Developer verified |
+| Verified on the physical iPhone (date and iOS version) | iPhone log below: Oct 17, 2026, iOS 26.6.2 | Developer verified |
 | Code and assets pushed; docs current; brief, AGENTS.md, CREDITS.md; git log; transcripts | All pushed; `git-log.txt`; `transcripts/build-2026-10-17_011502.md` | Done; docs approved by the Developer (Oct 17) |
 
 ### iPhone Safari checklist (Developer, at the live URL)
