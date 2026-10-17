@@ -1,15 +1,16 @@
 // Virtual Hallo-weenie: boot, app state, and input wiring.
-// So far: state machine, Enter (starts sound and motion), Play/Pause of everything, auto-pause,
-// ambient effects and soundscape, one input path for every scene object, and the Cauldron Brew
-// story (fired by the dev trigger until CP6 wires the ingredients).
+// State machine, Enter (starts sound and motion), Play/Pause of everything, auto-pause, ambient
+// effects and soundscape, one input path that gives every scene object its own response, the
+// Cauldron Brew story with its ingredient triggers, and the raven's hints.
 
 import { clock } from './clock.js';
 import { startEffects } from './effects.js';
 import { reducedMotion, onReducedMotionChange } from './motion.js';
 import { startAudio, pauseAudio, resumeAudio, onAudioInterrupted } from './audio.js';
 import { startAmbience, playUiSound } from './soundscape.js';
-import { playCauldronBrew } from './stories/cauldron.js';
-import { showHint, positionHint } from './hints.js';
+import { initCauldron, offerIngredient, playCauldronBrew, tapCauldron } from './stories/cauldron.js';
+import { flickerWindow, twitchBroom } from './objects.js';
+import { noteStoryPlayed, noteStoryStarted, positionHint, showHint, startHints, tapRaven } from './hints.js';
 import { applyShowParam, initDevView } from './dev.js';
 
 const stage = document.getElementById('stage');
@@ -33,7 +34,10 @@ function setState(changes) {
   playPauseButton.setAttribute('aria-label', state.paused ? 'Play' : 'Pause');
 
   const inScene = state.mode !== 'START';
-  if (inScene) startEffects();
+  if (inScene) {
+    startEffects();
+    startHints();
+  }
   if (inScene && !state.paused) {
     clock.start();
     resumeAudio();
@@ -103,20 +107,24 @@ function pauseFromOutside() {
 
 const storyRuns = [];   // measured story lengths in ms of clock time, for the dev readout
 
-// Plays the Cauldron Brew. Every object locks for the whole story (only Play/Pause still works);
-// at the end the scene unlocks and keyboard focus returns to the cauldron.
+// Plays the Cauldron Brew: called the moment the third ingredient lands (or by the dev trigger).
+// Every object locks for the whole story (only Play/Pause still works); at the end the scene
+// unlocks and keyboard focus returns to the cauldron.
 function startCauldronBrew() {
   if (!canInteract()) return;
   const startedAt = clock.now;
   setState({ mode: 'STORY' });
+  noteStoryStarted('cauldron');
   playCauldronBrew({
     onDone: () => {
       storyRuns.push(clock.now - startedAt);
       setState({ mode: 'SCENE' });
+      noteStoryPlayed('cauldron');
       document.getElementById('cauldron').focus({ preventScroll: true });
     },
   });
 }
+initCauldron({ onComplete: startCauldronBrew });
 
 // ---------- Scene input: one path for touch, mouse, and keyboard ----------
 
@@ -133,18 +141,22 @@ sceneInteractive.addEventListener('keydown', event => {
   activateObject(object);
 });
 
+// Every tappable object's own response, by element id.
+const OBJECT_ACTIONS = {
+  toadstool: () => offerIngredient('toadstool'),
+  moonflower: () => offerIngredient('moonflower'),
+  web: () => offerIngredient('web'),
+  cauldron: tapCauldron,
+  raven: tapRaven,
+  'window-left': () => flickerWindow('left'),
+  'window-right': () => flickerWindow('right'),
+  'window-attic': () => flickerWindow('attic'),
+  broom: twitchBroom,
+};
+
 function activateObject(object) {
   if (!canInteract()) return;
-  pokeObject(object);
-}
-
-// Placeholder feedback until each object gets its own at CP6: a quick wiggle,
-// or a brief dim-and-return when the device asks for reduced motion.
-function pokeObject(object) {
-  const keyframes = reducedMotion()
-    ? [{ opacity: 1 }, { opacity: 0.5 }, { opacity: 1 }]
-    : [{ transform: 'scale(1)' }, { transform: 'scale(1.08) rotate(-2deg)' }, { transform: 'scale(1)' }];
-  object.animate(keyframes, { duration: 320, easing: 'ease-out' });
+  OBJECT_ACTIONS[object.id]?.();
 }
 
 // ---------- Boot ----------

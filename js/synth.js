@@ -138,6 +138,88 @@ export const placeholders = {
   },
 };
 
+// Tap feedback sounds (CP6). Each returns its last source node.
+export const tapSounds = {
+  // Toadstool: a soft, bouncy "poink".
+  poink(ctx, out) {
+    tone(ctx, out, { from: 320, to: 860, duration: 0.09, peak: 0.35, attack: 0.005 });
+    return tone(ctx, out, { from: 640, to: 1100, at: 0.07, duration: 0.12, peak: 0.2, attack: 0.005 });
+  },
+  // Moonflower: a bell-like chime as the petals open.
+  chime(ctx, out) {
+    tone(ctx, out, { from: 1319, duration: 1.2, peak: 0.22, attack: 0.004 });
+    tone(ctx, out, { from: 1976, duration: 0.9, peak: 0.12, attack: 0.004 });
+    return tone(ctx, out, { from: 2637, at: 0.05, duration: 0.7, peak: 0.08, attack: 0.004 });
+  },
+  // Web: a harp-like twang (a plucked string, Karplus-Strong synthesis).
+  twang(ctx, out) {
+    const source = ctx.createBufferSource();
+    source.buffer = pluckBuffer(ctx, 196, 1.4);
+    const level = ctx.createGain();
+    level.gain.value = 0.6;
+    source.connect(level).connect(out);
+    source.start();
+    return source;
+  },
+  // Wrong order: a comic, wobbly "blorp".
+  blorp(ctx, out) {
+    const start = ctx.currentTime;
+    const oscillator = ctx.createOscillator();
+    oscillator.type = 'sawtooth';
+    oscillator.frequency.setValueAtTime(240, start);
+    oscillator.frequency.exponentialRampToValueAtTime(70, start + 0.45);
+    const wobble = ctx.createOscillator();
+    wobble.frequency.value = 14;
+    const wobbleDepth = ctx.createGain();
+    wobbleDepth.gain.value = 25;
+    wobble.connect(wobbleDepth).connect(oscillator.frequency);
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 700;
+    const envelope = ctx.createGain();
+    envelope.gain.setValueAtTime(0.0001, start);
+    envelope.gain.exponentialRampToValueAtTime(0.4, start + 0.03);
+    envelope.gain.exponentialRampToValueAtTime(0.0001, start + 0.5);
+    oscillator.connect(filter).connect(envelope).connect(out);
+    oscillator.start(start);
+    wobble.start(start);
+    oscillator.stop(start + 0.55);
+    wobble.stop(start + 0.55);
+    return oscillator;
+  },
+  // Cauldron tap: a low gurgle of three bubbles, a little higher as the brew progresses.
+  gurgle(ctx, out, { pitch = 1 } = {}) {
+    let last;
+    [0, 0.09, 0.2].forEach((at, i) => {
+      last = tone(ctx, out, { from: (120 + i * 30) * pitch, to: (260 + i * 40) * pitch, at, duration: 0.09, peak: 0.3, attack: 0.008 });
+    });
+    return last;
+  },
+  // An ingredient landing in the pot: a small plop.
+  plop(ctx, out) {
+    noiseBurst(ctx, out, { duration: 0.05, type: 'highpass', frequency: 1800, peak: 0.15 });
+    return tone(ctx, out, { from: 520, to: 140, duration: 0.15, peak: 0.35, attack: 0.004 });
+  },
+  // Window: a candle "fwip" plus a soft note (each window has its own).
+  candle(ctx, out, { note = 660 } = {}) {
+    noiseBurst(ctx, out, { duration: 0.15, type: 'bandpass', frequency: 900, peak: 0.12 });
+    return tone(ctx, out, { from: note, to: note * 1.01, at: 0.04, duration: 0.5, peak: 0.14, attack: 0.01 });
+  },
+  // Broom: a dry straw rustle.
+  rustle(ctx, out) {
+    noiseBurst(ctx, out, { duration: 0.12, type: 'bandpass', frequency: 3200, peak: 0.22 });
+    return noiseBurst(ctx, out, { at: 0.1, duration: 0.18, type: 'bandpass', frequency: 2600, peak: 0.16 });
+  },
+  // Ingredients growing back: a three-note twinkle.
+  twinkle(ctx, out) {
+    let last;
+    [1568, 2093, 2637].forEach((frequency, i) => {
+      last = tone(ctx, out, { from: frequency, at: i * 0.07, duration: 0.4, peak: 0.1, attack: 0.004 });
+    });
+    return last;
+  },
+};
+
 // Story sounds (Cauldron Brew). Generated, not stand-ins.
 export const storySounds = {
   // Rising bubbling rumble under the boil-over: low noise opening up plus a climbing sub tone.
@@ -263,6 +345,42 @@ function tone(ctx, out, { type = 'sine', from, to = from, at = 0, duration, peak
   oscillator.start(start);
   oscillator.stop(start + duration + 0.05);
   return oscillator;
+}
+
+// A short filtered noise burst (swishes, rustles, splashes). Returns its source node.
+function noiseBurst(ctx, out, { at = 0, duration, type, frequency, peak }) {
+  const start = ctx.currentTime + at;
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuffer(ctx);
+  const filter = ctx.createBiquadFilter();
+  filter.type = type;
+  filter.frequency.value = frequency;
+  const envelope = ctx.createGain();
+  envelope.gain.setValueAtTime(0.0001, start);
+  envelope.gain.exponentialRampToValueAtTime(peak, start + Math.min(0.01, duration / 3));
+  envelope.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+  noise.connect(filter).connect(envelope).connect(out);
+  noise.start(start);
+  noise.stop(start + duration + 0.02);
+  return noise;
+}
+
+// A plucked string: a burst of noise circulating through a short delay line that averages
+// neighbouring samples, which damps the high notes the way a real string does.
+function pluckBuffer(ctx, frequency, seconds) {
+  const rate = ctx.sampleRate;
+  const buffer = ctx.createBuffer(1, Math.floor(seconds * rate), rate);
+  const data = buffer.getChannelData(0);
+  const ring = new Float32Array(Math.round(rate / frequency));
+  for (let i = 0; i < ring.length; i++) ring[i] = Math.random() * 2 - 1;
+  let index = 0;
+  for (let i = 0; i < data.length; i++) {
+    const next = (index + 1) % ring.length;
+    data[i] = ring[index] * 0.5;
+    ring[index] = 0.996 * 0.5 * (ring[index] + ring[next]);
+    index = next;
+  }
+  return buffer;
 }
 
 // Two seconds of white noise, looped by the wind.

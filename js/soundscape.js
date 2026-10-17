@@ -3,7 +3,7 @@
 
 import { clock } from './clock.js';
 import { audioContext, channel, letFinishBeforePause, loadSound, loadedSound, playBuffer } from './audio.js';
-import { bubblingLoop, cricketLoop, placeholders, startWind, storySounds, uiSounds } from './synth.js';
+import { bubblingLoop, cricketLoop, placeholders, startWind, storySounds, tapSounds, uiSounds } from './synth.js';
 
 // Processed recordings in assets/audio/. Empty until the Developer's downloads are processed;
 // every slot falls back to its generated stand-in, so the app never requests a missing file.
@@ -55,14 +55,20 @@ export function playStorySound(name, options) {
   if (ctx) storySounds[name](ctx, channel('story'), options);
 }
 
-// Plays a voice that has a recording slot (cackle, caw) on the story channel: the recording
-// when it has loaded, otherwise its generated stand-in.
-export function playStoryVoice(name, options) {
+// Plays a tap feedback sound on the interactions channel.
+export function playTapSound(name, options) {
+  const ctx = audioContext();
+  if (ctx) tapSounds[name](ctx, channel('interactions'), options);
+}
+
+// Plays a voice that has a recording slot (cackle, caw): the recording when it has loaded,
+// otherwise its generated stand-in. Story channel unless another is given.
+export function playVoice(name, { channel: channelName = 'story', ...options } = {}) {
   const ctx = audioContext();
   if (!ctx) return;
   const recording = loadedSound(name);
-  if (recording) playBuffer(recording, { channel: 'story' });
-  else placeholders[name](ctx, channel('story'), options);
+  if (recording) playBuffer(recording, { channel: channelName });
+  else placeholders[name](ctx, channel(channelName), options);
 }
 
 function scheduleOneShot(delayMs) {

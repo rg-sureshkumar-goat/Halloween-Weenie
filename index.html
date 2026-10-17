@@ -9,24 +9,25 @@
        GitHub Pages lets browsers cache files for 10 minutes, so this makes a phone fetch all the new
        files together instead of mixing a new page with an old script. The import map applies the
        version to module imports inside the scripts. -->
-  <link rel="stylesheet" href="css/styles.css?v=5">
+  <link rel="stylesheet" href="css/styles.css?v=6">
   <script type="importmap">
     {
       "imports": {
-        "./js/audio.js": "./js/audio.js?v=5",
-        "./js/clock.js": "./js/clock.js?v=5",
-        "./js/dev.js": "./js/dev.js?v=5",
-        "./js/effects.js": "./js/effects.js?v=5",
-        "./js/hints.js": "./js/hints.js?v=5",
-        "./js/motion.js": "./js/motion.js?v=5",
-        "./js/soundscape.js": "./js/soundscape.js?v=5",
-        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=5",
-        "./js/synth.js": "./js/synth.js?v=5",
-        "./js/timeline.js": "./js/timeline.js?v=5"
+        "./js/audio.js": "./js/audio.js?v=6",
+        "./js/clock.js": "./js/clock.js?v=6",
+        "./js/dev.js": "./js/dev.js?v=6",
+        "./js/effects.js": "./js/effects.js?v=6",
+        "./js/hints.js": "./js/hints.js?v=6",
+        "./js/motion.js": "./js/motion.js?v=6",
+        "./js/objects.js": "./js/objects.js?v=6",
+        "./js/soundscape.js": "./js/soundscape.js?v=6",
+        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=6",
+        "./js/synth.js": "./js/synth.js?v=6",
+        "./js/timeline.js": "./js/timeline.js?v=6"
       }
     }
   </script>
-  <script type="module" src="js/main.js?v=5"></script>
+  <script type="module" src="js/main.js?v=6"></script>
 </head>
 <body>
   <noscript><p>Virtual Hallo-weenie needs JavaScript to run.</p></noscript>
@@ -107,6 +108,27 @@
         <radialGradient id="brew-glow">
           <stop offset="0" stop-color="#7CFF6B" stop-opacity="0.22"/>
           <stop offset="1" stop-color="#7CFF6B" stop-opacity="0"/>
+        </radialGradient>
+        <!-- Progress: the brew turns green after the toadstool, purple after the moonflower -->
+        <radialGradient id="brew-green-fill" cx="0.5" cy="0.4">
+          <stop offset="0" stop-color="#B8FF9E"/>
+          <stop offset="1" stop-color="#3FBF3A"/>
+        </radialGradient>
+        <radialGradient id="brew-purple-fill" cx="0.5" cy="0.4">
+          <stop offset="0" stop-color="#E3C4FF"/>
+          <stop offset="1" stop-color="#8A45D6"/>
+        </radialGradient>
+        <radialGradient id="brew-glow-green">
+          <stop offset="0" stop-color="#7CFF6B" stop-opacity="0.5"/>
+          <stop offset="1" stop-color="#7CFF6B" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="brew-glow-purple">
+          <stop offset="0" stop-color="#B46CFF" stop-opacity="0.5"/>
+          <stop offset="1" stop-color="#B46CFF" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="rune-glow">
+          <stop offset="0" stop-color="#D6A8FF" stop-opacity="0.7"/>
+          <stop offset="1" stop-color="#B46CFF" stop-opacity="0"/>
         </radialGradient>
         <!-- Story: the brew turns gold as it boils over -->
         <radialGradient id="brew-gold-fill" cx="0.5" cy="0.4">
@@ -364,7 +386,7 @@
         </g>
 
         <!-- Spider web hanging from the branch: ingredient 3 -->
-        <circle cx="100" cy="385" r="34" fill="url(#moonlight-glow)" opacity="0.5"/>
+        <circle id="web-halo" cx="100" cy="385" r="34" fill="url(#moonlight-glow)" opacity="0.5"/>
         <g id="web" class="scene-object" role="button" tabindex="0" aria-label="Spider web">
           <rect class="hit" x="74" y="310" width="52" height="102" rx="10"/>
           <g class="art" fill="none" stroke="#DCE6F2" stroke-linejoin="round">
@@ -413,7 +435,7 @@
         </g>
 
         <!-- Cauldron over a small fire, front center -->
-        <circle cx="195" cy="656" r="62" fill="url(#fire-glow)"/>
+        <circle id="fire-halo" cx="195" cy="656" r="62" fill="url(#fire-glow)"/>
         <g id="cauldron" class="scene-object" role="button" tabindex="0" aria-label="Cauldron">
           <rect class="hit" x="144" y="558" width="102" height="112" rx="12"/>
           <g class="art">
@@ -435,6 +457,15 @@
             <ellipse id="cauldron-glow" cx="195" cy="578" rx="46" ry="14" fill="url(#brew-glow)"/>
             <ellipse cx="195" cy="580" rx="44" ry="10" fill="#10151F" stroke="#2A3448" stroke-width="3"/>
             <ellipse id="cauldron-brew" cx="195" cy="580" rx="38" ry="7" fill="url(#brew-dark)"/>
+            <!-- Progress: green, then purple brew (crossfaded by js/stories/cauldron.js) -->
+            <g id="brew-green" opacity="0">
+              <ellipse cx="195" cy="576" rx="54" ry="18" fill="url(#brew-glow-green)"/>
+              <ellipse cx="195" cy="580" rx="38" ry="7" fill="url(#brew-green-fill)"/>
+            </g>
+            <g id="brew-purple" opacity="0">
+              <ellipse cx="195" cy="576" rx="54" ry="18" fill="url(#brew-glow-purple)"/>
+              <ellipse cx="195" cy="580" rx="38" ry="7" fill="url(#brew-purple-fill)"/>
+            </g>
             <!-- Story: gold brew and glow (faded in by the Cauldron Brew sequence) -->
             <g id="brew-gold" opacity="0">
               <ellipse cx="195" cy="576" rx="56" ry="20" fill="url(#brew-glow-gold)"/>
@@ -455,7 +486,14 @@
               <circle cx="206" cy="581" r="2" opacity="0"/>
               <circle cx="190" cy="581" r="2" opacity="0"/>
             </g>
+            <!-- One big bubble when the cauldron is tapped -->
+            <circle id="cauldron-burst" class="effect" cx="195" cy="578" r="3" fill="#6E9E5A" opacity="0"/>
             <!-- Three rim runes, unlit. They light one by one as ingredients land. -->
+            <g fill="url(#rune-glow)">
+              <circle id="rune-glow-1" cx="175" cy="607" r="11" opacity="0"/>
+              <circle id="rune-glow-2" cx="195" cy="612" r="11" opacity="0"/>
+              <circle id="rune-glow-3" cx="215" cy="607" r="11" opacity="0"/>
+            </g>
             <g fill="none" stroke="#3B2F5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path id="rune-1" d="M171 611 L175 601 L179 611 Z"/>
               <path id="rune-2" d="M195 604 V620 M190 609 L195 613 L200 609"/>
@@ -474,7 +512,7 @@
           <use href="#small-mushroom" x="90" y="708" width="20" height="16"/>
         </g>
         <!-- The biggest mushroom glows: ingredient 1 -->
-        <circle cx="128" cy="694" r="28" fill="url(#toadstool-glow)"/>
+        <circle id="toadstool-halo" cx="128" cy="694" r="28" fill="url(#toadstool-glow)"/>
         <g id="toadstool" class="scene-object" role="button" tabindex="0" aria-label="Toadstool">
           <rect class="hit" x="103" y="672" width="50" height="50" rx="10"/>
           <g class="art">
@@ -507,15 +545,28 @@
           </g>
         </g>
         <!-- Moonflower bud at the pond's edge: ingredient 2 -->
-        <circle cx="246" cy="686" r="22" fill="url(#moonlight-glow)"/>
+        <circle id="moonflower-halo" cx="246" cy="686" r="22" fill="url(#moonlight-glow)"/>
         <g id="moonflower" class="scene-object" role="button" tabindex="0" aria-label="Moonflower">
           <rect class="hit" x="222" y="672" width="50" height="50" rx="10"/>
           <g class="art">
             <path d="M246 706 Q244 698 246 690" fill="none" stroke="#3E6B4A" stroke-width="2"/>
             <path d="M246 700 Q238 696 236 700 Q240 703 246 700 Z M246 698 Q254 694 256 698 Q252 701 246 698 Z" fill="#3E6B4A"/>
-            <path d="M246 677 Q240 682 241 688 Q246 692 251 688 Q252 682 246 677 Z" fill="#DCE6F2"/>
-            <path d="M246 678 Q244 684 246 691 M246 678 Q249 684 248 690" fill="none" stroke="#B8C4D8" stroke-width="0.7"/>
-            <ellipse cx="246" cy="689" rx="4" ry="2" fill="#B46CFF" opacity="0.5"/>
+            <g class="bud">
+              <path d="M246 677 Q240 682 241 688 Q246 692 251 688 Q252 682 246 677 Z" fill="#DCE6F2"/>
+              <path d="M246 678 Q244 684 246 691 M246 678 Q249 684 248 690" fill="none" stroke="#B8C4D8" stroke-width="0.7"/>
+              <ellipse cx="246" cy="689" rx="4" ry="2" fill="#B46CFF" opacity="0.5"/>
+            </g>
+            <!-- Open bloom, shown when tapped -->
+            <g class="bloom" opacity="0">
+              <g fill="#EEF3FA">
+                <ellipse cx="246" cy="678" rx="3.5" ry="7"/>
+                <ellipse cx="246" cy="678" rx="3.5" ry="7" transform="rotate(72 246 685)"/>
+                <ellipse cx="246" cy="678" rx="3.5" ry="7" transform="rotate(144 246 685)"/>
+                <ellipse cx="246" cy="678" rx="3.5" ry="7" transform="rotate(216 246 685)"/>
+                <ellipse cx="246" cy="678" rx="3.5" ry="7" transform="rotate(288 246 685)"/>
+              </g>
+              <circle cx="246" cy="685" r="2.6" fill="#B46CFF"/>
+            </g>
           </g>
         </g>
       </g>
@@ -622,6 +673,17 @@
           <path d="M-15 -17 L-5 -13 M5 -13 L14 -14" fill="none" stroke="#0B2A14" stroke-width="2" stroke-linecap="round"/>
         </g>
         <rect id="story-shimmer" width="200" height="844" fill="url(#story-shimmer-gradient)" opacity="0"/>
+        <!-- Ingredient 3: a silver thread spools from the web into the pot -->
+        <path id="silk-thread" d="M100 385 Q140 470 195 574" fill="none" stroke="#E8F0FF" stroke-width="1.6"
+              stroke-linecap="round" opacity="0"/>
+        <!-- Wrong order: the cauldron burps a sour purple puff -->
+        <g id="burp-puff" fill="#9B6BC9" opacity="0">
+          <circle cx="195" cy="556" r="13"/>
+          <circle cx="179" cy="563" r="10"/>
+          <circle cx="211" cy="563" r="10"/>
+          <circle cx="186" cy="547" r="9"/>
+          <circle cx="205" cy="546" r="9"/>
+        </g>
       </g>
 
       <!-- Dev view (?dev=1): the region still visible at 375×667. Tap areas are outlined by styles.css. -->

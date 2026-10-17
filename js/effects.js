@@ -63,29 +63,58 @@ function fog() {
 
 // ---------- Candlelight: irregular flicker of the window glows ----------
 // Three sine waves at unrelated speeds never line up, so the flicker never visibly repeats.
+// A tapped window (flareWindow) dips dark for a moment, then flares bright and wide.
 // Reduced motion: a slow, gentle pulse.
 
+const WINDOWS = { left: 34, right: 34, attic: 26 };   // window name → resting glow radius
+const flareStarts = {};                                // window name → clock seconds of last tap
+
+export function flareWindow(name) {
+  flareStarts[name] = clock.now / 1000;
+}
+
 function candlelight() {
-  const glows = ['window-glow-left', 'window-glow-right', 'window-glow-attic']
-    .map(id => document.getElementById(id));
+  const glows = Object.keys(WINDOWS).map(name => ({ name, glow: document.getElementById(`window-glow-${name}`) }));
   return (t, reduced) => {
-    glows.forEach((glow, i) => {
+    glows.forEach(({ name, glow }, i) => {
       const level = reduced
         ? 0.88 + 0.08 * Math.sin(TAU * t / 6 + i * 2)
         : 0.82 + 0.1 * Math.sin(t * 7.3 + i) + 0.06 * Math.sin(t * 13.7 + i * 2) + 0.04 * Math.sin(t * 23.1 + i * 3);
-      glow.setAttribute('opacity', fixed(clamp(level, 0.6, 1)));
+      const age = t - (flareStarts[name] ?? -Infinity);
+      let flare = 0;                                   // -1 = dipped dark … +1 = full flare
+      if (age < 0.15) flare = -age / 0.15;
+      else if (age < 0.6) flare = Math.sin(Math.PI * (age - 0.15) / 0.45);
+      const opacity = flare < 0 ? clamp(level * (1 + 0.65 * flare), 0.25, 1) : clamp(level + 0.3 * flare, 0.6, 1);
+      glow.setAttribute('opacity', fixed(opacity));
+      glow.setAttribute('r', fixed(WINDOWS[name] + 12 * Math.max(flare, 0)));
     });
   };
 }
 
 // ---------- Chimney smoke and cauldron bubbles ----------
 // Smoke: six puffs at staggered points in a 7 s rise-and-fade cycle, drifting left past the roof.
-// Bubbles: four bubbles on independent cycles rise a little, swell, and pop.
-// Reduced motion: three still puffs that only change opacity; bubbles off.
+// Bubbles: four bubbles on independent cycles rise a little, swell, and pop. Their size and color
+// follow the brew's progress (setBrewBubbles), and a cauldron tap sends up one big bubble.
+// Reduced motion: three still puffs that only change opacity; bubbles off; the tap bubble swells
+// in place without rising.
+
+let bubbleSize = 1;
+let burstStart = null;
+
+export function setBrewBubbles({ size, color }) {
+  bubbleSize = size;
+  document.getElementById('cauldron-bubbles').setAttribute('fill', color);
+  document.getElementById('cauldron-burst').setAttribute('fill', color);
+}
+
+export function burstBubble() {
+  burstStart = clock.now / 1000;
+}
 
 function smokeAndBubbles() {
   const puffs = [...document.querySelectorAll('#chimney-smoke circle')];
   const bubbles = [...document.querySelectorAll('#cauldron-bubbles circle')];
+  const burst = document.getElementById('cauldron-burst');
   const SMOKE_CYCLE_S = 7;
   const CHIMNEY = { x: 156, y: 246 };
 
@@ -113,12 +142,23 @@ function smokeAndBubbles() {
       const phase = cycles % 1;
       const x = 195 + (pseudoRandom(i * 97 + Math.floor(cycles)) - 0.5) * 52;
       const popping = phase > 0.85;
-      const radius = popping ? 3 + ((phase - 0.85) / 0.15) * 2 : 1.5 + phase * 1.8;
+      const radius = (popping ? 3 + ((phase - 0.85) / 0.15) * 2 : 1.5 + phase * 1.8) * bubbleSize;
       bubble.setAttribute('cx', fixed(x));
-      bubble.setAttribute('cy', fixed(580 - phase * 8));
+      bubble.setAttribute('cy', fixed(580 - phase * 8 * bubbleSize));
       bubble.setAttribute('r', fixed(radius));
       bubble.setAttribute('opacity', fixed(popping ? 0.85 * (1 - (phase - 0.85) / 0.15) : 0.85));
     });
+
+    // One big bubble after a cauldron tap: swells for 0.55 s, then pops.
+    const age = burstStart === null ? Infinity : t - burstStart;
+    if (age > 0.7) {
+      burst.setAttribute('opacity', '0');
+      burstStart = null;
+    } else {
+      burst.setAttribute('cy', fixed(reduced ? 578 : 578 - age * 18));
+      burst.setAttribute('r', fixed(3 + age * 9));
+      burst.setAttribute('opacity', fixed(age < 0.55 ? 0.9 : 0.9 * (1 - (age - 0.55) / 0.15)));
+    }
   };
 
   // age 0 → just leaving the chimney; age 1 → high, wide, and faded

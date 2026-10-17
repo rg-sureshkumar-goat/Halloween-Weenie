@@ -105,6 +105,13 @@ body {
 .scene-object .hit {
   fill: transparent;           /* invisible, but still catches taps */
 }
+/* Feedback animations pivot where the object would: the broom on its bristles, the raven on its perch. */
+#broom .art,
+#raven .art,
+#cauldron .art {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
 .scene-object:focus-visible .hit {
   stroke: var(--spell-accent);
   stroke-width: 2.5;
