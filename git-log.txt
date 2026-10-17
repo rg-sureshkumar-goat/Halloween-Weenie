@@ -1,3 +1,5 @@
+85a9325 2026-10-17 01:15:37 -0500 Phase 1: save the build session transcript
+9f7a6d8 2026-10-17 01:12:56 -0500 Phase 1: export git log
 1bb2e9e 2026-10-17 01:11:59 -0500 Checkpoint 7: credits, cleanup, and Phase 1 checklist
 a2c2ad2 2026-10-17 01:06:26 -0500 Checkpoint 6: ingredients, progress, and raven hints
 9a39a5a 2026-10-17 01:04:32 -0500 Checkpoint 6 (WIP): ingredients, progress, and raven hints for iPhone check

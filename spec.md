@@ -25,7 +25,7 @@ Define only enough to build and verify the current direction:
 
 Reference the brief's fixed requirements rather than copying them. Specify your decisions precisely enough that the Developer and Agent can judge the same result. Leave untested details open until they are needed, and distinguish provisional ideas from approved behavior.
 
-> **Status (Oct 18, 2026):** **Phase 1** contract, built and approved checkpoint by checkpoint (see `plan.md`). Everything below describes the shipped Phase 1 behavior. Full creative detail lives in `Weenie Project-Brief.md`; this file holds the rules and the checks.
+> **Status (Oct 17, 2026):** Final **Phase 1** contract, built and approved checkpoint by checkpoint (see `plan.md`) and **approved by the Developer on Oct 17, 2026**. Everything below describes the shipped Phase 1 behavior. Full creative detail lives in `Weenie Project-Brief.md`; this file holds the rules and the checks.
 
 ### User experience
 

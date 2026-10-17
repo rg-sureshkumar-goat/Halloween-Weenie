@@ -24,7 +24,7 @@ Record only what informs the next build decisions:
 
 Investigate unfamiliar techniques or asset sources as needed. Verify usage terms and keep source links and required credits here. Distinguish evidence from assumptions; the Agent's recommendation alone is not evidence.
 
-> **Status (Oct 18, 2026):** Seeded from `Weenie Project-Brief.md`; every Phase 1 decision below is now settled (see *Open decisions*). Items still open are for Phase 2.
+> **Status (Oct 17, 2026):** Final Phase 1 version, **approved by the Developer on Oct 17, 2026**. Every Phase 1 decision below is settled (see *Open decisions*); items still open are for Phase 2.
 
 ### Approved direction
 
@@ -90,7 +90,7 @@ Downloads go in `assets/audio/source/`. Processing (trim, fade, convert, level) 
 
 ### Fonts
 
-**Decided Oct 18:** system fonts throughout, so there is nothing to load or credit. A display font for the title (OFL, credited) remains a Phase 2 polish option.
+**Decided Oct 17:** system fonts throughout, so there is nothing to load or credit. A display font for the title (OFL, credited) remains a Phase 2 polish option.
 
 ### Open decisions (raise at the checkpoint where each matters)
 
