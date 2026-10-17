@@ -56,6 +56,7 @@ Layers 1–4 are one SVG and layers 6–7 a second SVG above the canvas. Both us
 
 - States: `START → SCENE → STORY → SCENE`, plus a `paused` flag over SCENE or STORY. One function owns every transition, so lock and unlock rules live in one place.
 - Objects respond only when `state === SCENE && !paused`. In STORY, only Play/Pause works.
+- `setState()` in `js/main.js` is that one function. It writes `data-mode` and `data-paused` on the stage, CSS shows the matching UI (start screen, pause overlay, Play/Pause icon), and the scene wrapper is made `inert` whenever objects must not respond, which blocks touch, keyboard, and screen readers in one step.
 - **One pausable clock** (`js/clock.js`, driven by `requestAnimationFrame`) schedules every timed thing: hints, random sounds, story timelines, effect spawns. There is no raw `setTimeout`/`setInterval` outside `clock.js`.
 - **Pause** stops input, CSS animations and Web Animations, the particle loop, the clock, and audio (`audioContext.suspend()`). **Resume** continues exactly where it stopped, including mid-story.
 - When the page is hidden (`visibilitychange`), it auto-pauses. On return the paused overlay shows and the User resumes it; it does not auto-resume.
@@ -86,6 +87,13 @@ Triggers, feedback, sequence beats, and hint rhymes follow `Weenie Project-Brief
 ### Input and accessibility
 
 Every object is focusable (`role="button"`, `tabindex="0"`, Enter and Space). Accessible names don't give the solution away. Hit areas are at least 44×44 CSS px. Focus rings are visible and on theme. Hint text is at least 16 px, AA contrast, `aria-live="polite"`. Play/Pause is labeled and reflects its state. Scene objects block double-tap zoom, long-press, and text selection. Full list: `Weenie Project-Brief.md` › *Input and accessibility*.
+
+Structure rules (CP2):
+
+- Each tappable object is `<g class="scene-object" role="button" tabindex="0" aria-label="…">` holding an invisible `.hit` rectangle and an `.art` group. Tap areas are axis-aligned, at least 50×50 scene units (≥ 44 CSS px on phones), and never overlap. Any static transform goes on `.art`, never on the object, so animations on the object can't overwrite it.
+- DOM order is tab order: Play/Pause, then objects top to bottom, left to right. The focus ring is drawn on the tap area, because Safari's outlines on SVG are unreliable.
+- Touch, mouse, and keyboard reach objects through one input path in `js/main.js`.
+- UI: Play/Pause sits top left. The pause overlay is passive; only Play/Pause resumes. The hint bubble is parchment with dark text (15.1:1 contrast), placed left of the raven, falling back to above the raven when there's less than 140 px beside it. *(Placement still open: left gives the longest hint 7 lines at phone width, above gives 3 lines but covers the moon. Decide at CP6.)*
 
 ### Assets
 

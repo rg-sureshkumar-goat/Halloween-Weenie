@@ -85,6 +85,7 @@ System fonts for UI and hints. A display font for the title is optional; if used
 | --- | --- | --- |
 | Ingredient order: required or any order | Required, revisit after playtest | CP6 |
 | Hint timing and final rhymes | 20 s / +45 s / +45 s; rhymes in brief | CP6 |
+| Hint bubble placement | Left of the raven (approved at CP2); compare with `?show=hint&bubble=above` | CP6 |
 | Start-screen title | "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | CP4 |
 | Final palette and look | **Decided Oct 17:** the brief's palette, approved on the Developer's iPhone | — |
 | Which ambient effects to keep | Decide on iPhone | CP3 |
