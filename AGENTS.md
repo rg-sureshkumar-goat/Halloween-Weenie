@@ -36,3 +36,22 @@ When user directs agent to save transcript, save entire text of current session 
 # Project
 
 Fill in as the project takes shape: how to run it locally, how to test it, and any commands or structure that aren't obvious from the code.
+
+- **Live URL:** https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ (GitHub Pages from `main`, root folder).
+- **Repo:** https://github.com/rg-sureshkumar-goat/Halloween-Weenie (public). Commits use the GitHub noreply address, set in this repo's local git config. Check `git config user.email` before committing from another machine.
+- **Docs:** `brief.md` holds the class requirements (source of truth). `Weenie Project-Brief.md` is the Developer's build brief and planned file layout. `research.md`, `spec.md`, and `plan.md` hold current decisions, behavior, and progress.
+
+**Run locally.** From the project root, then open http://localhost:8000/:
+
+```
+python3 -m http.server 8000
+```
+
+ES modules don't load from `file://`. Keep every path relative, because Pages serves the site from `/Halloween-Weenie/`.
+
+**Test.**
+- Phone layouts: use Claude's built-in browser with viewport emulation at 390×844 and 375×667. Take a screenshot and check the console for errors. The headless Chrome CLI can't render narrower than 500 px, so don't use it for phone screenshots.
+- `?dev=1` (from Checkpoint 5): dev-only story trigger and timing readouts.
+- Final check is the physical iPhone at the live URL. Only the Developer marks it done in `plan.md`.
+
+**Deploy.** Commit on `main` after checking for secrets, then `git push`. Pages rebuilds automatically, usually within a minute or two. Confirm with `curl -I <live URL>` (expect HTTP 200).
