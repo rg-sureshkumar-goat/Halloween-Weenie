@@ -1,0 +1,18 @@
+1bb2e9e 2026-10-17 01:11:59 -0500 Checkpoint 7: credits, cleanup, and Phase 1 checklist
+a2c2ad2 2026-10-17 01:06:26 -0500 Checkpoint 6: ingredients, progress, and raven hints
+9a39a5a 2026-10-17 01:04:32 -0500 Checkpoint 6 (WIP): ingredients, progress, and raven hints for iPhone check
+8eeda0c 2026-10-17 00:54:25 -0500 Checkpoint 5: Cauldron Brew sequence
+a112d8c 2026-10-17 00:52:39 -0500 Checkpoint 5 (WIP): Cauldron Brew sequence for pacing check
+e21ab0f 2026-10-17 00:44:06 -0500 Checkpoint 4: audio, Enter, and Play/Pause
+5f89b49 2026-10-17 00:42:20 -0500 Checkpoint 4 (WIP): audio, Enter, and pause-everything for iPhone check
+cca993c 2026-10-17 00:36:05 -0500 Checkpoint 3: ambient effects
+e09a3e3 2026-10-17 00:33:33 -0500 Checkpoint 3 (WIP): ambient effects and CC0 sound shortlist
+5734c7b 2026-10-17 00:21:39 -0500 Checkpoint 2: layers and UI shell
+a864163 2026-10-17 00:18:14 -0500 Checkpoint 2 (WIP): buttons, tap areas, and UI shell for iPhone check
+8298055 2026-10-17 00:06:23 -0500 Checkpoint 1: static scene approved
+3e1ab06 2026-10-17 00:04:06 -0500 Checkpoint 1 (WIP): detailed scene art for iPhone check
+3bccc51 2026-10-16 23:54:38 -0500 Checkpoint 1 (WIP): rough layout for iPhone check
+4582c37 2026-10-16 23:47:05 -0500 Checkpoint 0: seed research, spec, and plan from the build brief
+8f56872 2026-10-16 23:42:13 -0500 Checkpoint 0: fill in AGENTS.md Project section
+8af0702 2026-10-16 23:34:03 -0500 Checkpoint 0: placeholder page for GitHub Pages
+d6a5859 2026-10-16 23:33:53 -0500 Initial commit: Project 4 template files
