@@ -1,7 +1,10 @@
 // Virtual Hallo-weenie: boot, app state, and input wiring.
-// Checkpoint 2: state machine skeleton, Enter, Play/Pause (visual + input lock only), and one
-// input path for every scene object. Sound, motion, and the pausable clock arrive at CP3–CP4.
+// So far: state machine, Enter, Play/Pause (input lock + the clock that drives every effect),
+// ambient effects (CP3), and one input path for every scene object. Sound arrives at CP4.
 
+import { clock } from './clock.js';
+import { startEffects } from './effects.js';
+import { reducedMotion, onReducedMotionChange } from './motion.js';
 import { showHint, positionHint } from './hints.js';
 import { applyShowParam, initDevView } from './dev.js';
 
@@ -9,7 +12,7 @@ const stage = document.getElementById('stage');
 const sceneInteractive = document.getElementById('scene-interactive');
 const playPauseButton = document.getElementById('play-pause');
 const enterButton = document.getElementById('enter-button');
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const motionNote = document.getElementById('motion-note');
 
 // App state: START → SCENE → STORY → SCENE, with `paused` layered over SCENE or STORY.
 const state = { mode: 'START', paused: false };
@@ -22,6 +25,14 @@ function setState(changes) {
   stage.dataset.paused = String(state.paused);
   sceneInteractive.inert = !canInteract();
   playPauseButton.setAttribute('aria-label', state.paused ? 'Play' : 'Pause');
+
+  // Effects begin with the first Enter. The clock, and so every effect and timer, runs only
+  // while the scene is showing and not paused.
+  const inScene = state.mode !== 'START';
+  if (inScene) startEffects();
+  if (inScene && !state.paused) clock.start();
+  else clock.stop();
+
   positionHint();
 }
 
@@ -31,10 +42,8 @@ function canInteract() {
 
 // ---------- Start screen and Play/Pause ----------
 
-document.getElementById('motion-note').hidden = !reducedMotion.matches;
-reducedMotion.addEventListener('change', () => {
-  document.getElementById('motion-note').hidden = !reducedMotion.matches;
-});
+motionNote.hidden = !reducedMotion();
+onReducedMotionChange(reduced => { motionNote.hidden = !reduced; });
 
 enterButton.addEventListener('click', () => {
   setState({ mode: 'SCENE' });
@@ -68,7 +77,7 @@ function activateObject(object) {
 // Placeholder feedback until each object gets its own at CP6: a quick wiggle,
 // or a brief dim-and-return when the device asks for reduced motion.
 function pokeObject(object) {
-  const keyframes = reducedMotion.matches
+  const keyframes = reducedMotion()
     ? [{ opacity: 1 }, { opacity: 0.5 }, { opacity: 1 }]
     : [{ transform: 'scale(1)' }, { transform: 'scale(1.08) rotate(-2deg)' }, { transform: 'scale(1)' }];
   object.animate(keyframes, { duration: 320, easing: 'ease-out' });

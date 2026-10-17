@@ -70,9 +70,11 @@ body {
   height: 100%;
 }
 
-/* Layers above the scene objects never take taps (spec.md › Layer stack). */
+/* Layers above the scene objects never take taps (spec.md › Layer stack), and neither do
+   effect elements inside the scene (fog, smoke, bubbles, bats). */
 .particles,
-.scene-front {
+.scene-front,
+.effect {
   pointer-events: none;
 }
 

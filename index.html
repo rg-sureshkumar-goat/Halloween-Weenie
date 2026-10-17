@@ -95,6 +95,10 @@
           <stop offset="0" stop-color="#DCE6F2" stop-opacity="0.4"/>
           <stop offset="1" stop-color="#DCE6F2" stop-opacity="0"/>
         </radialGradient>
+        <radialGradient id="fog-gradient">
+          <stop offset="0" stop-color="#B8C7DA" stop-opacity="0.28"/>
+          <stop offset="1" stop-color="#B8C7DA" stop-opacity="0"/>
+        </radialGradient>
         <radialGradient id="pond-water" cx="0.6" cy="0.4">
           <stop offset="0" stop-color="#1E4256"/>
           <stop offset="1" stop-color="#0A1826"/>
@@ -160,6 +164,8 @@
             <circle cx="290" cy="160" r="3"/>
           </g>
         </g>
+        <!-- Bats cross the moon every 15–40 s; effects.js adds the bat shapes -->
+        <g id="bats" class="effect" fill="#070A14" opacity="0"></g>
       </g>
 
       <!-- 2. Far forest: three tree lines, paler with distance -->
@@ -224,8 +230,14 @@
         </g>
       </g>
 
-      <!-- 3. Fog band, behind the objects (CP3) -->
-      <g id="layer-fog-back"></g>
+      <!-- 3. Fog band, behind the objects. Wider than the scene so its drift never shows an edge. -->
+      <g id="layer-fog-back">
+        <g id="fog-back" class="effect" fill="url(#fog-gradient)">
+          <ellipse cx="60" cy="505" rx="150" ry="20"/>
+          <ellipse cx="240" cy="498" rx="170" ry="18"/>
+          <ellipse cx="400" cy="508" rx="140" ry="20"/>
+        </g>
+      </g>
 
       <!-- 4. Scene objects: the only layer that takes taps.
            Each tappable object is a focusable button (.scene-object) holding an invisible tap area (.hit,
@@ -281,6 +293,16 @@
             <rect x="176" y="478" width="38" height="4" fill="#141B28"/>
           </g>
         </g>
+        <!-- Chimney smoke: puffs rise from the chimney top and drift left (animated by effects.js) -->
+        <g id="chimney-smoke" class="effect" fill="#9AA6BC">
+          <circle cx="156" cy="246" r="6" opacity="0"/>
+          <circle cx="156" cy="246" r="6" opacity="0"/>
+          <circle cx="156" cy="246" r="6" opacity="0"/>
+          <circle cx="156" cy="246" r="6" opacity="0"/>
+          <circle cx="156" cy="246" r="6" opacity="0"/>
+          <circle cx="156" cy="246" r="6" opacity="0"/>
+        </g>
+
         <!-- Window glows spill onto the wall behind the panes -->
         <g id="window-glows">
           <circle id="window-glow-left" cx="165" cy="376" r="34" fill="url(#window-glow)"/>
@@ -383,9 +405,12 @@
             <ellipse id="cauldron-glow" cx="195" cy="578" rx="46" ry="14" fill="url(#brew-glow)"/>
             <ellipse cx="195" cy="580" rx="44" ry="10" fill="#10151F" stroke="#2A3448" stroke-width="3"/>
             <ellipse id="cauldron-brew" cx="195" cy="580" rx="38" ry="7" fill="url(#brew-dark)"/>
-            <g fill="#5A8A4A" opacity="0.8">
-              <circle cx="183" cy="579" r="2"/>
-              <circle cx="206" cy="581" r="1.5"/>
+            <!-- Bubbles rise and pop on the brew (animated by effects.js) -->
+            <g id="cauldron-bubbles" class="effect" fill="#6E9E5A">
+              <circle cx="183" cy="579" r="2" opacity="0"/>
+              <circle cx="195" cy="580" r="2" opacity="0"/>
+              <circle cx="206" cy="581" r="2" opacity="0"/>
+              <circle cx="190" cy="581" r="2" opacity="0"/>
             </g>
             <!-- Three rim runes, unlit. They light one by one as ingredients land. -->
             <g fill="none" stroke="#3B2F5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -461,14 +486,24 @@
     <svg class="layer scene-front" id="scene-front" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice"
          aria-hidden="true">
       <defs>
+        <radialGradient id="fog-gradient-front">
+          <stop offset="0" stop-color="#B8C7DA" stop-opacity="0.22"/>
+          <stop offset="1" stop-color="#B8C7DA" stop-opacity="0"/>
+        </radialGradient>
         <radialGradient id="vignette" cx="0.5" cy="0.45" r="0.75">
           <stop offset="0.6" stop-color="#000" stop-opacity="0"/>
           <stop offset="1" stop-color="#000" stop-opacity="0.5"/>
         </radialGradient>
       </defs>
 
-      <!-- 6. Fog band, in front of the objects (CP3) -->
-      <g id="layer-fog-front"></g>
+      <!-- 6. Fog band, in front of the objects: low, around the bottoms of the ring and pond -->
+      <g id="layer-fog-front">
+        <g id="fog-front" class="effect" fill="url(#fog-gradient-front)">
+          <ellipse cx="20" cy="748" rx="160" ry="24"/>
+          <ellipse cx="220" cy="756" rx="180" ry="22"/>
+          <ellipse cx="420" cy="746" rx="150" ry="24"/>
+        </g>
+      </g>
 
       <!-- 7. Foreground framing: gnarled branches in the top corners, tall grass along the bottom -->
       <g id="layer-foreground">

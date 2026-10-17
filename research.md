@@ -65,15 +65,28 @@ Reasons recorded in the brief: SVG stays sharp at any phone size, and a static s
 
 ### Sound sources
 
-Workflow and the full needs list are in `Weenie Project-Brief.md` › *Sound workflow* and *Phase 1 sound list*. Rule: CC0 or public domain only. Confirm the license on each sound's own page before listing it. Flag anything CC-BY or NC and don't use it. Credit every sound anyway in `CREDITS.md`.
+**Decided Oct 17 (Developer): hybrid sound design.** Simple effects are generated in code with Web Audio, so they need no files, downloads, or credits and can be tuned instantly. Only the five natural or voice sounds that synthesis can't fake convincingly use CC0 recordings. This replaces the brief's plan of sourcing all 18 sounds as files.
 
-To be filled at Checkpoint 3 (two options per sound):
+**Why the search ran through Openverse, not Freesound.** Freesound's `robots.txt` disallows automated access to `/search/` for every bot and blocks Claude's crawler entirely, and the site rate-limited the Agent's first few requests (HTTP 429). The Agent stopped and, with the Developer's OK, searched [Openverse's public API](https://api.openverse.org/v1/) with a CC0 filter instead. Openverse indexes Freesound and reports each sound's license. Its `robots.txt` also lists the audio API, most likely to keep search engines from indexing it. The Agent made 9 spaced requests.
 
-| Sound | Option | URL | Author | License (checked on page) | Length | Why it fits | Pick |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| *(none yet)* | | | | | | | |
+**License check.** Every option below is listed as CC0 1.0 by Openverse. That is evidence, not proof: the Developer confirms the CC0 badge on each Freesound page when downloading, then ticks *Confirmed*. The Agent could not listen to the clips, so its picks are based on length, tags, and recording context (it avoided traffic, voices, and dogs). The Developer picks by ear.
 
-Until the files arrive, generated Web Audio placeholder tones stand in. They need no credit.
+| Sound | Option | Author · length | Why it might fit | Confirmed CC0 on page |
+| --- | --- | --- | --- | --- |
+| Night bed (crickets) | [crickets.wav](https://freesound.org/people/Sclolex/sounds/210540) | Sclolex · 38 s | Tagged "loop", short enough to loop seamlessly and stay small | ☐ |
+| | [Gentle rich cricket and insects at night](https://freesound.org/people/The_Sound_Side/sounds/331444) | The_Sound_Side · 140 s | "Gentle" sits well under interaction sounds; would be trimmed to ~45 s | ☐ |
+| Owl hoot | [Owl Hooting](https://freesound.org/people/howebzar/sounds/415153) | howebzar · 6 s | Tawny owl, the classic storybook "hoo-hoo" | ☐ |
+| | [Tawny Owl](https://freesound.org/people/faxfaxfax/sounds/655380) | faxfaxfax · 7 s | Same species, a second take to compare | ☐ |
+| Creaking branch | [tree_creak_05](https://freesound.org/people/Department64/sounds/95263) | Department64 · 13 s | Tree creak in wind, short | ☐ |
+| | [Tree creaks](https://freesound.org/people/Sacha.Julien/sounds/726217) | Sacha.Julien · 62 s | Forest field recording; pick the best creak | ☐ |
+| Cackle (distant + spirit) | [witch cackle](https://freesound.org/people/ImATaco/sounds/701358) | ImATaco · 3 s | Tagged cartoon/funny/goofy: playful rather than menacing, right for ages 10+ | ☐ |
+| | [witchy laugh 4](https://freesound.org/people/ivanmilic/sounds/557524) | ivanmilic · 4 s | Part of a 7-take series by one voice, so the ambient and story cackles can differ but match | ☐ |
+| Raven caws (2–3) | [raven x3](https://freesound.org/people/nielstii/sounds/346318) | nielstii · 3 s | Three calls in one clip, so three variants from one file | ☐ |
+| | [Common Raven, Yellowstone](https://freesound.org/people/Nivatius/sounds/519591) | Nivatius · 13 s | A real raven's croak, deeper than a crow's caw | ☐ |
+
+**Generated in code (no files, no external credit):** the wind layer under the crickets, cauldron bubbling loop, toadstool "poink", moonflower chime, web twang (plucked-string synthesis), wrong-order "blorp", window flicker, broom twitch, Enter and Play/Pause clicks, boil-over rumble, spirit whoosh, suction "fwoop", and pop.
+
+Downloads go in `assets/audio/source/`. Processing (trim, fade, convert, level) happens once files arrive; tooling choice pending (ffmpeg needs installing; macOS's built-in `afconvert` is the alternative).
 
 ### Fonts
 

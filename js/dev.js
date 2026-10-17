@@ -4,9 +4,12 @@
 //   ?show=pause   open on the paused scene
 //   ?show=hint    open on the scene with the longest hint in the raven's bubble
 //   &bubble=left|above   force the hint bubble's placement (to compare the two)
-//   ?dev=1        readout (viewport, safe area, visible part of the scene) and tap-area checks:
-//                 every tap area outlined, problems in red, and listed in the readout
+//   ?motion=reduce       force the reduced-motion versions of every effect (read by motion.js)
+//   ?dev=1        readout (viewport, safe area, visible part of the scene), tap-area checks
+//                 (every tap area outlined, problems in red and listed), frame-rate stats, and
+//                 window.devClock for fast-forwarding time from the console
 
+import { clock } from './clock.js';
 import { forceHintSide } from './hints.js';
 
 const VIEWBOX = { width: 390, height: 844 };
@@ -24,10 +27,49 @@ export function applyShowParam({ setState, showHint }) {
   if (show === 'hint') showHint(LONGEST_HINT);
 }
 
+let layoutText = '';
+let framesText = 'frames: measuring…';
+
 export function initDevView() {
   document.documentElement.classList.add('dev');
+  window.devClock = clock;   // console access: devClock.advance(7000) fast-forwards 7 s
   updateDevView();
   addEventListener('resize', updateDevView);
+  requestAnimationFrame(measureFrames);
+}
+
+function renderReadout() {
+  document.getElementById('dev-readout').textContent = `${layoutText}\n${framesText}`;
+}
+
+// Frame-rate stats over the last 2 s while the clock runs: average fps and the longest frame.
+// Uses its own frame loop so it measures real frames, independent of the clock it is checking.
+const FRAME_WINDOW_MS = 2000;
+let frameLog = [];
+let lastFrame = null;
+let lastReport = 0;
+
+function measureFrames(timestamp) {
+  if (clock.running && lastFrame !== null) {
+    frameLog.push({ at: timestamp, length: timestamp - lastFrame });
+    frameLog = frameLog.filter(frame => frame.at > timestamp - FRAME_WINDOW_MS);
+  }
+  if (!clock.running) frameLog = [];
+  lastFrame = timestamp;
+
+  if (timestamp - lastReport > 500) {
+    lastReport = timestamp;
+    if (!clock.running) {
+      framesText = 'frames: clock stopped';
+    } else if (frameLog.length > 10) {
+      const span = (frameLog.at(-1).at - frameLog[0].at) / 1000;
+      const fps = (frameLog.length - 1) / span;
+      const longest = Math.max(...frameLog.map(frame => frame.length));
+      framesText = `frames: ${fps.toFixed(0)} fps avg · longest ${longest.toFixed(0)} ms (last 2 s)`;
+    }
+    renderReadout();
+  }
+  requestAnimationFrame(measureFrames);
 }
 
 function updateDevView() {
@@ -38,13 +80,14 @@ function updateDevView() {
   const round = Math.round;
   const list = names => (names.length ? names.join(', ') : 'none');
 
-  document.getElementById('dev-readout').textContent =
+  layoutText =
     `viewport ${innerWidth} × ${innerHeight}  (stage ${round(stage.width)} × ${round(stage.height)})\n` +
     `safe area t${top} r${right} b${bottom} l${left}\n` +
     `visible scene y ${round(visible.top)}–${round(visible.bottom)}, x ${round(visible.left)}–${round(visible.right)}\n` +
     `tap areas ${taps.count} · smallest ${round(taps.smallest.width)}×${round(taps.smallest.height)} px\n` +
     `under ${MIN_TAP_PX} px: ${list(taps.small)} · clipped: ${list(taps.clipped)}\n` +
     `overlapping: ${list(taps.overlapping)}`;
+  renderReadout();
 }
 
 // Measures every tap area on screen: too small, cropped off the stage, or overlapping another.
