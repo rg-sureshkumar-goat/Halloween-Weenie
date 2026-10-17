@@ -11,10 +11,11 @@
 <body>
   <noscript><p>Virtual Hallo-weenie needs JavaScript to run.</p></noscript>
 
-  <!-- CHECKPOINT 1 ROUGH LAYOUT: plain labeled shapes at the proposed positions.
-       Detailed art replaces these shapes once the layout is approved.
-       Layer order follows spec.md › Layer stack. The particle canvas (CP3) will sit
-       between the two SVGs, so fog-front and foreground live in a second SVG on top. -->
+  <!-- The Witch's Hollow. Cut-paper storybook style: flat silhouettes, soft gradients, glows.
+       Light comes only from the moon (cool, upper right) and from magic (amber windows, cauldron, glowing ingredients).
+       Layer order follows spec.md › Layer stack. The particle canvas (CP3) will sit between the two SVGs,
+       so fog-front and the foreground live in a second SVG on top. Glows are radial gradients, not blur
+       filters, which are slow to animate on iPhone. -->
   <div class="stage" id="stage">
 
     <!-- BACK SVG: sky, forest, ground, fog (behind), scene objects (the only tappable layer) -->
@@ -23,142 +24,408 @@
       <defs>
         <linearGradient id="sky-gradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#0E1230"/>
+          <stop offset="0.55" stop-color="#152745"/>
           <stop offset="1" stop-color="#1B3A4B"/>
         </linearGradient>
+        <radialGradient id="moon-halo">
+          <stop offset="0.35" stop-color="#DCE6F2" stop-opacity="0.22"/>
+          <stop offset="0.6" stop-color="#DCE6F2" stop-opacity="0.07"/>
+          <stop offset="1" stop-color="#DCE6F2" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="ground-gradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0D1A2A"/>
+          <stop offset="1" stop-color="#060A14"/>
+        </linearGradient>
+        <linearGradient id="footpath-gradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1A2A3C"/>
+          <stop offset="1" stop-color="#22344A"/>
+        </linearGradient>
+        <radialGradient id="window-glow">
+          <stop offset="0" stop-color="#FFB547" stop-opacity="0.55"/>
+          <stop offset="1" stop-color="#FFB547" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="window-pane" cx="0.5" cy="0.6" r="0.7">
+          <stop offset="0" stop-color="#FFD98A"/>
+          <stop offset="1" stop-color="#FFB547"/>
+        </radialGradient>
+        <radialGradient id="fire-glow">
+          <stop offset="0" stop-color="#FF8A2A" stop-opacity="0.45"/>
+          <stop offset="1" stop-color="#FF8A2A" stop-opacity="0"/>
+        </radialGradient>
+        <!-- Brew starts dark; it turns green, purple, then gold as ingredients land (spec.md › Cauldron Brew) -->
+        <radialGradient id="brew-dark" cx="0.5" cy="0.4">
+          <stop offset="0" stop-color="#3F6B37"/>
+          <stop offset="1" stop-color="#16241A"/>
+        </radialGradient>
+        <radialGradient id="brew-glow">
+          <stop offset="0" stop-color="#7CFF6B" stop-opacity="0.22"/>
+          <stop offset="1" stop-color="#7CFF6B" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="toadstool-glow">
+          <stop offset="0" stop-color="#7CFF6B" stop-opacity="0.4"/>
+          <stop offset="1" stop-color="#7CFF6B" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="moonlight-glow">
+          <stop offset="0" stop-color="#DCE6F2" stop-opacity="0.4"/>
+          <stop offset="1" stop-color="#DCE6F2" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="pond-water" cx="0.6" cy="0.4">
+          <stop offset="0" stop-color="#1E4256"/>
+          <stop offset="1" stop-color="#0A1826"/>
+        </radialGradient>
+
+        <!-- Reusable shapes. Fill comes from the <use> or its group. -->
+        <symbol id="pine" viewBox="0 0 40 100">
+          <path d="M20 0 L27 22 L23 22 L31 44 L26 44 L36 68 L28 68 L40 92 L22 92 L22 100 L18 100 L18 92 L0 92 L12 68 L4 68 L14 44 L9 44 L17 22 L13 22 Z"/>
+        </symbol>
+        <symbol id="small-mushroom" viewBox="0 0 20 16">
+          <rect x="8" y="7" width="4" height="9" fill="#9A97AA"/>
+          <path d="M1 8 Q10 -2 19 8 Q10 10 1 8 Z" fill="#6E6A84"/>
+          <circle cx="7" cy="5" r="1" fill="#B9B6C8"/>
+          <circle cx="13" cy="4.5" r="0.8" fill="#B9B6C8"/>
+        </symbol>
+        <symbol id="tuft" viewBox="0 0 20 12">
+          <path d="M0 12 L4 2 L6 12 L9 0 L11 12 L14 3 L16 12 L20 5 L19 12 Z"/>
+        </symbol>
       </defs>
 
       <!-- 1. Sky, stars, moon -->
       <g id="layer-sky">
         <rect width="390" height="844" fill="url(#sky-gradient)"/>
-        <g fill="#DCE6F2" opacity="0.6">
-          <circle cx="40" cy="150" r="1.2"/><circle cx="95" cy="110" r="1"/><circle cx="150" cy="170" r="1.4"/>
-          <circle cx="190" cy="95" r="1"/><circle cx="225" cy="200" r="1.1"/><circle cx="70" cy="240" r="1"/>
-          <circle cx="360" cy="230" r="1.2"/><circle cx="120" cy="280" r="0.9"/><circle cx="250" cy="120" r="1"/>
-          <circle cx="20" cy="300" r="1"/>
+        <g id="stars" fill="#DCE6F2">
+          <circle cx="372" cy="282" r="0.9" opacity="0.38"/>
+          <circle cx="375" cy="31" r="1.4" opacity="0.45"/>
+          <circle cx="365" cy="72" r="1.1" opacity="0.73"/>
+          <circle cx="18" cy="239" r="1.3" opacity="0.87"/>
+          <circle cx="267" cy="207" r="0.6" opacity="0.44"/>
+          <circle cx="47" cy="192" r="1.0" opacity="0.74"/>
+          <circle cx="162" cy="125" r="1.2" opacity="0.45"/>
+          <circle cx="228" cy="163" r="1.4" opacity="0.38"/>
+          <circle cx="384" cy="93" r="0.9" opacity="0.54"/>
+          <circle cx="215" cy="117" r="1.3" opacity="0.42"/>
+          <circle cx="85" cy="176" r="1.3" opacity="0.50"/>
+          <circle cx="198" cy="156" r="1.2" opacity="0.44"/>
+          <circle cx="219" cy="235" r="0.8" opacity="0.55"/>
+          <circle cx="367" cy="118" r="0.9" opacity="0.55"/>
+          <circle cx="74" cy="225" r="1.4" opacity="0.88"/>
+          <circle cx="128" cy="82" r="0.7" opacity="0.59"/>
+          <circle cx="42" cy="244" r="0.9" opacity="0.79"/>
+          <circle cx="336" cy="23" r="0.9" opacity="0.82"/>
+          <circle cx="293" cy="248" r="1.4" opacity="0.39"/>
+          <circle cx="181" cy="191" r="1.0" opacity="0.55"/>
+          <circle cx="163" cy="325" r="1.3" opacity="0.82"/>
+          <circle cx="313" cy="309" r="0.7" opacity="0.85"/>
+          <circle cx="307" cy="226" r="1.4" opacity="0.87"/>
+          <circle cx="296" cy="35" r="1.3" opacity="0.55"/>
+          <circle cx="261" cy="247" r="1.4" opacity="0.42"/>
+          <circle cx="107" cy="136" r="0.6" opacity="0.44"/>
+          <circle cx="94" cy="23" r="1.0" opacity="0.44"/>
+          <circle cx="147" cy="100" r="1.0" opacity="0.38"/>
+          <circle cx="147" cy="294" r="1.0" opacity="0.54"/>
+          <circle cx="91" cy="249" r="1.3" opacity="0.61"/>
         </g>
-        <circle class="blk" cx="300" cy="140" r="46" fill="#DCE6F2"/>
-        <text class="blk-label" x="300" y="144" style="fill:#0E1230">Moon</text>
+        <g id="moon">
+          <circle cx="300" cy="140" r="130" fill="url(#moon-halo)"/>
+          <circle cx="300" cy="140" r="46" fill="#DCE6F2"/>
+          <g fill="#C3CEDD">
+            <circle cx="286" cy="128" r="9"/>
+            <circle cx="314" cy="154" r="6"/>
+            <circle cx="308" cy="120" r="4"/>
+            <circle cx="290" cy="160" r="3"/>
+          </g>
+        </g>
       </g>
 
-      <!-- 2. Far forest: three tree-line bands, paler with distance -->
+      <!-- 2. Far forest: three tree lines, paler with distance -->
       <g id="layer-far-forest">
-        <rect class="blk" x="0" y="330" width="390" height="230" fill="#22465A"/>
-        <rect class="blk" x="0" y="390" width="390" height="170" fill="#163142"/>
-        <rect class="blk" x="0" y="440" width="390" height="120" fill="#0E2030"/>
-        <text class="blk-label" x="330" y="352">Far forest (3 bands)</text>
+        <g fill="#1A3448">
+          <rect x="0" y="462" width="390" height="100"/>
+          <use href="#pine" x="-8" y="370" width="40" height="100"/>
+          <use href="#pine" x="14" y="384" width="34" height="86"/>
+          <use href="#pine" x="34" y="358" width="45" height="112"/>
+          <use href="#pine" x="58" y="378" width="37" height="92"/>
+          <use href="#pine" x="80" y="366" width="42" height="104"/>
+          <use href="#pine" x="104" y="386" width="34" height="84"/>
+          <use href="#pine" x="126" y="372" width="39" height="98"/>
+          <use href="#pine" x="150" y="380" width="36" height="90"/>
+          <use href="#pine" x="172" y="362" width="43" height="108"/>
+          <use href="#pine" x="196" y="376" width="38" height="94"/>
+          <use href="#pine" x="218" y="370" width="40" height="100"/>
+          <use href="#pine" x="240" y="384" width="34" height="86"/>
+          <use href="#pine" x="262" y="360" width="44" height="110"/>
+          <use href="#pine" x="286" y="378" width="37" height="92"/>
+          <use href="#pine" x="308" y="366" width="42" height="104"/>
+          <use href="#pine" x="330" y="382" width="35" height="88"/>
+          <use href="#pine" x="352" y="368" width="41" height="102"/>
+          <use href="#pine" x="374" y="380" width="36" height="90"/>
+        </g>
+        <g fill="#112538">
+          <rect x="0" y="497" width="390" height="80"/>
+          <use href="#pine" x="-14" y="413" width="37" height="92"/>
+          <use href="#pine" x="16" y="425" width="32" height="80"/>
+          <use href="#pine" x="44" y="405" width="40" height="100"/>
+          <use href="#pine" x="76" y="421" width="34" height="84"/>
+          <use href="#pine" x="108" y="409" width="38" height="96"/>
+          <use href="#pine" x="140" y="427" width="31" height="78"/>
+          <use href="#pine" x="232" y="423" width="33" height="82"/>
+          <use href="#pine" x="262" y="407" width="39" height="98"/>
+          <use href="#pine" x="294" y="419" width="34" height="86"/>
+          <use href="#pine" x="326" y="405" width="40" height="100"/>
+          <use href="#pine" x="358" y="421" width="34" height="84"/>
+          <use href="#pine" x="380" y="411" width="38" height="94"/>
+        </g>
+        <g fill="#0A1828">
+          <use href="#pine" x="-20" y="452" width="35" height="88"/>
+          <use href="#pine" x="12" y="466" width="30" height="74"/>
+          <use href="#pine" x="42" y="448" width="37" height="92"/>
+          <use href="#pine" x="300" y="450" width="36" height="90"/>
+          <use href="#pine" x="330" y="464" width="30" height="76"/>
+          <use href="#pine" x="360" y="446" width="38" height="94"/>
+        </g>
       </g>
 
-      <!-- Ground: a low hill the cottage sits on -->
+      <!-- Ground: a low hill the cottage sits on, rim-lit by the moon -->
       <g id="layer-ground">
-        <path class="blk" d="M0 520 Q195 440 390 520 L390 844 L0 844 Z" fill="#0A1622"/>
+        <path d="M0 520 Q195 440 390 520 L390 844 L0 844 Z" fill="url(#ground-gradient)"/>
+        <path d="M0 520 Q195 440 390 520" fill="none" stroke="#2C4A62" stroke-width="1.5" stroke-opacity="0.7"/>
+        <g fill="#060A13">
+          <use href="#tuft" x="96" y="520" width="20" height="12"/>
+          <use href="#tuft" x="276" y="512" width="22" height="13"/>
+          <use href="#tuft" x="60" y="600" width="24" height="14"/>
+          <use href="#tuft" x="318" y="620" width="22" height="13"/>
+          <use href="#tuft" x="140" y="560" width="18" height="11"/>
+          <use href="#tuft" x="250" y="580" width="20" height="12"/>
+        </g>
       </g>
 
       <!-- 3. Fog band, behind the objects (CP3) -->
       <g id="layer-fog-back"></g>
 
-      <!-- 4. Scene objects. data-tappable marks everything Users will tap (CP2 adds buttons and hit areas). -->
+      <!-- 4. Scene objects. data-tappable marks everything Users will tap (CP2 adds buttons and hit areas).
+           Glows sit outside the tappable groups so they don't enlarge the tap targets. -->
       <g id="layer-objects">
 
-        <!-- Crooked tree with branch, left edge -->
-        <g id="tree">
-          <path class="blk" d="M0 600 L0 250 L30 240 L48 300 L52 420 L40 600 Z" fill="#070A14"/>
-          <path d="M40 330 Q90 300 150 335" stroke="#070A14" stroke-width="9" fill="none" stroke-linecap="round"/>
-          <text class="blk-label" x="8" y="232" style="text-anchor:start">Crooked tree</text>
+        <!-- Crooked tree, left edge, with a branch reaching toward the cottage -->
+        <g id="tree" fill="#070A14">
+          <path d="M0 612 L0 240 Q10 228 20 236 Q30 214 46 206 Q38 222 34 240 Q44 262 40 290 Q38 304 46 318
+                   L52 330 Q50 360 44 380 Q40 420 48 470 Q54 540 62 612 Z"/>
+          <path d="M44 322 Q80 296 118 306 Q140 312 156 330 Q150 331 146 328 Q130 318 112 316 Q84 312 50 340 Z"/>
+          <path d="M118 306 Q124 292 134 286 M140 316 Q150 306 162 306 M30 230 Q22 212 10 206"
+                fill="none" stroke="#070A14" stroke-width="2.5" stroke-linecap="round"/>
+          <ellipse cx="28" cy="420" rx="5" ry="8" fill="#03050B"/>
+          <path d="M46 318 L52 330 Q50 360 44 380 Q40 420 48 470" fill="none" stroke="#DCE6F2" stroke-opacity="0.18" stroke-width="1.2"/>
         </g>
+        <circle cx="100" cy="385" r="34" fill="url(#moonlight-glow)" opacity="0.5"/>
         <!-- Spider web hanging from the branch (ingredient 3) -->
-        <g id="web" data-tappable="Spider web">
-          <line x1="100" y1="317" x2="100" y2="363" stroke="#DCE6F2" stroke-opacity="0.6"/>
-          <circle cx="100" cy="385" r="22" fill="none" stroke="#DCE6F2" stroke-opacity="0.7"/>
-          <circle cx="100" cy="385" r="12" fill="none" stroke="#DCE6F2" stroke-opacity="0.5"/>
-          <path d="M78 385 H122 M100 363 V407 M84 369 L116 401 M116 369 L84 401" stroke="#DCE6F2" stroke-opacity="0.5"/>
+        <g id="web" data-tappable="Spider web" fill="none" stroke="#DCE6F2" stroke-linejoin="round">
+          <line x1="100" y1="314" x2="100" y2="364" stroke-opacity="0.55" stroke-width="0.8"/>
+          <path d="M100 385 L122 385 M100 385 L115.6 400.6 M100 385 L100 407 M100 385 L84.4 400.6
+                   M100 385 L78 385 M100 385 L84.4 369.4 M100 385 L100 363 M100 385 L115.6 369.4"
+                stroke-opacity="0.75" stroke-width="0.8"/>
+          <g stroke-opacity="0.6" stroke-width="0.7">
+            <polygon points="107,385 105,390 100,392 95,390 93,385 95,380 100,378 105,380"/>
+            <polygon points="112,385 108.5,393.5 100,397 91.5,393.5 88,385 91.5,376.5 100,373 108.5,376.5"/>
+            <polygon points="117,385 112,397 100,402 88,397 83,385 88,373 100,368 112,373"/>
+            <polygon points="121,385 114.8,399.8 100,406 85.2,399.8 79,385 85.2,370.2 100,364 114.8,370.2"/>
+          </g>
+          <g fill="#070A14" stroke="none">
+            <circle cx="106" cy="391" r="2"/>
+            <circle cx="108" cy="394" r="2.8"/>
+          </g>
+          <path d="M104 389 L101 387 M104 392 L101 393 M110 392 L113 390 M110 396 L113 397" stroke="#070A14" stroke-width="0.8"/>
         </g>
-        <text class="blk-label" x="100" y="424">Web</text>
 
-        <!-- Cottage: focal point -->
+        <!-- Footpath from the cottage door down to the cauldron -->
+        <g id="footpath">
+          <path d="M183 482 C176 505 214 520 200 545 C192 560 160 568 165 592 L228 592 C228 570 244 555 230 540
+                   C222 525 205 505 207 482 Z" fill="url(#footpath-gradient)" opacity="0.85"/>
+          <g fill="#2A3D54">
+            <ellipse cx="196" cy="500" rx="7" ry="3"/>
+            <ellipse cx="206" cy="523" rx="8" ry="3.5"/>
+            <ellipse cx="200" cy="548" rx="9" ry="4"/>
+          </g>
+        </g>
+
+        <!-- Cottage: focal point. Chimney first so the roof covers its base. -->
         <g id="cottage">
-          <rect class="blk" x="150" y="255" width="18" height="55" fill="#070A14" transform="rotate(-10 159 282)"/>
-          <polygon class="blk" points="120,340 195,232 270,340" fill="#070A14"/>
-          <rect class="blk" x="135" y="335" width="120" height="145" fill="#070A14"/>
-          <rect class="blk" x="180" y="420" width="30" height="60" fill="#2A1D12"/>
-          <text class="blk-label" x="195" y="500">Cottage (focal point)</text>
+          <g id="chimney" fill="#070A14">
+            <polygon points="146,304 146,258 166,252 170,300"/>
+            <polygon points="141,260 168,249 171,256 144,266"/>
+          </g>
+          <polygon points="138,340 252,334 258,480 132,480" fill="#070A14"/>
+          <path d="M150 340 L148 478 M176 338 L176 420 M214 336 L214 420 M240 335 L243 478"
+                stroke="#0E1424" stroke-width="1.2"/>
+          <path d="M132 480 L258 480 L257 470 L133 471 Z" fill="#0B111E"/>
+          <path d="M252 334 L258 480" stroke="#DCE6F2" stroke-opacity="0.22" stroke-width="1.5"/>
+          <path d="M112 344 Q168 312 195 234 Q216 300 280 336 Q248 346 196 341 Q150 347 112 344 Z" fill="#070A14"/>
+          <path d="M136 334 Q190 322 258 328 M160 312 Q195 304 238 310 M178 286 Q196 280 218 284"
+                fill="none" stroke="#0E1426" stroke-width="1.2"/>
+          <path d="M195 234 Q216 300 280 336" fill="none" stroke="#DCE6F2" stroke-opacity="0.3" stroke-width="1.5"/>
+          <!-- Door, slightly ajar with a sliver of warm light -->
+          <g id="door">
+            <path d="M180 480 L180 440 Q195 418 210 440 L210 480 Z" fill="#1A120C"/>
+            <path d="M190 426 L190 480 M200 426 L200 480" stroke="#0E0906" stroke-width="1"/>
+            <line x1="209" y1="438" x2="209" y2="480" stroke="#FFB547" stroke-width="1.5" stroke-opacity="0.8"/>
+            <circle cx="185" cy="456" r="1.5" fill="#FFB547"/>
+            <rect x="176" y="478" width="38" height="4" fill="#141B28"/>
+          </g>
+        </g>
+        <!-- Window glows spill onto the wall behind the panes -->
+        <g id="window-glows">
+          <circle id="window-glow-left" cx="165" cy="376" r="34" fill="url(#window-glow)"/>
+          <circle id="window-glow-right" cx="225" cy="376" r="34" fill="url(#window-glow)"/>
+          <circle id="window-glow-attic" cx="195" cy="302" r="26" fill="url(#window-glow)"/>
         </g>
         <!-- Three windows: Phase 2 story "The Cottage Wakes" -->
-        <rect id="window-left" data-tappable="Left window" x="152" y="360" width="26" height="32" fill="#FFB547"/>
-        <rect id="window-right" data-tappable="Right window" x="212" y="360" width="26" height="32" fill="#FFB547"/>
-        <rect id="window-attic" data-tappable="Attic window" x="185" y="290" width="20" height="24" fill="#FFB547"/>
-
-        <!-- Raven on the roof peak: hint giver -->
-        <g id="raven" data-tappable="Raven">
-          <ellipse cx="195" cy="222" rx="12" ry="9" fill="#070A14" stroke="#DCE6F2" stroke-opacity="0.5"/>
-          <polygon points="205,219 214,222 205,225" fill="#3A3A3A"/>
+        <g id="window-left" data-tappable="Left window" transform="rotate(-3 165 376)">
+          <rect x="152" y="360" width="26" height="32" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
+          <path d="M165 360 V392 M152 376 H178" stroke="#070A14" stroke-width="2.5"/>
         </g>
-        <text class="blk-label" x="195" y="205">Raven</text>
+        <g id="window-right" data-tappable="Right window" transform="rotate(2 225 376)">
+          <rect x="212" y="360" width="26" height="32" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
+          <path d="M225 360 V392 M212 376 H238" stroke="#070A14" stroke-width="2.5"/>
+        </g>
+        <g id="window-attic" data-tappable="Attic window">
+          <path d="M185 314 L185 298 Q195 286 205 298 L205 314 Z" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
+          <path d="M195 290 V314 M185 303 H205" stroke="#070A14" stroke-width="2"/>
+        </g>
 
-        <!-- Broom by the door: Phase 2 story "Broomstick Flight" -->
+        <!-- Raven perched on the roof peak: the hint giver -->
+        <g id="raven" data-tappable="Raven" fill="#070A14">
+          <path d="M186 226 L176 232 L178 226 L175 221 L186 222 Z"/>
+          <path d="M184 226 Q186 214 198 214 Q206 214 207 221 Q206 229 196 231 Q188 232 184 226 Z"/>
+          <circle cx="205" cy="214" r="6"/>
+          <polygon points="210,212 218,215 210,217"/>
+          <circle cx="206.5" cy="212.5" r="1.2" fill="#FFB547"/>
+          <path d="M194 231 V235 M198 231 V235" stroke="#070A14" stroke-width="1.2"/>
+          <path d="M188 218 Q196 212 204 210" fill="none" stroke="#DCE6F2" stroke-opacity="0.35" stroke-width="1"/>
+        </g>
+
+        <!-- Broom leaning by the door: Phase 2 story "Broomstick Flight" -->
         <g id="broom" data-tappable="Broom">
-          <line x1="270" y1="410" x2="262" y2="462" stroke="#8A6A3A" stroke-width="3"/>
-          <polygon points="252,462 272,462 276,482 248,482" fill="#B08A4A"/>
+          <path d="M271 408 Q268 436 263 462" fill="none" stroke="#3E2C1C" stroke-width="3.5" stroke-linecap="round"/>
+          <polygon points="252,463 273,463 277,482 247,482" fill="#6E5530"/>
+          <path d="M255 466 L251 481 M260 466 L258 481 M265 466 L265 481 M270 466 L272 481" stroke="#4A3820" stroke-width="1"/>
+          <rect x="253" y="460" width="19" height="4" rx="1" fill="#2E2014"/>
         </g>
-        <text class="blk-label" x="300" y="438">Broom</text>
 
         <!-- Cauldron over a small fire, front center -->
+        <circle cx="195" cy="656" r="62" fill="url(#fire-glow)"/>
         <g id="cauldron" data-tappable="Cauldron">
-          <ellipse cx="195" cy="648" rx="30" ry="10" fill="#FF7A1A" opacity="0.8"/>
-          <ellipse class="blk" cx="195" cy="610" rx="44" ry="36" fill="#070A14"/>
-          <ellipse cx="195" cy="578" rx="40" ry="9" fill="#7CFF6B" opacity="0.85"/>
-          <circle cx="175" cy="600" r="4" fill="#B46CFF" opacity="0.5"/>
-          <circle cx="195" cy="604" r="4" fill="#B46CFF" opacity="0.5"/>
-          <circle cx="215" cy="600" r="4" fill="#B46CFF" opacity="0.5"/>
-        </g>
-        <text class="blk-label" x="195" y="676">Cauldron + 3 runes</text>
-
-        <!-- Mushroom ring, lower left; the biggest mushroom is ingredient 1 -->
-        <g id="mushroom-ring">
-          <ellipse cx="85" cy="702" rx="48" ry="15" fill="none" stroke="#DCE6F2" stroke-opacity="0.3" stroke-dasharray="3 3"/>
-          <g fill="#C9B8A0" opacity="0.6">
-            <ellipse cx="42" cy="700" rx="6" ry="4"/><ellipse cx="60" cy="689" rx="6" ry="4"/>
-            <ellipse cx="88" cy="687" rx="7" ry="4"/><ellipse cx="62" cy="715" rx="6" ry="4"/>
-            <ellipse cx="100" cy="716" rx="6" ry="4"/>
+          <!-- Fire sits low between long legs so its flame tongues show beneath the pot -->
+          <g id="fire">
+            <rect x="168" y="658" width="56" height="8" rx="4" fill="#2A1C12" transform="rotate(-7 196 662)"/>
+            <rect x="168" y="658" width="56" height="8" rx="4" fill="#24180F" transform="rotate(7 196 662)"/>
+            <path d="M166 662 Q162 650 170 642 Q172 652 178 652 Q176 638 186 632 Q188 646 194 646 Q194 634 202 628
+                     Q204 642 210 644 Q212 636 220 632 Q226 646 224 662 Z" fill="#FF7A1A"/>
+            <path d="M178 662 Q178 652 186 646 Q188 654 194 654 Q196 646 202 642 Q208 654 210 662 Z" fill="#FFB547"/>
           </g>
-          <text class="blk-label" x="80" y="740">Mushroom ring</text>
+          <g fill="#070A14">
+            <rect x="161" y="632" width="6" height="28" rx="2"/>
+            <rect x="192" y="640" width="6" height="24" rx="2"/>
+            <rect x="223" y="632" width="6" height="28" rx="2"/>
+          </g>
+          <path d="M152 582 Q146 620 170 640 Q195 652 220 640 Q244 620 238 582 Z" fill="#070A14"/>
+          <path d="M224 594 Q236 604 232 622" fill="none" stroke="#DCE6F2" stroke-opacity="0.25" stroke-width="1.5"/>
+          <ellipse id="cauldron-glow" cx="195" cy="578" rx="46" ry="14" fill="url(#brew-glow)"/>
+          <ellipse cx="195" cy="580" rx="44" ry="10" fill="#10151F" stroke="#2A3448" stroke-width="3"/>
+          <ellipse id="cauldron-brew" cx="195" cy="580" rx="38" ry="7" fill="url(#brew-dark)"/>
+          <g fill="#5A8A4A" opacity="0.8">
+            <circle cx="183" cy="579" r="2"/>
+            <circle cx="206" cy="581" r="1.5"/>
+          </g>
+          <!-- Three rim runes, unlit. They light one by one as ingredients land. -->
+          <g fill="none" stroke="#3B2F5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path id="rune-1" d="M171 611 L175 601 L179 611 Z"/>
+            <path id="rune-2" d="M195 604 V620 M190 609 L195 613 L200 609"/>
+            <path id="rune-3" d="M211 602 L216 607 L211 611 L219 611"/>
+          </g>
         </g>
-        <g id="toadstool" data-tappable="Toadstool">
-          <rect x="124" y="696" width="8" height="14" fill="#C9B8A0"/>
-          <ellipse cx="128" cy="694" rx="14" ry="9" fill="#7CFF6B" opacity="0.8"/>
-        </g>
-        <text class="blk-label" x="128" y="678">Toadstool</text>
 
-        <!-- Pond with a moonflower at its edge, lower right; the moonflower is ingredient 2 -->
+        <!-- Mushroom ring, lower left -->
+        <g id="mushroom-ring">
+          <ellipse cx="85" cy="704" rx="48" ry="15" fill="#0B1522" opacity="0.8"/>
+          <use href="#small-mushroom" x="32" y="692" width="20" height="16"/>
+          <use href="#small-mushroom" x="51" y="681" width="18" height="14"/>
+          <use href="#small-mushroom" x="78" y="678" width="20" height="16"/>
+          <use href="#small-mushroom" x="52" y="707" width="20" height="16"/>
+          <use href="#small-mushroom" x="90" y="708" width="20" height="16"/>
+        </g>
+        <!-- The biggest mushroom glows: ingredient 1 -->
+        <circle cx="128" cy="694" r="28" fill="url(#toadstool-glow)"/>
+        <g id="toadstool" data-tappable="Toadstool">
+          <path d="M124 710 L125 698 L131 698 L132 710 Z" fill="#CFC6B0"/>
+          <path d="M113 698 Q114 684 128 683 Q142 684 143 698 Q128 702 113 698 Z" fill="#6FE25E"/>
+          <g fill="#E6FFE0">
+            <circle cx="122" cy="690" r="1.8"/>
+            <circle cx="131" cy="688" r="1.5"/>
+            <circle cx="137" cy="694" r="1.3"/>
+          </g>
+        </g>
+
+        <!-- Pond, lower right, with the moon's reflection and reeds -->
         <g id="pond">
-          <ellipse class="blk" cx="300" cy="702" rx="62" ry="18" fill="#1B3A4B"/>
-          <ellipse cx="318" cy="700" rx="10" ry="3" fill="#DCE6F2" opacity="0.4"/>
-          <text class="blk-label" x="318" y="745">Pond</text>
+          <ellipse cx="300" cy="702" rx="62" ry="18" fill="url(#pond-water)"/>
+          <ellipse cx="300" cy="702" rx="62" ry="18" fill="none" stroke="#2C4A62" stroke-opacity="0.6"/>
+          <ellipse cx="318" cy="698" rx="12" ry="3" fill="#DCE6F2" opacity="0.5"/>
+          <path d="M306 704 H330 M310 709 H326" stroke="#DCE6F2" stroke-opacity="0.25" stroke-width="1.2"/>
+          <g fill="#121A28">
+            <ellipse cx="262" cy="716" rx="6" ry="3"/>
+            <ellipse cx="286" cy="720" rx="7" ry="3"/>
+            <ellipse cx="318" cy="720" rx="6" ry="2.5"/>
+          </g>
+          <path d="M352 708 Q351 690 350 676 M358 708 Q359 690 360 672 M364 710 Q366 694 368 680"
+                fill="none" stroke="#070A14" stroke-width="2"/>
+          <g fill="#1A120C">
+            <rect x="348" y="674" width="4" height="10" rx="2"/>
+            <rect x="358" y="670" width="4" height="10" rx="2"/>
+          </g>
         </g>
+        <!-- Moonflower bud at the pond's edge: ingredient 2 -->
+        <circle cx="246" cy="686" r="22" fill="url(#moonlight-glow)"/>
         <g id="moonflower" data-tappable="Moonflower">
-          <line x1="246" y1="705" x2="246" y2="690" stroke="#4A7A5A" stroke-width="2"/>
-          <circle cx="246" cy="685" r="7" fill="#DCE6F2"/>
+          <path d="M246 706 Q244 698 246 690" fill="none" stroke="#3E6B4A" stroke-width="2"/>
+          <path d="M246 700 Q238 696 236 700 Q240 703 246 700 Z M246 698 Q254 694 256 698 Q252 701 246 698 Z" fill="#3E6B4A"/>
+          <path d="M246 677 Q240 682 241 688 Q246 692 251 688 Q252 682 246 677 Z" fill="#DCE6F2"/>
+          <path d="M246 678 Q244 684 246 691 M246 678 Q249 684 248 690" fill="none" stroke="#B8C4D8" stroke-width="0.7"/>
+          <ellipse cx="246" cy="689" rx="4" ry="2" fill="#B46CFF" opacity="0.5"/>
         </g>
-        <text class="blk-label" x="246" y="730">Moonflower</text>
       </g>
     </svg>
 
     <!-- 5. Particle canvas goes here at CP3 -->
 
-    <!-- FRONT SVG: fog (in front), foreground framing, dev guides. Never takes taps. -->
+    <!-- FRONT SVG: fog (in front), foreground framing, vignette, dev guides. Never takes taps. -->
     <svg class="layer scene-front" id="scene-front" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice"
          aria-hidden="true">
+      <defs>
+        <radialGradient id="vignette" cx="0.5" cy="0.45" r="0.75">
+          <stop offset="0.6" stop-color="#000" stop-opacity="0"/>
+          <stop offset="1" stop-color="#000" stop-opacity="0.5"/>
+        </radialGradient>
+      </defs>
+
       <!-- 6. Fog band, in front of the objects (CP3) -->
       <g id="layer-fog-front"></g>
 
-      <!-- 7. Foreground framing: dark branches in the top corners, tall grass along the bottom -->
-      <g id="layer-foreground" fill="#070A14">
-        <path class="blk" d="M0 0 L0 110 Q40 70 90 60 Q60 50 30 20 Q50 10 70 0 Z"/>
-        <path class="blk" d="M390 0 L390 120 Q350 80 300 70 Q330 55 355 25 Q340 10 320 0 Z"/>
-        <path class="blk" d="M0 844 L0 745 L10 770 L18 740 L28 772 L40 752 L52 778 L70 765 L90 784 L120 775 L150 790
-                             L195 782 L240 790 L270 775 L300 784 L320 765 L338 778 L350 752 L362 772 L372 740
-                             L380 770 L390 745 L390 844 Z"/>
-        <text class="blk-label" x="195" y="820">Foreground: branches + grass</text>
+      <!-- 7. Foreground framing: gnarled branches in the top corners, tall grass along the bottom -->
+      <g id="layer-foreground">
+        <g fill="#05070F" stroke="#05070F" stroke-linecap="round">
+          <path stroke="none" d="M0 0 L0 118 Q12 96 30 84 Q52 70 92 64 Q100 62 104 56 Q94 58 84 56 Q62 54 46 40
+                                 Q58 36 66 24 Q52 30 40 26 Q30 18 34 0 Z"/>
+          <path fill="none" stroke-width="2.5" d="M92 64 Q110 66 122 58 M66 24 Q74 14 86 12"/>
+          <path stroke="none" d="M390 0 L390 128 Q376 104 356 92 Q332 78 296 74 Q290 72 286 66 Q298 68 308 64
+                                 Q330 58 344 42 Q332 40 324 28 Q338 32 350 28 Q360 18 356 0 Z"/>
+          <path fill="none" stroke-width="2.5" d="M296 74 Q280 78 270 70 M324 28 Q316 18 304 16
+                                                  M338 50 Q322 78 316 108 Q312 118 304 122 M318 98 Q326 104 332 104"/>
+        </g>
+        <!-- Grass: back row slightly lighter, front row darkest (tips stay below y 735, clear of tappables) -->
+        <path fill="#0A1220" d="M0 844 L0 742 L4 742 L8 762 L11 740 L15 758 L18 742 L21 757 L26 749 L30 764 L34 743 L39 759 L42 747 L46 771 L51 752 L56 775 L59 749 L62 766 L66 758 L69 775 L74 759 L80 779 L85 759 L90 778 L93 763 L96 779 L101 761 L106 778 L111 762 L116 779 L121 761 L126 777 L131 764 L136 786 L141 767 L146 791 L149 766 L153 788 L156 766 L160 780 L165 764 L170 783 L175 769 L181 790 L186 766 L190 785 L196 763 L201 781 L206 771 L211 792 L216 762 L221 784 L225 767 L229 788 L232 766 L235 782 L239 770 L242 792 L246 768 L249 785 L255 768 L260 787 L265 759 L269 782 L275 764 L280 782 L284 757 L289 780 L292 763 L296 779 L299 759 L303 778 L307 762 L311 780 L315 755 L319 778 L324 754 L329 774 L334 756 L339 779 L345 746 L350 768 L354 748 L358 763 L363 749 L368 764 L372 746 L375 763 L379 745 L382 761 L385 740 L389 754 L389 736 L390 752 L390 844 Z"/>
+        <path fill="#05070F" d="M0 844 L0 748 L3 742 L7 765 L10 745 L14 765 L16 748 L19 768 L23 757 L28 774 L30 749 L33 770 L35 749 L38 772 L42 756 L46 772 L48 760 L51 774 L53 765 L56 780 L60 765 L63 787 L67 764 L70 783 L74 769 L78 785 L82 763 L87 786 L91 775 L95 791 L98 780 L101 802 L104 771 L107 788 L112 772 L116 786 L119 773 L122 791 L127 781 L131 796 L135 777 L139 794 L141 784 L144 808 L148 788 L152 804 L155 789 L157 811 L160 783 L163 801 L166 781 L169 796 L173 790 L176 808 L179 788 L182 812 L186 788 L190 811 L193 786 L196 809 L200 791 L204 814 L207 788 L210 810 L213 787 L216 802 L219 783 L221 800 L225 786 L229 804 L233 784 L238 803 L242 787 L246 802 L250 777 L255 793 L258 777 L260 801 L263 773 L266 796 L270 780 L274 795 L276 771 L279 787 L283 780 L287 802 L290 777 L294 793 L298 779 L302 795 L306 766 L309 786 L312 763 L315 779 L318 771 L320 789 L323 771 L325 788 L329 769 L333 787 L337 755 L341 776 L345 758 L349 773 L352 763 L354 786 L358 748 L362 762 L366 751 L370 773 L373 741 L376 756 L379 742 L383 765 L387 740 L390 762 L390 844 Z"/>
       </g>
+
+      <!-- Storybook vignette: darkens the edges to pull the eye to the cottage -->
+      <rect width="390" height="844" fill="url(#vignette)"/>
 
       <!-- Dev view (?dev=1): the region still visible at 375×667, plus tappable outlines drawn by js/main.js -->
       <g id="dev-overlay" class="dev-only">

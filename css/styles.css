@@ -75,20 +75,6 @@ body {
   }
 }
 
-/* Rough-layout (blockout) styling: faint outlines so positions read clearly.
-   Removed when the detailed art replaces the blockout. */
-.blk {
-  stroke: var(--moonlight);
-  stroke-opacity: 0.35;
-  stroke-width: 1;
-}
-.blk-label {
-  fill: var(--moonlight);
-  font-size: 11px;
-  font-family: inherit;
-  text-anchor: middle;
-}
-
 /* Dev view (?dev=1): visible-area guide, tappable outlines, and readout. */
 .dev-only {
   display: none;
