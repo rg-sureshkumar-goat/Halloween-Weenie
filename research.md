@@ -55,12 +55,12 @@ Reasons recorded in the brief: SVG stays sharp at any phone size, and a static s
 | Free GitHub Pages needs a public repo | **Verified Oct 16, 2026** ([GitHub Docs](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site)): on GitHub Free the repo must be public; a private repo needs a paid plan, and the site is still publicly visible | Resolved |
 | Pages serves the site from `/<repo>/`, so all paths must be relative | Assumption | CP0, live URL loads assets |
 | iOS Safari only starts Web Audio inside a user gesture (Enter tap) | Well established; untested here | CP4 on iPhone |
-| The ringer/silent switch mutes Web Audio unless `navigator.audioSession.type = "playback"` is set | **Unverified.** Support and behavior need checking | CP4 on iPhone; fallback is a start-screen note |
+| The ringer/silent switch mutes Web Audio unless `navigator.audioSession.type = "playback"` is set | **Fact-checked Oct 17:** WebKit treats Web Audio as "ambient" (obeys the switch); setting `playback` is the documented fix ([MDN](https://developer.mozilla.org/docs/Web/API/AudioSession/type), [WebKit bug 237322](https://auto-bugs.webkit.org/show_bug.cgi?id=237322)). Implemented at CP4; **iPhone result not yet reported** | Developer's iPhone listening test |
 | `AudioBufferSourceNode.loop` is gapless; `<audio loop>` is not | Well established; untested here | CP4, by ear |
 | iOS Reduce Motion is exposed as `prefers-reduced-motion: reduce` | Well established; untested here | CP4 on iPhone |
 | Animating SVG blur filters is slow on iPhone, while `transform`/`opacity` stay smooth | Assumption | CP3 on iPhone |
 | Safari's toolbars make the real viewport shorter than the screen (390×844 phone ≠ 390×844 viewport) | **Checked Oct 17:** the `?dev=1` view on the Developer's iPhone reported no tappable object clipped. Exact viewport numbers were not recorded. In emulation, an estimated SE-size Safari viewport (375×548) would clip the toadstool | Resolved for the Developer's iPhone; recheck on other phones at the playtest |
-| GitHub Pages caching | **Observed Oct 17:** `cache-control: max-age=600`. For up to 10 min after a deploy, browsers can show the previous files, and can mix a new page with an old stylesheet | For now, add a new `?v=…` when checking a fresh deploy. Versioned asset links proposed at CP4 |
+| GitHub Pages caching (fixed at CP4 with versioned file links and an import map) | **Observed Oct 17:** `cache-control: max-age=600`. For up to 10 min after a deploy, browsers can show the previous files, and can mix a new page with an old stylesheet | For now, add a new `?v=…` when checking a fresh deploy. Versioned asset links proposed at CP4 |
 | Headless Chrome CLI (`--screenshot --window-size=390,844`) gives phone-width screenshots | **Failed Oct 16, 2026:** new headless mode laid the page out 500 px wide and cropped it. The built-in browser's viewport emulation reported exactly 390×844 and 375×667, so it's the screenshot tool for now | Resolved |
 
 ### Sound sources
@@ -99,7 +99,7 @@ System fonts for UI and hints. A display font for the title is optional; if used
 | Ingredient order: required or any order | Required, revisit after playtest | CP6 |
 | Hint timing and final rhymes | 20 s / +45 s / +45 s; rhymes in brief | CP6 |
 | Hint bubble placement | Left of the raven (approved at CP2); compare with `?show=hint&bubble=above` | CP6 |
-| Start-screen title | "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | CP4 |
+| Start-screen title | **Decided Oct 17:** "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | — |
 | Final palette and look | **Decided Oct 17:** the brief's palette, approved on the Developer's iPhone | — |
 | Which ambient effects to keep | **Decided Oct 17:** all five (fog, candlelight, smoke and bubbles, fireflies, bats); the Developer checked them on the iPhone and said "this is good" | — |
 | Commit original sound files or only processed MP3s | Proposed: commit only processed files; keep `assets/audio/source/` out of git | When the files arrive |

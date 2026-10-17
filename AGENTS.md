@@ -54,4 +54,4 @@ ES modules don't load from `file://`. Keep every path relative, because Pages se
 - `?dev=1` (from Checkpoint 5): dev-only story trigger and timing readouts.
 - Final check is the physical iPhone at the live URL. Only the Developer marks it done in `plan.md`.
 
-**Deploy.** Commit on `main` after checking for secrets, then `git push`. Pages rebuilds automatically, usually within a minute or two. Confirm with `curl -I <live URL>` (expect HTTP 200). Pages tells browsers to cache files for 10 minutes, so when checking a fresh deploy on the iPhone, add a new query such as `?v=cp2` to the URL.
+**Deploy.** If any CSS or JS changed, bump the version number `?v=N` on every CSS/JS link in `index.html` (stylesheet, import map, and main script; one search-and-replace). Commit on `main` after checking for secrets, then `git push`. Pages rebuilds automatically, usually within a minute or two. Confirm with `curl -I <live URL>` (expect HTTP 200). Pages tells browsers to cache files for 10 minutes, so when checking a fresh deploy on the iPhone, add a new query such as `?v=cp2` to the URL.

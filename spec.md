@@ -70,9 +70,12 @@ Layers 1–4 are one SVG and layers 6–7 a second SVG above the canvas. Both us
 
 ### Audio
 
-- One `AudioContext`, created or resumed inside the Enter tap. Three gain channels (ambience, interactions, story) feed a master gain. Ambience sits well below interactions and ducks slightly during the story *(amount provisional)*.
-- The ambience bed loops through `AudioBufferSourceNode.loop`. Random one-shots play every 15–40 s; the raven caw is skipped while a hint is showing.
-- Files are MP3, about 2 MB total. Generated placeholder tones stand in until the real files arrive.
+- One `AudioContext` (`js/audio.js`), created inside the Enter tap after setting `navigator.audioSession.type = "playback"` where supported, so the silent switch doesn't mute it. Three gain channels feed a master gain: ambience 0.35, interactions 0.9, story 0.9. Ambience ducks slightly during the story *(amount provisional, CP5)*.
+- Hybrid sound design (`research.md` › *Sound sources*). `js/synth.js` generates the wind, the cauldron bubbling loop, the UI clicks, and, until the downloads are processed, stand-ins for the five recordings. `js/soundscape.js` lists processed recordings in `RECORDINGS`; each empty slot uses its stand-in, so the app never requests a missing file. A file that fails to load is logged once and replaced by its stand-in.
+- The night bed and bubbling loop through `AudioBufferSourceNode.loop` (gapless). A random ambient one-shot plays every 15–40 s on the clock, never the same one twice in a row. The raven caw is skipped while a hint is showing (hook `setOneShotFilter`, wired at CP6).
+- **Pause** (in `setState()`) stops the clock, suspends audio (a Pause click still playing finishes first), and pauses Web Animations. **Play** reverses all three. Hiding the page (`visibilitychange`) or the system interrupting audio pauses automatically. The start screen says "Best with sound on.", plus "and silent mode off" where `navigator.audioSession` is unavailable.
+- Recorded files: about 2 MB total. AAC (`.m4a`) via macOS `afconvert` is the proposed format; MP3 via ffmpeg is the alternative. Decide when the files arrive.
+- Every CSS and JS link in `index.html` carries `?v=N`, and an import map applies it to module imports. Bump N on every deploy that changes CSS or JS, so phones never mix cached and new files.
 
 ### Cauldron Brew (Phase 1 story)
 
