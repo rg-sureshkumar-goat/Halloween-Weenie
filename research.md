@@ -101,8 +101,8 @@ System fonts for UI and hints. A display font for the title is optional; if used
 | Hint bubble placement | Left of the raven (approved at CP2); compare with `?show=hint&bubble=above` | CP6 |
 | Start-screen title | "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | CP4 |
 | Final palette and look | **Decided Oct 17:** the brief's palette, approved on the Developer's iPhone | — |
-| Which ambient effects to keep | Decide on iPhone | CP3 |
-| Commit original sound files or only processed MP3s | Undecided | CP3 |
+| Which ambient effects to keep | **Decided Oct 17:** all five (fog, candlelight, smoke and bubbles, fireflies, bats); the Developer checked them on the iPhone and said "this is good" | — |
+| Commit original sound files or only processed MP3s | Proposed: commit only processed files; keep `assets/audio/source/` out of git | When the files arrive |
 | Phase 2 due date | Unknown | — |
 
 ## Revisions

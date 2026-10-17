@@ -61,6 +61,13 @@ Layers 1–4 are one SVG and layers 6–7 a second SVG above the canvas. Both us
 - **Pause** stops input, CSS animations and Web Animations, the particle loop, the clock, and audio (`audioContext.suspend()`). **Resume** continues exactly where it stopped, including mid-story.
 - When the page is hidden (`visibilitychange`), it auto-pauses. On return the paused overlay shows and the User resumes it; it does not auto-resume.
 
+### Ambient effects (CP3)
+
+- Five effects, all kept: two fog bands (one behind the objects, one low in front), window candlelight, chimney smoke with cauldron bubbles, 15 fireflies on the particle canvas (by the ring and pond), and a five-bat flock crossing the moon. The first flight comes 6 s after Enter, then every 15–40 s.
+- Every effect moves on the clock (`js/effects.js`), using only transform and opacity. They start on the first Enter, and stopping the clock (Pause) freezes them all.
+- Reduced motion is read on every frame through `js/motion.js` (device setting, or `?motion=reduce` for testing). Fog only fades, bats fade in on the moon, smoke changes opacity in place, bubbles are off, the windows pulse slowly, and fireflies pulse in place.
+- `clock.advance(ms)` (dev tools only, exposed as `devClock` with `?dev=1`) fast-forwards time in simulated frames, for checking timers without waiting.
+
 ### Audio
 
 - One `AudioContext`, created or resumed inside the Enter tap. Three gain channels (ambience, interactions, story) feed a master gain. Ambience sits well below interactions and ducks slightly during the story *(amount provisional)*.
