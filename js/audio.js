@@ -69,6 +69,13 @@ export function channel(name) {
   return channels[name];
 }
 
+// Lowers the ambience to `fraction` of its normal level (1 restores it), gliding over ~`seconds`.
+// The glide runs on audio time, so it freezes with everything else when paused.
+export function setAmbienceLevel(fraction, seconds = 0.5) {
+  if (!ctx) return;
+  channels.ambience.gain.setTargetAtTime(CHANNEL_LEVELS.ambience * fraction, ctx.currentTime, seconds / 3);
+}
+
 // For the dev view's level meter.
 export function masterOutput() {
   return master;

@@ -131,15 +131,113 @@ export const placeholders = {
     }
     return last;
   },
-  // A raven caw, at a slightly different pitch each time.
-  caw(ctx, out) {
-    const pitch = 0.9 + Math.random() * 0.25;
+  // A raven caw, at a slightly different pitch each time unless one is given.
+  caw(ctx, out, { pitch = 0.9 + Math.random() * 0.25 } = {}) {
     return tone(ctx, out, { type: 'sawtooth', from: 780 * pitch, to: 520 * pitch, duration: 0.28, peak: 0.28,
                             attack: 0.02, bandpass: 1600 });
   },
 };
 
+// Story sounds (Cauldron Brew). Generated, not stand-ins.
+export const storySounds = {
+  // Rising bubbling rumble under the boil-over: low noise opening up plus a climbing sub tone.
+  rumble(ctx, out, { duration = 2 } = {}) {
+    const start = ctx.currentTime;
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer(ctx);
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(180, start);
+    filter.frequency.exponentialRampToValueAtTime(900, start + duration);
+    const level = swellEnvelope(ctx, start, duration, 0.5);
+    noise.connect(filter).connect(level).connect(out);
+    noise.start(start);
+    noise.stop(start + duration + 0.1);
+    tone(ctx, out, { from: 55, to: 120, duration, peak: 0.3, attack: duration * 0.8 });
+  },
+
+  // Whoosh as the spirit flies, panned from one side to the other.
+  whoosh(ctx, out, { duration = 1.3, panFrom = -0.7, panTo = 0.7 } = {}) {
+    const start = ctx.currentTime;
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer(ctx);
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.Q.value = 1.2;
+    filter.frequency.setValueAtTime(400, start);
+    filter.frequency.exponentialRampToValueAtTime(2400, start + duration * 0.5);
+    filter.frequency.exponentialRampToValueAtTime(600, start + duration);
+    const level = bellEnvelope(ctx, start, duration, 0.45);
+    const pan = ctx.createStereoPanner();
+    pan.pan.setValueAtTime(panFrom, start);
+    pan.pan.linearRampToValueAtTime(panTo, start + duration);
+    noise.connect(filter).connect(level).connect(pan).connect(out);
+    noise.start(start);
+    noise.stop(start + duration + 0.1);
+  },
+
+  // Magical shimmer: a quick rising run of bell-like notes.
+  shimmer(ctx, out) {
+    const notes = [1047, 1175, 1319, 1568, 1760, 2093, 2349];
+    notes.forEach((frequency, i) => {
+      tone(ctx, out, { from: frequency, to: frequency * 1.003, at: i * 0.07, duration: 0.45, peak: 0.12, attack: 0.005 });
+    });
+  },
+
+  // Reverse "fwoop" as the spirit is sucked back down: a falling sweep that swells, then cuts.
+  fwoop(ctx, out, { duration = 1.2 } = {}) {
+    const start = ctx.currentTime;
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer(ctx);
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.Q.value = 2;
+    filter.frequency.setValueAtTime(2400, start);
+    filter.frequency.exponentialRampToValueAtTime(260, start + duration);
+    const level = swellEnvelope(ctx, start, duration, 0.5);
+    noise.connect(filter).connect(level).connect(out);
+    noise.start(start);
+    noise.stop(start + duration + 0.1);
+    tone(ctx, out, { from: 900, to: 140, duration, peak: 0.18, attack: duration * 0.85 });
+  },
+
+  // The POP as the spirit vanishes into the pot.
+  pop(ctx, out) {
+    tone(ctx, out, { from: 620, to: 80, duration: 0.12, peak: 0.6, attack: 0.003 });
+    const start = ctx.currentTime;
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer(ctx);
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 1500;
+    const level = ctx.createGain();
+    level.gain.setValueAtTime(0.4, start);
+    level.gain.exponentialRampToValueAtTime(0.0001, start + 0.04);
+    noise.connect(filter).connect(level).connect(out);
+    noise.start(start);
+    noise.stop(start + 0.06);
+  },
+};
+
 // ---------- Helpers ----------
+
+// Gain that swells from silence to `peak` over `duration`, then cuts off quickly.
+function swellEnvelope(ctx, start, duration, peak) {
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(peak, start + duration * 0.9);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration + 0.08);
+  return gain;
+}
+
+// Gain that rises to `peak` at the midpoint and falls back, like a bell curve.
+function bellEnvelope(ctx, start, duration, peak) {
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(peak, start + duration * 0.5);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+  return gain;
+}
 
 // One oscillator with a pitch glide and a smooth attack/decay envelope, optionally filtered.
 function tone(ctx, out, { type = 'sine', from, to = from, at = 0, duration, peak, attack = 0.01, bandpass = null }) {

@@ -9,22 +9,24 @@
        GitHub Pages lets browsers cache files for 10 minutes, so this makes a phone fetch all the new
        files together instead of mixing a new page with an old script. The import map applies the
        version to module imports inside the scripts. -->
-  <link rel="stylesheet" href="css/styles.css?v=4">
+  <link rel="stylesheet" href="css/styles.css?v=5">
   <script type="importmap">
     {
       "imports": {
-        "./js/audio.js": "./js/audio.js?v=4",
-        "./js/clock.js": "./js/clock.js?v=4",
-        "./js/dev.js": "./js/dev.js?v=4",
-        "./js/effects.js": "./js/effects.js?v=4",
-        "./js/hints.js": "./js/hints.js?v=4",
-        "./js/motion.js": "./js/motion.js?v=4",
-        "./js/soundscape.js": "./js/soundscape.js?v=4",
-        "./js/synth.js": "./js/synth.js?v=4"
+        "./js/audio.js": "./js/audio.js?v=5",
+        "./js/clock.js": "./js/clock.js?v=5",
+        "./js/dev.js": "./js/dev.js?v=5",
+        "./js/effects.js": "./js/effects.js?v=5",
+        "./js/hints.js": "./js/hints.js?v=5",
+        "./js/motion.js": "./js/motion.js?v=5",
+        "./js/soundscape.js": "./js/soundscape.js?v=5",
+        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=5",
+        "./js/synth.js": "./js/synth.js?v=5",
+        "./js/timeline.js": "./js/timeline.js?v=5"
       }
     }
   </script>
-  <script type="module" src="js/main.js?v=4"></script>
+  <script type="module" src="js/main.js?v=5"></script>
 </head>
 <body>
   <noscript><p>Virtual Hallo-weenie needs JavaScript to run.</p></noscript>
@@ -105,6 +107,15 @@
         <radialGradient id="brew-glow">
           <stop offset="0" stop-color="#7CFF6B" stop-opacity="0.22"/>
           <stop offset="1" stop-color="#7CFF6B" stop-opacity="0"/>
+        </radialGradient>
+        <!-- Story: the brew turns gold as it boils over -->
+        <radialGradient id="brew-gold-fill" cx="0.5" cy="0.4">
+          <stop offset="0" stop-color="#FFE58A"/>
+          <stop offset="1" stop-color="#E0A82E"/>
+        </radialGradient>
+        <radialGradient id="brew-glow-gold">
+          <stop offset="0" stop-color="#FFD24A" stop-opacity="0.55"/>
+          <stop offset="1" stop-color="#FFD24A" stop-opacity="0"/>
         </radialGradient>
         <radialGradient id="toadstool-glow">
           <stop offset="0" stop-color="#7CFF6B" stop-opacity="0.4"/>
@@ -424,6 +435,19 @@
             <ellipse id="cauldron-glow" cx="195" cy="578" rx="46" ry="14" fill="url(#brew-glow)"/>
             <ellipse cx="195" cy="580" rx="44" ry="10" fill="#10151F" stroke="#2A3448" stroke-width="3"/>
             <ellipse id="cauldron-brew" cx="195" cy="580" rx="38" ry="7" fill="url(#brew-dark)"/>
+            <!-- Story: gold brew and glow (faded in by the Cauldron Brew sequence) -->
+            <g id="brew-gold" opacity="0">
+              <ellipse cx="195" cy="576" rx="56" ry="20" fill="url(#brew-glow-gold)"/>
+              <ellipse cx="195" cy="580" rx="38" ry="7" fill="url(#brew-gold-fill)"/>
+            </g>
+            <!-- Story: drips that spill over the rim during the boil-over -->
+            <g id="brew-spill" fill="#E8C24A" opacity="0">
+              <path d="M161 585 q3 7 0 11 q-3 -4 0 -11 Z"/>
+              <path d="M177 589 q3 8 0 12 q-3 -4 0 -12 Z"/>
+              <path d="M196 590 q3 9 0 13 q-3 -4 0 -13 Z"/>
+              <path d="M214 589 q3 7 0 11 q-3 -4 0 -11 Z"/>
+              <path d="M229 585 q3 8 0 12 q-3 -4 0 -12 Z"/>
+            </g>
             <!-- Bubbles rise and pop on the brew (animated by effects.js) -->
             <g id="cauldron-bubbles" class="effect" fill="#6E9E5A">
               <circle cx="183" cy="579" r="2" opacity="0"/>
@@ -509,6 +533,30 @@
           <stop offset="0" stop-color="#B8C7DA" stop-opacity="0.22"/>
           <stop offset="1" stop-color="#B8C7DA" stop-opacity="0"/>
         </radialGradient>
+        <!-- Story: smoke spirit, dimming, flash, and shimmer -->
+        <linearGradient id="spirit-body" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#D4FFC8" stop-opacity="0.95"/>
+          <stop offset="0.45" stop-color="#7CFF6B" stop-opacity="0.85"/>
+          <stop offset="1" stop-color="#7CFF6B" stop-opacity="0"/>
+        </linearGradient>
+        <radialGradient id="spirit-glow">
+          <stop offset="0" stop-color="#7CFF6B" stop-opacity="0.4"/>
+          <stop offset="1" stop-color="#7CFF6B" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="story-dim-gradient" cx="0.5" cy="0.68" r="0.85">
+          <stop offset="0" stop-color="#05060D" stop-opacity="0.15"/>
+          <stop offset="1" stop-color="#05060D" stop-opacity="0.85"/>
+        </radialGradient>
+        <radialGradient id="story-flash-gradient">
+          <stop offset="0" stop-color="#FFF3B0" stop-opacity="0.95"/>
+          <stop offset="0.5" stop-color="#FFD24A" stop-opacity="0.45"/>
+          <stop offset="1" stop-color="#FFD24A" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="story-shimmer-gradient" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+          <stop offset="0.5" stop-color="#FFF6D0" stop-opacity="0.28"/>
+          <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+        </linearGradient>
         <radialGradient id="vignette" cx="0.5" cy="0.45" r="0.75">
           <stop offset="0.6" stop-color="#000" stop-opacity="0"/>
           <stop offset="1" stop-color="#000" stop-opacity="0.5"/>
@@ -543,6 +591,39 @@
       <!-- Storybook vignette: darkens the edges to pull the eye to the cottage -->
       <rect width="390" height="844" fill="url(#vignette)"/>
 
+      <!-- Story layer (Cauldron Brew): all hidden until the sequence runs; js/stories/cauldron.js animates it -->
+      <g id="story-layer" class="effect">
+        <rect id="story-dim" width="390" height="844" fill="url(#story-dim-gradient)" opacity="0"/>
+        <circle id="story-flash" cx="195" cy="575" r="60" fill="url(#story-flash-gradient)" opacity="0"/>
+        <g id="story-puff" fill="#C9D2E0" opacity="0">
+          <circle cx="195" cy="560" r="12"/>
+          <circle cx="178" cy="566" r="10"/>
+          <circle cx="212" cy="566" r="10"/>
+          <circle cx="185" cy="552" r="9"/>
+          <circle cx="205" cy="551" r="9"/>
+          <circle cx="195" cy="572" r="8"/>
+        </g>
+        <!-- The smoke spirit: mischievous, friendly grin. Drawn around its head centre (0, 0). -->
+        <g id="spirit" opacity="0" transform="translate(195 575) scale(0.25)">
+          <circle class="spirit-glow" r="48" fill="url(#spirit-glow)"/>
+          <path d="M0 -28 C18 -28 28 -14 28 2 C28 16 22 26 14 34 C10 40 12 48 6 56 C2 62 -6 66 -10 74
+                   C-12 64 -6 56 -10 50 C-16 44 -26 36 -28 22 C-30 6 -22 -28 0 -28 Z" fill="url(#spirit-body)"/>
+          <path d="M-28 12 q-9 -3 -7 -13 M28 10 q9 -4 6 -13" fill="none" stroke="#C8FFB8" stroke-opacity="0.6"
+                stroke-width="2" stroke-linecap="round"/>
+          <g fill="#0B2A14">
+            <ellipse cx="-9" cy="-6" rx="4" ry="5.5"/>
+            <ellipse cx="9" cy="-6" rx="4" ry="5.5"/>
+            <path d="M-13 5 Q0 19 13 5 Q0 11 -13 5 Z"/>
+          </g>
+          <g fill="#FFFFFF">
+            <circle cx="-8" cy="-8" r="1.3"/>
+            <circle cx="10" cy="-8" r="1.3"/>
+          </g>
+          <path d="M-15 -17 L-5 -13 M5 -13 L14 -14" fill="none" stroke="#0B2A14" stroke-width="2" stroke-linecap="round"/>
+        </g>
+        <rect id="story-shimmer" width="200" height="844" fill="url(#story-shimmer-gradient)" opacity="0"/>
+      </g>
+
       <!-- Dev view (?dev=1): the region still visible at 375×667. Tap areas are outlined by styles.css. -->
       <g id="dev-overlay" class="dev-only">
         <rect class="dev-guide" x="10" y="80" width="370" height="685"/>
@@ -551,6 +632,7 @@
     </svg>
 
     <pre class="dev-readout dev-only" id="dev-readout" aria-hidden="true"></pre>
+    <button class="dev-brew dev-only" id="dev-brew" type="button">Brew (dev)</button>
   </div>
 
   <div class="rotate-message" id="rotate-message">

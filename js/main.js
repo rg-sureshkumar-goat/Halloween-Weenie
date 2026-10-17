@@ -1,12 +1,14 @@
 // Virtual Hallo-weenie: boot, app state, and input wiring.
 // So far: state machine, Enter (starts sound and motion), Play/Pause of everything, auto-pause,
-// ambient effects and soundscape, and one input path for every scene object.
+// ambient effects and soundscape, one input path for every scene object, and the Cauldron Brew
+// story (fired by the dev trigger until CP6 wires the ingredients).
 
 import { clock } from './clock.js';
 import { startEffects } from './effects.js';
 import { reducedMotion, onReducedMotionChange } from './motion.js';
 import { startAudio, pauseAudio, resumeAudio, onAudioInterrupted } from './audio.js';
 import { startAmbience, playUiSound } from './soundscape.js';
+import { playCauldronBrew } from './stories/cauldron.js';
 import { showHint, positionHint } from './hints.js';
 import { applyShowParam, initDevView } from './dev.js';
 
@@ -97,6 +99,25 @@ function pauseFromOutside() {
   if (state.mode !== 'START' && !state.paused) setState({ paused: true });
 }
 
+// ---------- Stories ----------
+
+const storyRuns = [];   // measured story lengths in ms of clock time, for the dev readout
+
+// Plays the Cauldron Brew. Every object locks for the whole story (only Play/Pause still works);
+// at the end the scene unlocks and keyboard focus returns to the cauldron.
+function startCauldronBrew() {
+  if (!canInteract()) return;
+  const startedAt = clock.now;
+  setState({ mode: 'STORY' });
+  playCauldronBrew({
+    onDone: () => {
+      storyRuns.push(clock.now - startedAt);
+      setState({ mode: 'SCENE' });
+      document.getElementById('cauldron').focus({ preventScroll: true });
+    },
+  });
+}
+
 // ---------- Scene input: one path for touch, mouse, and keyboard ----------
 
 sceneInteractive.addEventListener('click', event => {
@@ -130,4 +151,6 @@ function pokeObject(object) {
 
 setState({});
 applyShowParam({ setState, showHint });   // dev shortcuts skip Enter, so they run without sound
-if (new URLSearchParams(location.search).get('dev') === '1') initDevView();
+if (new URLSearchParams(location.search).get('dev') === '1') {
+  initDevView({ playStory: startCauldronBrew, storyRuns });
+}

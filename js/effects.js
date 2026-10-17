@@ -12,6 +12,22 @@ const TAU = Math.PI * 2;
 
 let started = false;
 
+// Sparkles emitted by stories (the smoke spirit's trail), drawn on the particle canvas with the
+// fireflies. Each drifts and fades over SPARKLE_LIFE_S. Capped so a long trail can't pile up.
+const SPARKLE_LIFE_S = 0.9;
+const MAX_SPARKLES = 120;
+const sparkles = [];
+
+export function emitSparkle(x, y) {
+  sparkles.push({
+    x, y,
+    vx: (Math.random() - 0.5) * 14,      // scene units per second
+    vy: 6 + Math.random() * 10,           // drifts down a little
+    born: clock.now / 1000,
+  });
+  if (sparkles.length > MAX_SPARKLES) sparkles.shift();
+}
+
 // Called when the User taps Enter. Safe to call more than once.
 export function startEffects() {
   if (started) return;
@@ -113,7 +129,7 @@ function smokeAndBubbles() {
   }
 }
 
-// ---------- Fireflies: glowing dots wandering near the mushroom ring and the pond ----------
+// ---------- Fireflies (and story sparkles): glowing dots on the particle canvas ----------
 // Drawn on the particle canvas, mapped to scene coordinates with the same "slice" fit as the SVGs.
 // Reduced motion: the dots stay in place and pulse slowly.
 
@@ -153,6 +169,16 @@ function fireflies() {
       const glow = Math.max(0, Math.sin(t * TAU * blinkSpeed / 2 + pBlink));
       ctx.globalAlpha = 0.15 + 0.85 * glow;
       ctx.drawImage(sprite, x - 6, y - 6, 12, 12);
+    }
+
+    // Story sparkles: drift, shrink, and fade; expired ones are dropped.
+    while (sparkles.length && t - sparkles[0].born > SPARKLE_LIFE_S) sparkles.shift();
+    for (const sparkle of sparkles) {
+      const age = t - sparkle.born;
+      const life = 1 - age / SPARKLE_LIFE_S;
+      const size = 3 + 7 * life;
+      ctx.globalAlpha = life;
+      ctx.drawImage(sprite, sparkle.x + sparkle.vx * age - size / 2, sparkle.y + sparkle.vy * age - size / 2, size, size);
     }
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';

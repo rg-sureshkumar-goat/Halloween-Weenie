@@ -7,7 +7,8 @@
 //   ?motion=reduce       force the reduced-motion versions of every effect (read by motion.js)
 //   ?dev=1        readout (viewport, safe area, visible part of the scene), tap-area checks
 //                 (every tap area outlined, problems in red and listed), frame-rate stats, an audio
-//                 line (context state, output level, recent one-shots), and window.devClock for
+//                 line (context state, output level, recent one-shots), a "Brew (dev)" button that
+//                 plays the Cauldron Brew with its measured length shown, and window.devClock for
 //                 fast-forwarding time from the console
 
 import { clock } from './clock.js';
@@ -34,9 +35,12 @@ let layoutText = '';
 let framesText = 'frames: measuring…';
 let audioText = 'audio: not started (tap Enter)';
 let levelMeter = null;
+let storyRuns = [];
 
-export function initDevView() {
+export function initDevView({ playStory, storyRuns: runs }) {
   document.documentElement.classList.add('dev');
+  storyRuns = runs;
+  document.getElementById('dev-brew').addEventListener('click', playStory);
   window.devClock = clock;   // console access: devClock.advance(7000) fast-forwards 7 s
   updateDevView();
   addEventListener('resize', updateDevView);
@@ -44,7 +48,10 @@ export function initDevView() {
 }
 
 function renderReadout() {
-  document.getElementById('dev-readout').textContent = `${layoutText}\n${framesText}\n${audioText}`;
+  const story = storyRuns.length
+    ? `story runs: ${storyRuns.map(ms => `${(ms / 1000).toFixed(2)} s`).join(', ')}`
+    : 'story runs: none yet';
+  document.getElementById('dev-readout').textContent = `${layoutText}\n${framesText}\n${audioText}\n${story}`;
 }
 
 // Frame-rate stats over the last 2 s while the clock runs: average fps and the longest frame.

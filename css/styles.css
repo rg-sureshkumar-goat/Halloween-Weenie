@@ -358,6 +358,25 @@ body {
   pointer-events: none;
 }
 
+/* Dev-only story trigger, top right, shown once the scene is running. */
+.dev-brew {
+  position: absolute;
+  z-index: 35;
+  top: calc(env(safe-area-inset-top) + var(--edge));
+  right: calc(env(safe-area-inset-right) + var(--edge));
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px dashed var(--dev-accent);
+  border-radius: 22px;
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--moonlight);
+  font: 600 14px/1 ui-monospace, Menlo, monospace;
+  cursor: pointer;
+}
+.dev .stage[data-mode="START"] .dev-brew {
+  display: none;
+}
+
 /* Probe element: CSS resolves env() insets so scripts can read them as pixels. */
 #inset-probe {
   position: fixed;

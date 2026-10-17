@@ -3,7 +3,7 @@
 
 import { clock } from './clock.js';
 import { audioContext, channel, letFinishBeforePause, loadSound, loadedSound, playBuffer } from './audio.js';
-import { bubblingLoop, cricketLoop, placeholders, startWind, uiSounds } from './synth.js';
+import { bubblingLoop, cricketLoop, placeholders, startWind, storySounds, uiSounds } from './synth.js';
 
 // Processed recordings in assets/audio/. Empty until the Developer's downloads are processed;
 // every slot falls back to its generated stand-in, so the app never requests a missing file.
@@ -47,6 +47,22 @@ export function playUiSound(name) {
   const ctx = audioContext();
   if (!ctx) return;
   letFinishBeforePause(uiSounds[name](ctx, channel('interactions')));
+}
+
+// Plays a generated story sound on the story channel.
+export function playStorySound(name, options) {
+  const ctx = audioContext();
+  if (ctx) storySounds[name](ctx, channel('story'), options);
+}
+
+// Plays a voice that has a recording slot (cackle, caw) on the story channel: the recording
+// when it has loaded, otherwise its generated stand-in.
+export function playStoryVoice(name, options) {
+  const ctx = audioContext();
+  if (!ctx) return;
+  const recording = loadedSound(name);
+  if (recording) playBuffer(recording, { channel: 'story' });
+  else placeholders[name](ctx, channel('story'), options);
 }
 
 function scheduleOneShot(delayMs) {
