@@ -77,15 +77,25 @@ Keep implementation progress and verification here. Update `research.md` when ev
 
 ### Playtest observations
 
-Optional for Phase 1: one cold try after CP6. Required in Phase 2.
+**Playtest 1 (Phase 1 build, before Oct 22, 2026).** Peers explored the Phase 1 build. The Developer reported this summary on Oct 22. Tester count and per-tester actions weren't recorded, so these rows hold the reported feedback rather than step-by-step observations.
 
-| # | What the User did or said | Interpretation | Priority |
+| # | What the Users did or said (as reported) | Interpretation | Priority |
 | --- | --- | --- | --- |
-| | | | |
+| P1 | It isn't clear what to select; there's a lot of guessing, and that frustrates. | The three ingredients don't stand out enough from the rest of the scene, so their affordance is weak. | High: R1, R3 |
+| P2 | Suggested making the environment more dynamic: a field of blue mushrooms with one green mushroom, so the one to pick is clear. | Users need contrast (an odd one out) to see which object matters. | High: R1 |
+| P3 | The raven that gives the hints is hidden; it blends with the night background. | The progressive hints can't help if Users never notice their source, so discovery falls back to guessing. | High: R2 |
+
+**Revision priorities (approved Oct 22):** R1 a ring of small dim blue mushrooms around the single green glowing toadstool; R2 a visible raven (moonlight outline, glowing eye, halo, idle head-turn and blink, wing flap when it speaks); R3 ingredients that pulse brighter in turn, and faster hints (12 s, then every 30 s). Check: a browser regression, then a re-test on the iPhone, ideally with a new tester and no explanation.
 
 ### Revisions
 
-*None yet.*
+| # | From | What changed | How it was checked | Status |
+| --- | --- | --- | --- | --- |
+| R1 | P1, P2 | The 5 grey mushrooms became a ring of 13 small, dim **blue** mushrooms around the one big **green** glowing toadstool. Tapping the blue ones gets a bounce, blue spores, and a soft "boop", but no progress. | Browser, Oct 22: a real tap made the nearest blue mushroom bounce and puff spores; runes stayed dark; the toadstool was untouched. 11 tap areas, smallest 48 px at 375×667, none clipped or overlapping at 390×844, 375×667, 390×664, or desktop. "Blue mushrooms" sits before "Toadstool" in tab order. | Built; **iPhone re-test pending** |
+| R2 | P3 | The raven got a moonlit outline, a glowing amber eye, and a halo that brightens while it speaks. It blinks and glances back every 6.5 s and flaps its wing when it speaks. | Browser, Oct 22: screenshot shows the raven standing out from the sky; the head turns during its idle cycle; at every hint the wing flaps and the halo goes 0.55 → 0.95, then back. Reduced motion: no head turn, and the eye flashes instead of a flap. | Built; **iPhone re-test pending** |
+| R3 | P1, P3 | Each ingredient pulses brighter in turn every 5 s. Hints now come at 12 s, then +30 s, then +30 s (was 20 / 45 / 45). | Browser, Oct 22: hints at 12.0, 42.0, 72.0 s, 8 s each; the pulse glow swells and fades (reduced motion: brightens only). Regression: brew to story to regrow, pulses intact; no console errors. | Built; **iPhone re-test pending** |
+
+**Next check:** play it on the iPhone and, ideally, re-test with someone who hasn't seen it, without explaining anything. Record what they did here as playtest 2.
 
 ### Phase 1 delivery checklist (`Weenie Project-Brief.md` › Deliverables)
 

@@ -19,9 +19,9 @@ const SPARKLE_LIFE_S = 0.9;
 const MAX_SPARKLES = 120;
 const sparkles = [];
 
-export function emitSparkle(x, y) {
+export function emitSparkle(x, y, tint = 'green') {
   sparkles.push({
-    x, y,
+    x, y, tint,
     vx: (Math.random() - 0.5) * 14,      // scene units per second
     vy: 6 + Math.random() * 10,           // drifts down a little
     born: clock.now / 1000,
@@ -33,7 +33,7 @@ export function emitSparkle(x, y) {
 export function startEffects() {
   if (started) return;
   started = true;
-  const effects = [fog(), candlelight(), smokeAndBubbles(), fireflies(), bats()];
+  const effects = [fog(), candlelight(), smokeAndBubbles(), fireflies(), bats(), ravenIdle(), ingredientPulses()];
   clock.onTick((step, now) => {
     const reduced = reducedMotion();
     const seconds = now / 1000;
@@ -177,7 +177,8 @@ function smokeAndBubbles() {
 function fireflies() {
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
-  const sprite = glowSprite();
+  const sprites = { green: glowSprite('green'), blue: glowSprite('blue') };
+  const sprite = sprites.green;
   const homes = [
     { x: 85, y: 668, count: 8 },   // above the mushroom ring
     { x: 300, y: 666, count: 7 },  // above the pond
@@ -219,7 +220,7 @@ function fireflies() {
       const life = 1 - age / SPARKLE_LIFE_S;
       const size = 3 + 7 * life;
       ctx.globalAlpha = life;
-      ctx.drawImage(sprite, sparkle.x + sparkle.vx * age - size / 2, sparkle.y + sparkle.vy * age - size / 2, size, size);
+      ctx.drawImage(sprites[sparkle.tint], sparkle.x + sparkle.vx * age - size / 2, sparkle.y + sparkle.vy * age - size / 2, size, size);
     }
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
@@ -241,16 +242,23 @@ function fitCanvas(canvas) {
   };
 }
 
-// A soft yellow-green glow, drawn once and reused for every firefly.
-function glowSprite() {
+// A soft glow, drawn once per color and reused for every particle.
+// Glow colors: green for fireflies, spores, and the spirit's trail; blue for the blue mushrooms' spores.
+const GLOW_COLORS = {
+  green: { core: '245, 255, 190', inner: '225, 255, 130', outer: '190, 255, 100' },
+  blue: { core: '220, 235, 255', inner: '160, 195, 255', outer: '110, 150, 240' },
+};
+
+function glowSprite(color) {
+  const { core, inner, outer } = GLOW_COLORS[color];
   const sprite = document.createElement('canvas');
   sprite.width = sprite.height = 64;
   const g = sprite.getContext('2d');
   const gradient = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  gradient.addColorStop(0, 'rgba(245, 255, 190, 1)');
-  gradient.addColorStop(0.12, 'rgba(225, 255, 130, 0.95)');
-  gradient.addColorStop(0.4, 'rgba(190, 255, 100, 0.25)');
-  gradient.addColorStop(1, 'rgba(190, 255, 100, 0)');
+  gradient.addColorStop(0, `rgba(${core}, 1)`);
+  gradient.addColorStop(0.12, `rgba(${inner}, 0.95)`);
+  gradient.addColorStop(0.4, `rgba(${outer}, 0.25)`);
+  gradient.addColorStop(1, `rgba(${outer}, 0)`);
   g.fillStyle = gradient;
   g.fillRect(0, 0, 64, 64);
   return sprite;
@@ -317,6 +325,51 @@ function bats() {
       const flap = 0.3 + 0.7 * Math.abs(Math.sin(t * TAU * 6 + i));
       bat.setAttribute('transform', `translate(${fixed(x)} ${fixed(y)}) scale(${size} ${fixed(size * flap)})`);
     });
+  };
+}
+
+// ---------- Raven idle (revision R2): small movements so Users notice the hint giver ----------
+// Every 6.5 s: a blink, a quick look over its shoulder, then another blink.
+// Reduced motion: blinks only.
+
+const RAVEN_CYCLE_S = 6.5;
+
+function ravenIdle() {
+  const heads = [...document.querySelectorAll('#raven .raven-head')];
+  const eyes = [...document.querySelectorAll('#raven .raven-eye, #raven .raven-eye-glow')];
+  return (t, reduced) => {
+    const cycle = t % RAVEN_CYCLE_S;
+    const lookingBack = !reduced && cycle > 3.2 && cycle < 4.1;
+    // Mirroring the head around its centre (x = 205) turns the beak the other way.
+    for (const head of heads) head.setAttribute('transform', lookingBack ? 'translate(410 0) scale(-1 1)' : '');
+    const blinking = (cycle > 1.2 && cycle < 1.32) || (cycle > 5 && cycle < 5.12);
+    for (const eye of eyes) eye.setAttribute('opacity', blinking ? '0' : '1');
+  };
+}
+
+// ---------- Ingredient pulses (revision R3): each ingredient still in the scene glows brighter in turn ----------
+// Every 5 s each one's glow swells and fades once, staggered so they take turns. The glow lives in
+// the ingredient's drawing, so it disappears with it while the ingredient is in the pot.
+// Reduced motion: a slower, gentler pulse that brightens without growing.
+
+const PULSE_EVERY_S = 5;
+const PULSES = [
+  { id: 'toadstool', offset: 0, rest: 16, peak: 34 },
+  { id: 'moonflower', offset: 1.6, rest: 12, peak: 28 },
+  { id: 'web', offset: 3.2, rest: 20, peak: 40 },
+];
+
+function ingredientPulses() {
+  const pulses = PULSES.map(pulse => ({ ...pulse, circle: document.querySelector(`#${pulse.id} .pulse`) }));
+  return (t, reduced) => {
+    for (const { circle, offset, rest, peak } of pulses) {
+      const age = (((t - offset) % PULSE_EVERY_S) + PULSE_EVERY_S) % PULSE_EVERY_S;
+      const length = reduced ? 2 : 1.2;
+      const progress = Math.min(age / length, 1);
+      const glow = age < length ? Math.sin(Math.PI * progress) : 0;
+      circle.setAttribute('opacity', fixed(glow * (reduced ? 0.5 : 0.85)));
+      circle.setAttribute('r', fixed(reduced ? rest * 1.4 : rest + (peak - rest) * progress));
+    }
   };
 }
 

@@ -103,6 +103,19 @@ body {
 .scene-object .hit {
   fill: transparent;           /* invisible, but still catches taps */
 }
+/* The drawing never takes taps, so an object's tap area is exactly its .hit rectangles. That keeps
+   tap areas the size the dev check measures, even for objects with several (the blue mushrooms). */
+.scene-object .art {
+  pointer-events: none;
+}
+.blue-mushroom {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;   /* bounce on its stem */
+}
+.raven-wing {
+  transform-box: fill-box;
+  transform-origin: 0% 60%;     /* flaps from the shoulder */
+}
 /* Feedback animations pivot where the object would: the broom on its bristles, the raven on its perch. */
 #broom .art,
 #raven .art,

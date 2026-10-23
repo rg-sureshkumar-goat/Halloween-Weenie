@@ -97,13 +97,13 @@ Downloads go in `assets/audio/source/`. Processing (trim, fade, convert, level) 
 | Decision | Decision or proposal | Raise at |
 | --- | --- | --- |
 | Ingredient order: required or any order | **Decided Oct 17:** required (toadstool, moonflower, web); revisit after the playtest | Phase 2 playtest |
-| Hint timing and final rhymes | **Decided Oct 17:** 20 s / +45 s / +45 s, each shown 8 s; the brief's three rhymes | Phase 2 playtest |
+| Hint timing and final rhymes | **Revised Oct 22 after playtest 1 (P1, P3):** 12 s / +30 s / +30 s, each shown 8 s (was 20 / 45 / 45); the brief's three rhymes | Phase 2 re-test |
 | Hint bubble placement | **Decided Oct 17:** above the raven (3 lines for the longest hint vs 7 beside it); the left option was removed at CP7 | — |
 | Start-screen title | **Decided Oct 17:** "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | — |
 | Final palette and look | **Decided Oct 17:** the brief's palette, approved on the Developer's iPhone | — |
 | Which ambient effects to keep | **Decided Oct 17:** all five (fog, candlelight, smoke and bubbles, fireflies, bats); the Developer checked them on the iPhone and said "this is good" | — |
 | Recorded sounds in Phase 1 | **Decided Oct 17:** ship Phase 1 with generated sound only; the CC0 shortlist stays ready for Phase 2. If recordings are added, commit only the processed files and keep `assets/audio/source/` out of git (proposed) | Phase 2 |
-| Phase 2 due date | Unknown | — |
+| Phase 2 due date | **Mon, Oct 26, 2026** (Developer, Oct 22) | — |
 
 ## Revisions
 

@@ -118,10 +118,8 @@ function updateDevView() {
 // Measures every tap area on screen: too small, cropped off the stage, or overlapping another.
 // Problem areas get the .dev-problem class so styles.css outlines them in red.
 function checkTapAreas(stage) {
-  const areas = [...document.querySelectorAll('.scene-object')].map(object => {
-    const hit = object.querySelector('.hit');
-    return { name: object.getAttribute('aria-label'), hit, box: hit.getBoundingClientRect() };
-  });
+  const areas = [...document.querySelectorAll('.scene-object')].flatMap(object =>
+    [...object.querySelectorAll('.hit')].map(hit => ({ name: object.getAttribute('aria-label'), hit, box: hit.getBoundingClientRect() })));
   const small = [], clipped = [], overlapping = [];
   let smallest = { width: Infinity, height: Infinity };
 
@@ -141,6 +139,7 @@ function checkTapAreas(stage) {
   for (let i = 0; i < areas.length; i++) {
     for (let j = i + 1; j < areas.length; j++) {
       const a = areas[i].box, b = areas[j].box;
+      if (areas[i].name === areas[j].name) continue;          // an object's own tap areas may touch
       if (a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom) {
         overlapping.push(`${areas[i].name} + ${areas[j].name}`);
         areas[i].problem = areas[j].problem = true;

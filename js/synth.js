@@ -187,6 +187,10 @@ export const tapSounds = {
     wobble.stop(start + 0.55);
     return oscillator;
   },
+  // Blue mushroom: a soft, low "boop" (pitch varies a little per mushroom). No progress.
+  boop(ctx, out, { pitch = 1 } = {}) {
+    return tone(ctx, out, { from: 330 * pitch, to: 250 * pitch, duration: 0.16, peak: 0.22, attack: 0.006 });
+  },
   // Cauldron tap: a low gurgle of three bubbles, a little higher as the brew progresses.
   gurgle(ctx, out, { pitch = 1 } = {}) {
     let last;

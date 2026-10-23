@@ -84,6 +84,8 @@ Triggers, feedback, sequence beats, and hint rhymes follow `Weenie Project-Brief
 - **Order (required, decided Oct 17):** toadstool → moonflower → spider silk. Each tap gives its own feedback, then the ingredient travels into the pot: the toadstool puffs spores, says "poink", and arcs in; the moonflower blooms with a chime and drifts in trailing sparkles; the web shimmers with a harp twang and spools a silver thread into the pot. While an ingredient is in the pot it is hidden and out of touch and tab reach. Reduced motion: ingredients fade out in place.
 - **Progress:** each correct ingredient changes the brew color (dark → green → purple; gold comes with the story), lights one of 3 rim runes, and grows the bubbles and fire glow. The third ingredient landing starts the story. After the POP, the brew clears, the runes go dark, and all three ingredients grow back.
 - **Wrong order:** the wrong ingredient still travels in, then the pot burps a sour purple puff with a "blorp" and a wobble, the raven says "Hrk. Not like that.", the runes go dark, the brew clears, and every used ingredient grows back. Nothing else is penalized.
+- **Blue mushrooms (revision R1):** a fairy ring of 13 small, dim blue mushrooms surrounds the one big green glowing toadstool, so the ingredient is the odd one out. The ring is one button with two tap areas, one on each side of the toadstool's. A tap makes the nearest blue mushroom bounce and puff blue spores with a soft "boop"; it never counts as progress.
+- **Ingredient pulses (revision R3):** every 5 s, each ingredient still in the scene glows brighter in turn (reduced motion: a slower glow that doesn't grow).
 - **Other objects:** cauldron tap sends up one big bubble with a gurgle that rises with progress; each window flares with its own note; the broom twitches with a rustle (Phase 2 story objects).
 - **Sequence (approved Oct 17 on the iPhone):** 8.5 s on the pausable timeline (`js/timeline.js`, `js/stories/cauldron.js`). Beginning 0–2 s: gold flash, scene dims, brew swells gold and boils over, 0.35 s shake. Middle 2–6 s: a friendly, mischievous grinning smoke spirit bursts out, loops the cottage, and crosses the moon with a sparkle trail. End 6–8.5 s: it spirals back into the pot, POP and puff, brew and fire settle, a shimmer sweeps the scene, and the raven bobs and caws twice. Sounds are generated (rumble, panned whooshes, shimmer, fwoop, pop); the cackle and caws use the recordings once processed. Ambience ducks to 40% for the story. Measured from the story starting to interaction returning.
 - **Lock and return:** story mode (`setState({ mode: 'STORY' })`) makes the scene inert, so only Play/Pause works. At the end the scene unlocks and keyboard focus moves to the cauldron. Every story element is reset to rest, so it replays without reloading, any number of times.
@@ -93,8 +95,9 @@ Triggers, feedback, sequence beats, and hint rhymes follow `Weenie Project-Brief
 ### Hints
 
 - The hint engine holds **one ladder per story** and hints toward the next story not yet played. Phase 1 registers only the cauldron ladder.
-- Hints advance on clock time without progress: 20 s, then +45 s, then +45 s, each shown 8 s with a caw (decided Oct 17). They pause with Play/Pause. A correct ingredient resets the countdown. The raven stays quiet during the story, and after it has played the cauldron hints stop. The ambient raven caw is skipped while a hint is showing.
+- Hints advance on clock time without progress: 12 s, then +30 s, then +30 s, each shown 8 s with a caw (revised Oct 22 after playtest 1; was 20 / 45 / 45 s). They pause with Play/Pause. A correct ingredient resets the countdown. The raven stays quiet during the story, and after it has played the cauldron hints stop. The ambient raven caw is skipped while a hint is showing.
 - The bubble sits above the raven (decided Oct 17).
+- **A visible raven (revision R2):** a moonlit outline, a glowing amber eye, and a halo that brightens while it speaks. Every 6.5 s it blinks and glances over its shoulder, and its wing flaps whenever it speaks. Reduced motion: blinks only, and the eye flashes instead of the wing flapping.
 - Tapping the raven caws, bobs, and repeats the latest hint, or says a flavor line if none is due yet (a different set after the story, e.g. "Caw! Again! Again!").
 
 ### Input and accessibility
@@ -103,7 +106,7 @@ Every object is focusable (`role="button"`, `tabindex="0"`, Enter and Space). Ac
 
 Structure rules (CP2):
 
-- Each tappable object is `<g class="scene-object" role="button" tabindex="0" aria-label="…">` holding an invisible `.hit` rectangle and an `.art` group. Tap areas are axis-aligned, at least 50×50 scene units (≥ 44 CSS px on phones), and never overlap. Any static transform goes on `.art`, never on the object, so animations on the object can't overwrite it.
+- Each tappable object is `<g class="scene-object" role="button" tabindex="0" aria-label="…">` holding one or more invisible `.hit` rectangles and an `.art` group. The drawing never takes taps (`pointer-events: none`), so an object's tap area is exactly its `.hit` rectangles. Tap areas are axis-aligned, at least 50×50 scene units (≥ 44 CSS px on phones), and never overlap. Any static transform goes on `.art`, never on the object, so animations on the object can't overwrite it.
 - DOM order is tab order: Play/Pause, then objects top to bottom, left to right. The focus ring is drawn on the tap area, because Safari's outlines on SVG are unreliable.
 - Touch, mouse, and keyboard reach objects through one input path in `js/main.js`.
 - UI: Play/Pause sits top left. The pause overlay is passive; only Play/Pause resumes. The hint bubble is parchment with dark text (15.1:1 contrast), placed above the raven (decided at CP6).

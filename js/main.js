@@ -9,7 +9,7 @@ import { reducedMotion, onReducedMotionChange } from './motion.js';
 import { startAudio, pauseAudio, resumeAudio, onAudioInterrupted } from './audio.js';
 import { startAmbience, playUiSound } from './soundscape.js';
 import { initCauldron, offerIngredient, playCauldronBrew, tapCauldron } from './stories/cauldron.js';
-import { flickerWindow, twitchBroom } from './objects.js';
+import { flickerWindow, tapBlueMushrooms, twitchBroom } from './objects.js';
 import { noteStoryPlayed, noteStoryStarted, positionHint, showHint, startHints, tapRaven } from './hints.js';
 import { applyShowParam, initDevView } from './dev.js';
 
@@ -149,7 +149,7 @@ initCauldron({ onComplete: startCauldronBrew });
 
 sceneInteractive.addEventListener('click', event => {
   const object = event.target.closest('.scene-object');
-  if (object) activateObject(object);
+  if (object) activateObject(object, event);
 });
 
 sceneInteractive.addEventListener('keydown', event => {
@@ -157,7 +157,7 @@ sceneInteractive.addEventListener('keydown', event => {
   const object = event.target.closest('.scene-object');
   if (!object) return;
   event.preventDefault();
-  activateObject(object);
+  activateObject(object, event);
 });
 
 // Every tappable object's own response, by element id.
@@ -166,6 +166,7 @@ const OBJECT_ACTIONS = {
   moonflower: () => offerIngredient('moonflower'),
   web: () => offerIngredient('web'),
   cauldron: tapCauldron,
+  'blue-mushrooms': tapBlueMushrooms,
   raven: tapRaven,
   'window-left': () => flickerWindow('left'),
   'window-right': () => flickerWindow('right'),
@@ -173,9 +174,9 @@ const OBJECT_ACTIONS = {
   broom: twitchBroom,
 };
 
-function activateObject(object) {
+function activateObject(object, event) {
   if (!canInteract()) return;
-  OBJECT_ACTIONS[object.id]?.();
+  OBJECT_ACTIONS[object.id]?.(event);
 }
 
 // ---------- Boot ----------

@@ -11,9 +11,10 @@ import { reducedMotion } from './motion.js';
 // Each step appears `afterMs` after the previous one (or after the last progress).
 const LADDERS = {
   cauldron: [
-    { afterMs: 20000, text: "The witch's pot is cold tonight. It's hungry for things that glow." },
-    { afterMs: 45000, text: 'Three gifts the forest keeps: one in the ring, one where water sleeps, one where the spider creeps.' },
-    { afterMs: 45000, text: 'Ground, then water, then the web. Mix them wrong and the pot will burp.' },
+    // Timing revised after playtest 1 (was 20 / 45 / 45 s): Users were guessing and getting frustrated.
+    { afterMs: 12000, text: "The witch's pot is cold tonight. It's hungry for things that glow." },
+    { afterMs: 30000, text: 'Three gifts the forest keeps: one in the ring, one where water sleeps, one where the spider creeps.' },
+    { afterMs: 30000, text: 'Ground, then water, then the web. Mix them wrong and the pot will burp.' },
   ],
 };
 const STORY_ORDER = ['cauldron'];   // Phase 2 adds Broomstick Flight and The Cottage Wakes
@@ -83,6 +84,19 @@ export function longestHint() {
   return Object.values(LADDERS).flat().map(step => step.text).reduce((a, b) => (b.length > a.length ? b : a));
 }
 
+// The raven flaps its wing as it speaks (revision R2), so eyes go to where the words come from.
+// Reduced motion: its eye flashes instead.
+function ravenSpeaks() {
+  if (reducedMotion()) {
+    document.querySelector('#raven .raven-eye-glow').animate(
+      [{ opacity: 1 }, { opacity: 0.2 }, { opacity: 1 }, { opacity: 0.2 }, { opacity: 1 }], { duration: 700 });
+    return;
+  }
+  document.querySelector('#raven .raven-wing').animate(
+    [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-38deg)' }, { transform: 'rotate(0deg)' },
+     { transform: 'rotate(-28deg)' }, { transform: 'rotate(0deg)' }], { duration: 650, easing: 'ease-in-out' });
+}
+
 function currentStory() {
   return STORY_ORDER.find(story => !playedStories.has(story)) ?? null;
 }
@@ -103,6 +117,7 @@ function scheduleNextHint() {
 // Shows text in the bubble for `durationMs` of clock time (so a pause holds it on screen).
 function say(text, durationMs, { caw = true } = {}) {
   if (caw) playVoice('caw', { channel: 'interactions' });
+  ravenSpeaks();
   showHint(text);
   cancelHide();
   cancelHide = clock.after(durationMs, () => {
@@ -117,20 +132,24 @@ const stage = document.getElementById('stage');
 const bubble = document.getElementById('hint-bubble');
 const hintText = document.getElementById('hint-text');
 const ravenArt = document.querySelector('#raven .art');
+const ravenHalo = document.getElementById('raven-halo');
 const playPauseButton = document.getElementById('play-pause');
 
 const GAP = 10;               // px between the bubble's tail and the raven
 const EDGE = 12;              // px kept clear of the stage edges
 const MAX_WIDTH = 320;        // px
 
+// While the bubble shows, the raven's halo brightens, linking the words to the bird.
 export function showHint(message) {
   hintText.textContent = message;
   bubble.classList.add('is-visible');
+  ravenHalo.setAttribute('opacity', '0.95');
   positionHint();
 }
 
 function hideHint() {
   bubble.classList.remove('is-visible');
+  ravenHalo.setAttribute('opacity', '0.55');
 }
 
 function isHintShowing() {

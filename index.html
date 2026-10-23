@@ -9,25 +9,25 @@
        GitHub Pages lets browsers cache files for 10 minutes, so this makes a phone fetch all the new
        files together instead of mixing a new page with an old script. The import map applies the
        version to module imports inside the scripts. -->
-  <link rel="stylesheet" href="css/styles.css?v=7">
+  <link rel="stylesheet" href="css/styles.css?v=8">
   <script type="importmap">
     {
       "imports": {
-        "./js/audio.js": "./js/audio.js?v=7",
-        "./js/clock.js": "./js/clock.js?v=7",
-        "./js/dev.js": "./js/dev.js?v=7",
-        "./js/effects.js": "./js/effects.js?v=7",
-        "./js/hints.js": "./js/hints.js?v=7",
-        "./js/motion.js": "./js/motion.js?v=7",
-        "./js/objects.js": "./js/objects.js?v=7",
-        "./js/soundscape.js": "./js/soundscape.js?v=7",
-        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=7",
-        "./js/synth.js": "./js/synth.js?v=7",
-        "./js/timeline.js": "./js/timeline.js?v=7"
+        "./js/audio.js": "./js/audio.js?v=8",
+        "./js/clock.js": "./js/clock.js?v=8",
+        "./js/dev.js": "./js/dev.js?v=8",
+        "./js/effects.js": "./js/effects.js?v=8",
+        "./js/hints.js": "./js/hints.js?v=8",
+        "./js/motion.js": "./js/motion.js?v=8",
+        "./js/objects.js": "./js/objects.js?v=8",
+        "./js/soundscape.js": "./js/soundscape.js?v=8",
+        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=8",
+        "./js/synth.js": "./js/synth.js?v=8",
+        "./js/timeline.js": "./js/timeline.js?v=8"
       }
     }
   </script>
-  <script type="module" src="js/main.js?v=7"></script>
+  <script type="module" src="js/main.js?v=8"></script>
 </head>
 <body>
   <noscript><p>Virtual Hallo-weenie needs JavaScript to run.</p></noscript>
@@ -171,6 +171,10 @@
           <stop offset="0" stop-color="#B8C7DA" stop-opacity="0.28"/>
           <stop offset="1" stop-color="#B8C7DA" stop-opacity="0"/>
         </radialGradient>
+        <radialGradient id="raven-eye-glow">
+          <stop offset="0" stop-color="#FFC85A" stop-opacity="0.9"/>
+          <stop offset="1" stop-color="#FFB547" stop-opacity="0"/>
+        </radialGradient>
         <radialGradient id="pond-water" cx="0.6" cy="0.4">
           <stop offset="0" stop-color="#1E4256"/>
           <stop offset="1" stop-color="#0A1826"/>
@@ -180,11 +184,11 @@
         <symbol id="pine" viewBox="0 0 40 100">
           <path d="M20 0 L27 22 L23 22 L31 44 L26 44 L36 68 L28 68 L40 92 L22 92 L22 100 L18 100 L18 92 L0 92 L12 68 L4 68 L14 44 L9 44 L17 22 L13 22 Z"/>
         </symbol>
-        <symbol id="small-mushroom" viewBox="0 0 20 16">
-          <rect x="8" y="7" width="4" height="9" fill="#9A97AA"/>
-          <path d="M1 8 Q10 -2 19 8 Q10 10 1 8 Z" fill="#6E6A84"/>
-          <circle cx="7" cy="5" r="1" fill="#B9B6C8"/>
-          <circle cx="13" cy="4.5" r="0.8" fill="#B9B6C8"/>
+        <symbol id="blue-mushroom" viewBox="0 0 20 16">
+          <rect x="8" y="7" width="4" height="9" fill="#8C98B8"/>
+          <path d="M1 8 Q10 -2 19 8 Q10 10 1 8 Z" fill="#3C5C9E"/>
+          <circle cx="7" cy="5" r="1" fill="#9DB8EC"/>
+          <circle cx="13" cy="4.5" r="0.8" fill="#9DB8EC"/>
         </symbol>
         <symbol id="tuft" viewBox="0 0 20 12">
           <path d="M0 12 L4 2 L6 12 L9 0 L11 12 L14 3 L16 12 L20 5 L19 12 Z"/>
@@ -382,17 +386,32 @@
           <circle id="window-glow-attic" cx="195" cy="302" r="26" fill="url(#window-glow)"/>
         </g>
 
-        <!-- Raven perched on the roof peak: the hint giver -->
+        <!-- Raven perched on the roof peak: the hint giver. Revision R2 (playtest 1: it blended into the
+             night) gives it a moonlight outline, a glowing eye, a halo, an idle head-turn and blink
+             (js/effects.js), and a wing that flaps when it speaks (js/hints.js). -->
+        <circle id="raven-halo" cx="197" cy="221" r="32" fill="url(#moonlight-glow)" opacity="0.55"/>
         <g id="raven" class="scene-object" role="button" tabindex="0" aria-label="Raven">
           <rect class="hit" x="171" y="197" width="50" height="50" rx="10"/>
-          <g class="art" fill="#070A14">
-            <path d="M186 226 L176 232 L178 226 L175 221 L186 222 Z"/>
-            <path d="M184 226 Q186 214 198 214 Q206 214 207 221 Q206 229 196 231 Q188 232 184 226 Z"/>
-            <circle cx="205" cy="214" r="6"/>
-            <polygon points="210,212 218,215 210,217"/>
-            <circle cx="206.5" cy="212.5" r="1.2" fill="#FFB547"/>
-            <path d="M194 231 V235 M198 231 V235" stroke="#070A14" stroke-width="1.2"/>
-            <path d="M188 218 Q196 212 204 210" fill="none" stroke="#DCE6F2" stroke-opacity="0.35" stroke-width="1"/>
+          <g class="art">
+            <!-- Outline: the silhouette drawn first with a wide moonlit stroke; the fill on top hides
+                 the inner half, so only the outer edge glows -->
+            <g fill="none" stroke="#DCE6F2" stroke-opacity="0.7" stroke-width="2.6" stroke-linejoin="round">
+              <path d="M186 226 L176 232 L178 226 L175 221 L186 222 Z"/>
+              <path d="M184 226 Q186 214 198 214 Q206 214 207 221 Q206 229 196 231 Q188 232 184 226 Z"/>
+              <g class="raven-head"><circle cx="205" cy="214" r="6"/><polygon points="210,212 218,215 210,217"/></g>
+            </g>
+            <g fill="#070A14">
+              <path d="M186 226 L176 232 L178 226 L175 221 L186 222 Z"/>
+              <path d="M184 226 Q186 214 198 214 Q206 214 207 221 Q206 229 196 231 Q188 232 184 226 Z"/>
+              <path class="raven-wing" d="M187 222 Q194 215 203 219 Q197 227 187 226 Z" fill="#1A2233"/>
+              <g class="raven-head">
+                <circle cx="205" cy="214" r="6"/>
+                <polygon points="210,212 218,215 210,217" fill="#2A2A30"/>
+                <circle class="raven-eye-glow" cx="206.5" cy="212.5" r="4.5" fill="url(#raven-eye-glow)"/>
+                <circle class="raven-eye" cx="206.5" cy="212.5" r="1.7" fill="#FFC85A"/>
+              </g>
+              <path d="M194 231 V235 M198 231 V235" stroke="#070A14" stroke-width="1.2"/>
+            </g>
           </g>
         </g>
 
@@ -410,6 +429,7 @@
         <g id="web" class="scene-object" role="button" tabindex="0" aria-label="Spider web">
           <rect class="hit" x="74" y="310" width="52" height="102" rx="10"/>
           <g class="art" fill="none" stroke="#DCE6F2" stroke-linejoin="round">
+            <circle class="pulse" cx="100" cy="385" r="20" fill="url(#moonlight-glow)" stroke="none" opacity="0"/>
             <line x1="100" y1="314" x2="100" y2="364" stroke-opacity="0.55" stroke-width="0.8"/>
             <path d="M100 385 L122 385 M100 385 L115.6 400.6 M100 385 L100 407 M100 385 L84.4 400.6
                      M100 385 L78 385 M100 385 L84.4 369.4 M100 385 L100 363 M100 385 L115.6 369.4"
@@ -522,20 +542,35 @@
           </g>
         </g>
 
-        <!-- Mushroom ring, lower left -->
-        <g id="mushroom-ring">
-          <ellipse cx="85" cy="704" rx="48" ry="15" fill="#0B1522" opacity="0.8"/>
-          <use href="#small-mushroom" x="32" y="692" width="20" height="16"/>
-          <use href="#small-mushroom" x="51" y="681" width="18" height="14"/>
-          <use href="#small-mushroom" x="78" y="678" width="20" height="16"/>
-          <use href="#small-mushroom" x="52" y="707" width="20" height="16"/>
-          <use href="#small-mushroom" x="90" y="708" width="20" height="16"/>
+        <!-- Fairy ring of small, dim blue mushrooms around the one green toadstool (revision R1, playtest 1:
+             the odd one out shows which mushroom matters). One button for the whole ring, with two tap
+             areas, one on each side of the toadstool, so they never overlap its tap area. -->
+        <ellipse id="mushroom-ring" cx="128" cy="702" rx="84" ry="26" fill="#0B1522" opacity="0.7"/>
+        <g id="blue-mushrooms" class="scene-object" role="button" tabindex="0" aria-label="Blue mushrooms">
+          <rect class="hit" x="40" y="662" width="60" height="76" rx="10"/>
+          <rect class="hit" x="156" y="676" width="56" height="62" rx="10"/>
+          <g class="art">
+            <use class="blue-mushroom" href="#blue-mushroom" x="44" y="690" width="16" height="12.8"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="53" y="677" width="14" height="11.2"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="68" y="666" width="16" height="12.8"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="85" y="669" width="14" height="11.2"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="54" y="704" width="16" height="12.8"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="71" y="713" width="18" height="14.4"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="88" y="708" width="14" height="11.2"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="160" y="676" width="16" height="12.8"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="177" y="683" width="14" height="11.2"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="190" y="692" width="16" height="12.8"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="185" y="705" width="18" height="14.4"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="168" y="716" width="16" height="12.8"/>
+            <use class="blue-mushroom" href="#blue-mushroom" x="155" y="709" width="14" height="11.2"/>
+          </g>
         </g>
         <!-- The biggest mushroom glows: ingredient 1 -->
         <circle id="toadstool-halo" cx="128" cy="694" r="28" fill="url(#toadstool-glow)"/>
         <g id="toadstool" class="scene-object" role="button" tabindex="0" aria-label="Toadstool">
           <rect class="hit" x="103" y="672" width="50" height="50" rx="10"/>
           <g class="art">
+            <circle class="pulse" cx="128" cy="694" r="16" fill="url(#toadstool-glow)" stroke="none" opacity="0"/>
             <path d="M124 710 L125 698 L131 698 L132 710 Z" fill="#CFC6B0"/>
             <path d="M113 698 Q114 684 128 683 Q142 684 143 698 Q128 702 113 698 Z" fill="#6FE25E"/>
             <g fill="#E6FFE0">
@@ -569,6 +604,7 @@
         <g id="moonflower" class="scene-object" role="button" tabindex="0" aria-label="Moonflower">
           <rect class="hit" x="222" y="672" width="50" height="50" rx="10"/>
           <g class="art">
+            <circle class="pulse" cx="246" cy="685" r="12" fill="url(#moonlight-glow)" stroke="none" opacity="0"/>
             <path d="M246 706 Q244 698 246 690" fill="none" stroke="#3E6B4A" stroke-width="2"/>
             <path d="M246 700 Q238 696 236 700 Q240 703 246 700 Z M246 698 Q254 694 256 698 Q252 701 246 698 Z" fill="#3E6B4A"/>
             <g class="bud">
