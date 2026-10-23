@@ -1,7 +1,7 @@
 // Virtual Hallo-weenie: boot, app state, and input wiring.
 // State machine, Enter (starts sound and motion), Play/Pause of everything, auto-pause, ambient
 // effects and soundscape, one input path that gives every scene object its own response, the
-// Cauldron Brew story with its ingredient triggers, and the raven's hints.
+// stories with their triggers (Cauldron Brew, Broomstick Flight), and the raven's hints.
 
 import { clock } from './clock.js';
 import { startEffects } from './effects.js';
@@ -9,7 +9,8 @@ import { reducedMotion, onReducedMotionChange } from './motion.js';
 import { startAudio, pauseAudio, resumeAudio, onAudioInterrupted } from './audio.js';
 import { startAmbience, playUiSound } from './soundscape.js';
 import { initCauldron, offerIngredient, playCauldronBrew, tapCauldron } from './stories/cauldron.js';
-import { flickerWindow, tapBlueMushrooms, twitchBroom } from './objects.js';
+import { initBroom, playBroomstickFlight, tapBroom } from './stories/broom.js';
+import { flickerWindow, tapBlueMushrooms } from './objects.js';
 import { noteStoryPlayed, noteStoryStarted, positionHint, showHint, startHints, tapRaven } from './hints.js';
 import { applyShowParam, initDevView } from './dev.js';
 
@@ -124,26 +125,34 @@ function pauseFromOutside() {
 
 // ---------- Stories ----------
 
-const storyRuns = [];   // measured story lengths in ms of clock time, for the dev readout
+// Each story's sequence and the object that gets keyboard focus when it ends.
+const STORIES = {
+  cauldron: { play: playCauldronBrew, focusAfter: 'cauldron' },
+  broom: { play: playBroomstickFlight, focusAfter: 'broom' },
+};
+const storyRuns = [];   // { story, ms } measured on the clock, for the dev readout
 
-// Plays the Cauldron Brew: called the moment the third ingredient lands (or by the dev trigger).
-// Every object locks for the whole story (only Play/Pause still works); at the end the scene
-// unlocks and keyboard focus returns to the cauldron.
-function startCauldronBrew() {
-  if (!canInteract()) return;
+// Plays a story: called the moment its trigger completes (or by a dev trigger). Every object locks
+// for the whole story (only Play/Pause still works); at the end the scene unlocks, the raven moves
+// on to the next unplayed story, and keyboard focus returns to the story's object.
+function startStory(id) {
+  if (!canInteract()) return false;
+  const story = STORIES[id];
   const startedAt = clock.now;
   setState({ mode: 'STORY' });
-  noteStoryStarted('cauldron');
-  playCauldronBrew({
+  noteStoryStarted(id);
+  story.play({
     onDone: () => {
-      storyRuns.push(clock.now - startedAt);
+      storyRuns.push({ story: id, ms: clock.now - startedAt });
       setState({ mode: 'SCENE' });
-      noteStoryPlayed('cauldron');
-      document.getElementById('cauldron').focus({ preventScroll: true });
+      noteStoryPlayed(id);
+      document.getElementById(story.focusAfter).focus({ preventScroll: true });
     },
   });
+  return true;
 }
-initCauldron({ onComplete: startCauldronBrew });
+initCauldron({ onComplete: () => startStory('cauldron') });
+initBroom({ onComplete: () => startStory('broom') });
 
 // ---------- Scene input: one path for touch, mouse, and keyboard ----------
 
@@ -171,7 +180,7 @@ const OBJECT_ACTIONS = {
   'window-left': () => flickerWindow('left'),
   'window-right': () => flickerWindow('right'),
   'window-attic': () => flickerWindow('attic'),
-  broom: twitchBroom,
+  broom: tapBroom,
 };
 
 function activateObject(object, event) {
@@ -184,5 +193,5 @@ function activateObject(object, event) {
 setState({});
 applyShowParam({ setState, showHint });   // dev shortcuts skip Enter, so they run without sound
 if (new URLSearchParams(location.search).get('dev') === '1') {
-  initDevView({ playStory: startCauldronBrew, storyRuns });
+  initDevView({ playStory: startStory, storyRuns });
 }

@@ -1,6 +1,6 @@
-// Tap feedback for scene objects that aren't story ingredients: the blue mushrooms (decoys around the
-// green toadstool), and the three windows and the broom, which belong to Phase 2's stories. Each
-// gives its own small response so every tap is answered.
+// Tap feedback for scene objects that aren't story triggers yet: the blue mushrooms (decoys around
+// the green toadstool) and the three windows (The Cottage Wakes, coming next). Each gives its own
+// small response so every tap is answered. The broom's taps live in js/stories/broom.js.
 
 import { emitSparkle, flareWindow } from './effects.js';
 import { playTapSound } from './soundscape.js';
@@ -38,15 +38,4 @@ function nearestTo(elements, clientX, clientY) {
     return Math.hypot(box.x + box.width / 2 - clientX, box.y + box.height / 2 - clientY);
   };
   return elements.reduce((best, element) => (distance(element) < distance(best) ? element : best));
-}
-
-// The broom twitches on its bristles, or briefly dims when motion is reduced.
-export function twitchBroom() {
-  const art = document.querySelector('#broom .art');
-  const keyframes = reducedMotion()
-    ? [{ opacity: 1 }, { opacity: 0.55 }, { opacity: 1 }]
-    : [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-9deg)' }, { transform: 'rotate(6deg)' },
-       { transform: 'rotate(-3deg)' }, { transform: 'rotate(0deg)' }];
-  art.animate(keyframes, { duration: 450, easing: 'ease-out' });
-  playTapSound('rustle');
 }

@@ -6,8 +6,8 @@
 //   ?motion=reduce       force the reduced-motion versions of every effect (read by motion.js)
 //   ?dev=1        readout (viewport, safe area, visible part of the scene), tap-area checks
 //                 (every tap area outlined, problems in red and listed), frame-rate stats, an audio
-//                 line (context state, output level, recent one-shots), a "Brew (dev)" button that
-//                 plays the Cauldron Brew with its measured length shown, and window.devClock for
+//                 line (context state, output level, recent one-shots), "Brew (dev)" and "Fly (dev)" buttons that
+//                 play each story, with every run's measured length shown, and window.devClock for
 //                 fast-forwarding time from the console
 
 import { clock } from './clock.js';
@@ -34,7 +34,8 @@ let storyRuns = [];
 export function initDevView({ playStory, storyRuns: runs }) {
   document.documentElement.classList.add('dev');
   storyRuns = runs;
-  document.getElementById('dev-brew').addEventListener('click', playStory);
+  document.getElementById('dev-brew').addEventListener('click', () => playStory('cauldron'));
+  document.getElementById('dev-fly').addEventListener('click', () => playStory('broom'));
   window.devClock = clock;   // console access: devClock.advance(7000) fast-forwards 7 s
   updateDevView();
   addEventListener('resize', updateDevView);
@@ -43,7 +44,7 @@ export function initDevView({ playStory, storyRuns: runs }) {
 
 function renderReadout() {
   const story = storyRuns.length
-    ? `story runs: ${storyRuns.map(ms => `${(ms / 1000).toFixed(2)} s`).join(', ')}`
+    ? `story runs: ${storyRuns.map(run => `${run.story} ${(run.ms / 1000).toFixed(2)} s`).join(', ')}`
     : 'story runs: none yet';
   document.getElementById('dev-readout').textContent = `${layoutText}\n${framesText}\n${audioText}\n${story}`;
 }

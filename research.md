@@ -98,6 +98,7 @@ Downloads go in `assets/audio/source/`. Processing (trim, fade, convert, level) 
 | --- | --- | --- |
 | Ingredient order: required or any order | **Decided Oct 17:** required (toadstool, moonflower, web); revisit after the playtest | Phase 2 playtest |
 | Hint timing and final rhymes | **Revised Oct 22 after playtest 1 (P1, P3):** 12 s / +30 s / +30 s, each shown 8 s (was 20 / 45 / 45); the brief's three rhymes | Phase 2 re-test |
+| Broomstick Flight trigger and hints | **Decided Oct 22:** 3 broom taps, progress holds; hints aim at the next unplayed story (cauldron, then broom), first broom hint 20 s after the previous story, then +30 s each; the drafted rhymes | Phase 2 re-test |
 | Hint bubble placement | **Decided Oct 17:** above the raven (3 lines for the longest hint vs 7 beside it); the left option was removed at CP7 | — |
 | Start-screen title | **Decided Oct 17:** "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | — |
 | Final palette and look | **Decided Oct 17:** the brief's palette, approved on the Developer's iPhone | — |

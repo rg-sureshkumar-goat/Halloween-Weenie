@@ -444,23 +444,29 @@ body {
   pointer-events: none;
 }
 
-/* Dev-only story trigger, top right, shown once the scene is running. */
-.dev-brew {
+/* Dev-only story triggers, top right, shown once the scene is running. */
+.dev-triggers {
   position: absolute;
   z-index: 35;
   top: calc(env(safe-area-inset-top) + var(--edge));
   right: calc(env(safe-area-inset-right) + var(--edge));
+}
+.dev .dev-triggers {
+  display: flex;
+  gap: 6px;
+}
+.dev .stage[data-mode="START"] .dev-triggers {
+  display: none;
+}
+.dev-trigger {
   min-height: 44px;
-  padding: 0 14px;
+  padding: 0 10px;
   border: 1px dashed var(--dev-accent);
   border-radius: 22px;
   background: rgba(0, 0, 0, 0.7);
   color: var(--moonlight);
-  font: 600 14px/1 ui-monospace, Menlo, monospace;
+  font: 600 13px/1 ui-monospace, Menlo, monospace;
   cursor: pointer;
-}
-.dev .stage[data-mode="START"] .dev-brew {
-  display: none;
 }
 
 /* Probe element: CSS resolves env() insets so scripts can read them as pixels. */

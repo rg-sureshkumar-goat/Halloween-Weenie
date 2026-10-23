@@ -8,7 +8,8 @@ import { reducedMotion } from './motion.js';
 
 // ---------- Hint content ----------
 
-// Each step appears `afterMs` after the previous one (or after the last progress).
+// Each step appears `afterMs` after the previous one, after the last progress, or (for a story's
+// first step) after the previous story ended.
 const LADDERS = {
   cauldron: [
     // Timing revised after playtest 1 (was 20 / 45 / 45 s): Users were guessing and getting frustrated.
@@ -16,8 +17,13 @@ const LADDERS = {
     { afterMs: 30000, text: 'Three gifts the forest keeps: one in the ring, one where water sleeps, one where the spider creeps.' },
     { afterMs: 30000, text: 'Ground, then water, then the web. Mix them wrong and the pot will burp.' },
   ],
+  broom: [
+    { afterMs: 20000, text: "The witch left her broom by the door tonight. It's itching to fly, if you wake it just right." },
+    { afterMs: 30000, text: 'Once it twitches, twice it shakes. Knock a third time, and see what wakes.' },
+    { afterMs: 30000, text: "Three taps on the broom by the cottage door, and up she'll go to the moon once more." },
+  ],
 };
-const STORY_ORDER = ['cauldron'];   // Phase 2 adds Broomstick Flight and The Cottage Wakes
+const STORY_ORDER = ['cauldron', 'broom'];   // the raven hints toward the first story not yet played
 const HINT_SHOW_MS = 8000;          // the brief asks for at least 6 s
 const REACTION_SHOW_MS = 3000;
 
@@ -29,7 +35,7 @@ const FLAVOR_AFTER = ['Caw! Again! Again!', 'Hrk. That spirit owes me a feather.
 
 let started = false;
 const playedStories = new Set();
-let step = 0;                  // next hint step on the current story's ladder
+const steps = {};              // story → its next hint step (each story keeps its own place)
 let lastHint = null;           // repeated when the raven is tapped
 let flavorCount = 0;
 let cancelNextHint = () => {};
@@ -43,7 +49,7 @@ export function startHints() {
   scheduleNextHint();
 }
 
-// A correct ingredient resets the countdown to the next hint.
+// Progress on any story (an ingredient in the pot, a broom tap) resets the countdown to the next hint.
 export function noteProgress() {
   scheduleNextHint();
 }
@@ -54,11 +60,10 @@ export function noteStoryStarted() {
   hideHint();
 }
 
-// Once a story has played, its hints stop and the ladder moves to the next unfound story.
+// Once a story has played, its hints stop and the raven moves on to the next unplayed story.
 export function noteStoryPlayed(story) {
   playedStories.add(story);
-  step = 0;
-  lastHint = null;
+  if (LADDERS[story]?.some(step => step.text === lastHint)) lastHint = null;
   scheduleNextHint();
 }
 
@@ -105,10 +110,11 @@ function scheduleNextHint() {
   cancelNextHint();
   cancelNextHint = () => {};
   const story = currentStory();
+  const step = steps[story] ?? 0;
   if (!story || step >= LADDERS[story].length) return;
   cancelNextHint = clock.after(LADDERS[story][step].afterMs, () => {
     lastHint = LADDERS[story][step].text;
-    step++;
+    steps[story] = step + 1;
     say(lastHint, HINT_SHOW_MS);
     scheduleNextHint();
   });

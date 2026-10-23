@@ -9,25 +9,26 @@
        GitHub Pages lets browsers cache files for 10 minutes, so this makes a phone fetch all the new
        files together instead of mixing a new page with an old script. The import map applies the
        version to module imports inside the scripts. -->
-  <link rel="stylesheet" href="css/styles.css?v=8">
+  <link rel="stylesheet" href="css/styles.css?v=9">
   <script type="importmap">
     {
       "imports": {
-        "./js/audio.js": "./js/audio.js?v=8",
-        "./js/clock.js": "./js/clock.js?v=8",
-        "./js/dev.js": "./js/dev.js?v=8",
-        "./js/effects.js": "./js/effects.js?v=8",
-        "./js/hints.js": "./js/hints.js?v=8",
-        "./js/motion.js": "./js/motion.js?v=8",
-        "./js/objects.js": "./js/objects.js?v=8",
-        "./js/soundscape.js": "./js/soundscape.js?v=8",
-        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=8",
-        "./js/synth.js": "./js/synth.js?v=8",
-        "./js/timeline.js": "./js/timeline.js?v=8"
+        "./js/audio.js": "./js/audio.js?v=9",
+        "./js/clock.js": "./js/clock.js?v=9",
+        "./js/dev.js": "./js/dev.js?v=9",
+        "./js/effects.js": "./js/effects.js?v=9",
+        "./js/hints.js": "./js/hints.js?v=9",
+        "./js/motion.js": "./js/motion.js?v=9",
+        "./js/objects.js": "./js/objects.js?v=9",
+        "./js/soundscape.js": "./js/soundscape.js?v=9",
+        "./js/stories/broom.js": "./js/stories/broom.js?v=9",
+        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=9",
+        "./js/synth.js": "./js/synth.js?v=9",
+        "./js/timeline.js": "./js/timeline.js?v=9"
       }
     }
   </script>
-  <script type="module" src="js/main.js?v=8"></script>
+  <script type="module" src="js/main.js?v=9"></script>
 </head>
 <body>
   <noscript><p>Virtual Hallo-weenie needs JavaScript to run.</p></noscript>
@@ -170,6 +171,10 @@
         <radialGradient id="fog-gradient">
           <stop offset="0" stop-color="#B8C7DA" stop-opacity="0.28"/>
           <stop offset="1" stop-color="#B8C7DA" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="broom-glow-gradient">
+          <stop offset="0" stop-color="#FFD98A" stop-opacity="0.75"/>
+          <stop offset="1" stop-color="#FFB547" stop-opacity="0"/>
         </radialGradient>
         <radialGradient id="raven-eye-glow">
           <stop offset="0" stop-color="#FFC85A" stop-opacity="0.9"/>
@@ -463,7 +468,9 @@
           </g>
         </g>
 
-        <!-- Broom leaning by the door: Phase 2 story "Broomstick Flight" -->
+        <!-- Broom leaning by the door: three taps start "Broomstick Flight" (js/stories/broom.js).
+             Its bristles glow brighter with each tap. -->
+        <circle id="broom-glow" cx="262" cy="470" r="26" fill="url(#broom-glow-gradient)" opacity="0"/>
         <g id="broom" class="scene-object" role="button" tabindex="0" aria-label="Broom">
           <rect class="hit" x="237" y="404" width="50" height="82" rx="10"/>
           <g class="art">
@@ -729,6 +736,31 @@
           <path d="M-15 -17 L-5 -13 M5 -13 L14 -14" fill="none" stroke="#0B2A14" stroke-width="2" stroke-linecap="round"/>
         </g>
         <rect id="story-shimmer" width="200" height="844" fill="url(#story-shimmer-gradient)" opacity="0"/>
+        <!-- Broomstick Flight: the witch riding her broom, drawn around her seat (0, 0) facing right.
+             The outline is drawn first with a moonlit stroke, then the fill, so only the outer edge
+             glows against the night sky. -->
+        <g id="flight-bats" fill="#070A14" opacity="0"></g>
+        <g id="witch-flight" opacity="0" transform="translate(266 445)">
+          <path d="M-28 3 L26 -1" stroke="#5A4128" stroke-width="3" stroke-linecap="round"/>
+          <path d="M-28 -2 L-46 -8 Q-50 3 -46 13 L-28 7 Z" fill="#6E5530"/>
+          <path d="M-44 -4 L-30 0 M-46 3 L-30 3 M-44 10 L-30 6" stroke="#4A3820" stroke-width="1"/>
+          <g fill="none" stroke="#DCE6F2" stroke-opacity="0.65" stroke-width="2.6" stroke-linejoin="round">
+            <path d="M-8 -20 Q-26 -18 -34 -4 Q-22 -10 -9 -9 Z"/>
+            <path d="M-10 2 Q-14 -12 -8 -22 L4 -22 Q10 -10 8 2 Z"/>
+            <circle cx="-1" cy="-27" r="5"/>
+            <path d="M-7 -32 L5 -33 L-9 -50 Z"/>
+          </g>
+          <g fill="#070A14">
+            <path d="M-8 -20 Q-26 -18 -34 -4 Q-22 -10 -9 -9 Z"/>
+            <path d="M-10 2 Q-14 -12 -8 -22 L4 -22 Q10 -10 8 2 Z"/>
+            <circle cx="-1" cy="-27" r="5"/>
+            <ellipse cx="-1" cy="-31.5" rx="10" ry="2.2" transform="rotate(-8 -1 -31.5)"/>
+            <path d="M-7 -32 L5 -33 L-9 -50 Z"/>
+            <path d="M3 -16 L15 -3 M-4 2 L4 8 L10 8" fill="none" stroke="#070A14" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M-5 -25 Q-15 -23 -22 -17" fill="none" stroke="#070A14" stroke-width="1.6"/>
+          </g>
+        </g>
+
         <!-- Ingredient 3: a silver thread spools from the web into the pot -->
         <path id="silk-thread" d="M100 385 Q140 470 195 574" fill="none" stroke="#E8F0FF" stroke-width="1.6"
               stroke-linecap="round" opacity="0"/>
@@ -750,7 +782,10 @@
     </svg>
 
     <pre class="dev-readout dev-only" id="dev-readout" aria-hidden="true"></pre>
-    <button class="dev-brew dev-only" id="dev-brew" type="button">Brew (dev)</button>
+    <div class="dev-triggers dev-only">
+      <button class="dev-trigger" id="dev-brew" type="button">Brew (dev)</button>
+      <button class="dev-trigger" id="dev-fly" type="button">Fly (dev)</button>
+    </div>
   </div>
 
   <div class="rotate-message" id="rotate-message">

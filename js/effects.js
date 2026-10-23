@@ -177,7 +177,7 @@ function smokeAndBubbles() {
 function fireflies() {
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
-  const sprites = { green: glowSprite('green'), blue: glowSprite('blue') };
+  const sprites = { green: glowSprite('green'), blue: glowSprite('blue'), gold: glowSprite('gold') };
   const sprite = sprites.green;
   const homes = [
     { x: 85, y: 668, count: 8 },   // above the mushroom ring
@@ -243,10 +243,12 @@ function fitCanvas(canvas) {
 }
 
 // A soft glow, drawn once per color and reused for every particle.
-// Glow colors: green for fireflies, spores, and the spirit's trail; blue for the blue mushrooms' spores.
+// Glow colors: green for fireflies, spores, and the spirit's trail; blue for the blue mushrooms'
+// spores; gold for the broom's dust and the witch's trail.
 const GLOW_COLORS = {
   green: { core: '245, 255, 190', inner: '225, 255, 130', outer: '190, 255, 100' },
   blue: { core: '220, 235, 255', inner: '160, 195, 255', outer: '110, 150, 240' },
+  gold: { core: '255, 248, 215', inner: '255, 214, 120', outer: '255, 170, 60' },
 };
 
 function glowSprite(color) {
@@ -268,7 +270,7 @@ function glowSprite(color) {
 // The first flight comes 6 s after Enter so Users see it early.
 // Reduced motion: the bats fade in on the moon briefly instead of flying.
 
-const BAT_SHAPE = 'M0 0 C-2 -3 -5 -4 -9 -3 C-7 -1 -8 1 -10 2 C-6 1 -3 2 0 4 C3 2 6 1 10 2 C8 1 7 -1 9 -3 C5 -4 2 -3 0 0 Z';
+export const BAT_SHAPE = 'M0 0 C-2 -3 -5 -4 -9 -3 C-7 -1 -8 1 -10 2 C-6 1 -3 2 0 4 C3 2 6 1 10 2 C8 1 7 -1 9 -3 C5 -4 2 -3 0 0 Z';
 const FLOCK = [
   { dx: 0, dy: 0, size: 1 },
   { dx: 16, dy: -10, size: 0.85 },

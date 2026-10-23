@@ -6,7 +6,7 @@
 // Reduced motion keeps the same beats and length: the spirit fades up above the pot and pulses
 // instead of flying, the flash, puff, and shimmer only fade, and nothing shakes or swells.
 
-import { playTimeline, ease, lerp, scaleAbout } from '../timeline.js';
+import { playTimeline, catmullRom, ease, lerp, scaleAbout } from '../timeline.js';
 import { burstBubble, emitSparkle, setBrewBubbles } from '../effects.js';
 import { setAmbienceLevel } from '../audio.js';
 import { playStorySound, playTapSound, playVoice } from '../soundscape.js';
@@ -458,19 +458,4 @@ export function playCauldronBrew({ onDone }) {
     set(spiritGlow, 'opacity', 1);
     for (const layer of shakeLayers) layer.style.transform = '';
   }
-}
-
-// Smooth curve through the waypoints (Catmull-Rom), u from 0 (first point) to 1 (last point).
-function catmullRom(points, u) {
-  const last = points.length - 1;
-  const scaled = Math.min(Math.max(u, 0), 1) * last;
-  const i = Math.min(Math.floor(scaled), last - 1);
-  const t = scaled - i;
-  const p0 = points[Math.max(i - 1, 0)];
-  const p1 = points[i];
-  const p2 = points[i + 1];
-  const p3 = points[Math.min(i + 2, last)];
-  const blend = (a, b, c, d) =>
-    0.5 * (2 * b + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (-a + 3 * b - 3 * c + d) * t * t * t);
-  return [blend(p0[0], p1[0], p2[0], p3[0]), blend(p0[1], p1[1], p2[1], p3[1])];
 }

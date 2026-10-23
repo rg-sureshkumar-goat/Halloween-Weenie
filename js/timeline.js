@@ -35,3 +35,18 @@ export function playTimeline({ length, tracks = [], cues = [], onDone = () => {}
 export const ease = p => (p < 0.5 ? 2 * p * p : 1 - (-2 * p + 2) ** 2 / 2);   // ease-in-out
 export const lerp = (from, to, p) => from + (to - from) * p;
 export const scaleAbout = (x, y, scale) => `translate(${x} ${y}) scale(${scale.toFixed(3)}) translate(${-x} ${-y})`;
+
+// Smooth curve through the waypoints (Catmull-Rom), u from 0 (first point) to 1 (last point).
+export function catmullRom(points, u) {
+  const last = points.length - 1;
+  const scaled = Math.min(Math.max(u, 0), 1) * last;
+  const i = Math.min(Math.floor(scaled), last - 1);
+  const t = scaled - i;
+  const p0 = points[Math.max(i - 1, 0)];
+  const p1 = points[i];
+  const p2 = points[i + 1];
+  const p3 = points[Math.min(i + 2, last)];
+  const blend = (a, b, c, d) =>
+    0.5 * (2 * b + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (-a + 3 * b - 3 * c + d) * t * t * t);
+  return [blend(p0[0], p1[0], p2[0], p3[0]), blend(p0[1], p1[1], p2[1], p3[1])];
+}

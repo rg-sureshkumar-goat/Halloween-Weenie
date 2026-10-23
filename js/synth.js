@@ -209,10 +209,10 @@ export const tapSounds = {
     noiseBurst(ctx, out, { duration: 0.15, type: 'bandpass', frequency: 900, peak: 0.12 });
     return tone(ctx, out, { from: note, to: note * 1.01, at: 0.04, duration: 0.5, peak: 0.14, attack: 0.01 });
   },
-  // Broom: a dry straw rustle.
-  rustle(ctx, out) {
-    noiseBurst(ctx, out, { duration: 0.12, type: 'bandpass', frequency: 3200, peak: 0.22 });
-    return noiseBurst(ctx, out, { at: 0.1, duration: 0.18, type: 'bandpass', frequency: 2600, peak: 0.16 });
+  // Broom: a dry straw rustle, higher and louder as the broom wakes (pitch 1, 1.2, 1.4).
+  rustle(ctx, out, { pitch = 1 } = {}) {
+    noiseBurst(ctx, out, { duration: 0.12, type: 'bandpass', frequency: 3200 * pitch, peak: 0.22 * pitch });
+    return noiseBurst(ctx, out, { at: 0.1, duration: 0.18, type: 'bandpass', frequency: 2600 * pitch, peak: 0.16 * pitch });
   },
   // Ingredients growing back: a three-note twinkle.
   twinkle(ctx, out) {
@@ -285,6 +285,24 @@ export const storySounds = {
     noise.start(start);
     noise.stop(start + duration + 0.1);
     tone(ctx, out, { from: 900, to: 140, duration, peak: 0.18, attack: duration * 0.85 });
+  },
+
+  // Bat wings for the witch's flock: rapid soft flutters, panned as the flock passes.
+  flutter(ctx, out, { duration = 2, panFrom = 0.6, panTo = -0.6 } = {}) {
+    const start = ctx.currentTime;
+    const pan = ctx.createStereoPanner();
+    pan.pan.setValueAtTime(panFrom, start);
+    pan.pan.linearRampToValueAtTime(panTo, start + duration);
+    pan.connect(out);
+    for (let at = 0; at < duration; at += 0.07 + Math.random() * 0.05) {
+      noiseBurst(ctx, pan, { at, duration: 0.05, type: 'bandpass', frequency: 900 + Math.random() * 700, peak: 0.12 });
+    }
+  },
+
+  // A soft landing thump as the broom touches down by the door.
+  thump(ctx, out) {
+    noiseBurst(ctx, out, { duration: 0.12, type: 'lowpass', frequency: 400, peak: 0.3 });
+    tone(ctx, out, { from: 120, to: 60, duration: 0.25, peak: 0.45, attack: 0.005 });
   },
 
   // The POP as the spirit vanishes into the pot.

@@ -92,9 +92,16 @@ Triggers, feedback, sequence beats, and hint rhymes follow `Weenie Project-Brief
 - **Reduced motion:** the same beats and length. The spirit fades up above the pot and pulses instead of flying; flash, puff, and shimmer only fade; no swell, spill travel, shake, or raven bob.
 - **Dev trigger:** with `?dev=1`, a "Brew (dev)" button plays the story, and the readout lists each run's measured length. CP6 replaces it with the ingredient triggers.
 
+### Broomstick Flight (Phase 2 story 2)
+
+- **Trigger (decided Oct 22):** tap the broom by the door 3 times. Tap 1: a twitch and a straw rustle. Tap 2: a bigger shake, gold dust, and a higher rustle. Tap 3: a hard rattle, a twinkle, and lift-off 0.45 s later. The bristles glow brighter with each tap (0.4 → 0.75 → 1). Progress holds until the story plays. If another story is already playing, the broom settles back.
+- **Sequence (8.5 s, `js/stories/broom.js`):** Beginning 0–2 s: the scene dims; the leaning broom hands over to a flying one, and a witch silhouette (moonlit outline) fades in riding it. Middle 2–6 s: she swoops up the right of the moon, loops once in front of it, and sweeps left across the sky, trailing gold sparkles and a flock of six bats. End 6–8.5 s: she glides down to the door, fades, the broom leans back, a shimmer sweeps the scene, and the raven caws. Sounds are generated (whooshes, bat flutter, landing thump) plus the shared cackle and caw. Ambience ducks to 40%.
+- **Reduced motion:** the same beats and length. The witch fades up above the door, a pulsing silhouette appears in front of the moon while the bats fade in around it, then the broom fades back. Nothing travels or rotates.
+- **Lock and return:** the same story mode as the Cauldron Brew, through one shared `startStory()` in `js/main.js`. Focus returns to the broom, and the broom can be woken again.
+
 ### Hints
 
-- The hint engine holds **one ladder per story** and hints toward the next story not yet played. Phase 1 registers only the cauldron ladder.
+- The hint engine holds **one ladder per story** and hints toward the first story not yet played, in the order cauldron, then broom. Each story keeps its own place on its ladder, so playing the broom first doesn't reset the cauldron's hints. A story's first hint comes 20 s after the previous story ends (the cauldron's comes 12 s after Enter), then +30 s and +30 s. Broom rhymes (decided Oct 22): "The witch left her broom by the door tonight. It's itching to fly, if you wake it just right." / "Once it twitches, twice it shakes. Knock a third time, and see what wakes." / "Three taps on the broom by the cottage door, and up she'll go to the moon once more."
 - Hints advance on clock time without progress: 12 s, then +30 s, then +30 s, each shown 8 s with a caw (revised Oct 22 after playtest 1; was 20 / 45 / 45 s). They pause with Play/Pause. A correct ingredient resets the countdown. The raven stays quiet during the story, and after it has played the cauldron hints stop. The ambient raven caw is skipped while a hint is showing.
 - The bubble sits above the raven (decided Oct 17).
 - **A visible raven (revision R2):** a moonlit outline, a glowing amber eye, and a halo that brightens while it speaks. Every 6.5 s it blinks and glances over its shoulder, and its wing flaps whenever it speaks. Reduced motion: blinks only, and the eye flashes instead of the wing flapping.
@@ -154,8 +161,8 @@ Agent evidence: headless screenshots at 390×844 and 375×667, a console free of
 Record excluded ideas, the next behavior that must work, and consequential requirement changes with their evidence.
 
 - **Phase 1 scope:** scene, ambience, start screen, Play/Pause, Cauldron Brew, hints, credits, deploy.
-- **Excluded this week:** Broomstick Flight and The Cottage Wakes behavior. Their objects (broom, windows) are placed now and give small flavor feedback only. Also excluded: playtest revisions, Phase 2 polish, raster art, frameworks or a build step, 3D.
-- **Next behavior that must work:** CP0, the placeholder page live at the HTTPS URL on the iPhone.
+- **Phase 2 scope:** playtest revisions R1–R3 (done), Broomstick Flight (CP8), The Cottage Wakes (CP9), then polish, full re-verification, playtest 2, and the debrief (CP10). Still excluded: raster art, frameworks or a build step, 3D.
+- **Next behavior that must work:** The Cottage Wakes (CP9): light the three windows to wake the cottage.
 - **Requirement changes:** *none yet.*
 
 ## Saving the transcript
