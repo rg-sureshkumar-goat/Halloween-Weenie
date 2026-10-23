@@ -22,8 +22,13 @@ const LADDERS = {
     { afterMs: 30000, text: 'Once it twitches, twice it shakes. Knock a third time, and see what wakes.' },
     { afterMs: 30000, text: "Three taps on the broom by the cottage door, and up she'll go to the moon once more." },
   ],
+  cottage: [
+    { afterMs: 20000, text: 'The old cottage dozes, its candles burned low. Give each one a spark, and it might say hello.' },
+    { afterMs: 30000, text: 'Three sleepy windows, two low and one high. Light every one, and the house opens an eye.' },
+    { afterMs: 30000, text: 'Tap all three windows, the attic one too, and the cottage will wake with a yawn just for you.' },
+  ],
 };
-const STORY_ORDER = ['cauldron', 'broom'];   // the raven hints toward the first story not yet played
+const STORY_ORDER = ['cauldron', 'broom', 'cottage'];   // the raven hints toward the first story not yet played
 const HINT_SHOW_MS = 8000;          // the brief asks for at least 6 s
 const REACTION_SHOW_MS = 3000;
 
@@ -49,7 +54,7 @@ export function startHints() {
   scheduleNextHint();
 }
 
-// Progress on any story (an ingredient in the pot, a broom tap) resets the countdown to the next hint.
+// Progress on any story (an ingredient in the pot, a broom tap, a window lit) resets the countdown to the next hint.
 export function noteProgress() {
   scheduleNextHint();
 }

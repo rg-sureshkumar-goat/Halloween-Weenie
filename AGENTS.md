@@ -47,13 +47,13 @@ Fill in as the project takes shape: how to run it locally, how to test it, and a
 - `css/styles.css`: layout, color tokens, UI, focus and dev styles.
 - `js/main.js`: `setState()` (the one place state changes: lock, pause, UI), Enter, Play/Pause, auto-pause, input routing, credits.
 - `js/clock.js`: the one pausable clock. `js/timeline.js`: timelines on it for stories and short animations.
-- `js/effects.js`: ambient effects, plus sparkles, window flares, and brew bubbles.
+- `js/effects.js`: ambient effects, plus sparkles, window flares and lighting, and brew bubbles.
 - `js/audio.js`: AudioContext, channels, file loading. `js/synth.js`: every generated sound. `js/soundscape.js`: ambience, one-shots, and sound helpers.
-- `js/hints.js`: raven hint ladders and the speech bubble. `js/objects.js`: windows and broom.
-- `js/stories/cauldron.js`: ingredients, progress, and the Cauldron Brew sequence. Phase 2 stories go beside it.
+- `js/hints.js`: raven hint ladders and the speech bubble. `js/objects.js`: the blue mushrooms (decoy taps).
+- `js/stories/`: each story with its trigger. `cauldron.js` (ingredients and Cauldron Brew), `broom.js` (three broom taps and Broomstick Flight), `cottage.js` (three windows and The Cottage Wakes).
 - `js/motion.js`: the reduced-motion preference. `js/dev.js`: developer tools.
 
-**Dev switches** (add to the URL): `?dev=1` shows the readout (viewport, visible scene, tap-area checks, fps, audio level and one-shots, story lengths), a **Brew (dev)** button, and `devClock.advance(ms)` in the console to fast-forward time. `?show=scene|pause|hint` opens straight to that state (no sound, since Enter is skipped). `?motion=reduce` forces reduced motion.
+**Dev switches** (add to the URL): `?dev=1` shows the readout (viewport, visible scene, tap-area checks, fps, audio level and one-shots, story lengths), **Brew**, **Fly**, and **Wake (dev)** buttons that play each story, and `devClock.advance(ms)` in the console to fast-forward time. `?show=scene|pause|hint` opens straight to that state (no sound, since Enter is skipped). `?motion=reduce` forces reduced motion.
 
 **Run locally.** From the project root, then open http://localhost:8000/:
 

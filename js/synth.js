@@ -224,7 +224,7 @@ export const tapSounds = {
   },
 };
 
-// Story sounds (Cauldron Brew). Generated, not stand-ins.
+// Story sounds (Cauldron Brew, Broomstick Flight, The Cottage Wakes). Generated, not stand-ins.
 export const storySounds = {
   // Rising bubbling rumble under the boil-over: low noise opening up plus a climbing sub tone.
   rumble(ctx, out, { duration = 2 } = {}) {
@@ -303,6 +303,86 @@ export const storySounds = {
   thump(ctx, out) {
     noiseBurst(ctx, out, { duration: 0.12, type: 'lowpass', frequency: 400, peak: 0.3 });
     tone(ctx, out, { from: 120, to: 60, duration: 0.25, peak: 0.45, attack: 0.005 });
+  },
+
+  // The cottage's yawn: a deep, breathy "haaawm" that rises, holds, and sinks. A buzzy tone goes
+  // through two vowel filters that slide from "aah" toward "aww", over a breath of noise.
+  yawn(ctx, out, { duration = 2.2 } = {}) {
+    const start = ctx.currentTime;
+    const end = start + duration;
+    const voice = ctx.createOscillator();
+    voice.type = 'sawtooth';
+    voice.frequency.setValueAtTime(110, start);
+    voice.frequency.exponentialRampToValueAtTime(190, start + duration * 0.35);
+    voice.frequency.exponentialRampToValueAtTime(150, start + duration * 0.7);
+    voice.frequency.exponentialRampToValueAtTime(70, end);
+    const level = ctx.createGain();
+    level.gain.setValueAtTime(0.0001, start);
+    // Peak levels chosen so its loudness (RMS) matches the brew's rumble.
+    level.gain.exponentialRampToValueAtTime(0.55, start + duration * 0.25);
+    level.gain.exponentialRampToValueAtTime(0.43, start + duration * 0.7);
+    level.gain.exponentialRampToValueAtTime(0.0001, end);
+    for (const [open, close] of [[800, 600], [1200, 850]]) {
+      const vowel = ctx.createBiquadFilter();
+      vowel.type = 'bandpass';
+      vowel.Q.value = 4;
+      vowel.frequency.setValueAtTime(open * 0.8, start);
+      vowel.frequency.linearRampToValueAtTime(open, start + duration * 0.35);
+      vowel.frequency.linearRampToValueAtTime(close, end);
+      voice.connect(vowel).connect(level);
+    }
+    level.connect(out);
+    voice.start(start);
+    voice.stop(end + 0.05);
+
+    const breath = ctx.createBufferSource();
+    breath.buffer = noiseBuffer(ctx);
+    const breathFilter = ctx.createBiquadFilter();
+    breathFilter.type = 'bandpass';
+    breathFilter.frequency.value = 1400;
+    breath.connect(breathFilter).connect(bellEnvelope(ctx, start, duration, 0.08)).connect(out);
+    breath.start(start);
+    breath.stop(end + 0.05);
+  },
+
+  // A smoke ring puffed from the chimney: a soft, low "poof" (each ring a little higher).
+  poof(ctx, out, { pitch = 1 } = {}) {
+    noiseBurst(ctx, out, { duration: 0.22, type: 'lowpass', frequency: 700 * pitch, peak: 0.35 });
+    tone(ctx, out, { from: 180 * pitch, to: 110 * pitch, duration: 0.2, peak: 0.3, attack: 0.008 });
+  },
+
+  // The cottage dozing off: a rumbly, fluttering in-breath, then a soft out-breath with a faint whistle.
+  snore(ctx, out) {
+    const start = ctx.currentTime;
+    const buzz = ctx.createOscillator();
+    buzz.type = 'sawtooth';
+    buzz.frequency.setValueAtTime(62, start);
+    buzz.frequency.linearRampToValueAtTime(72, start + 0.9);
+    const muffle = ctx.createBiquadFilter();
+    muffle.type = 'lowpass';
+    muffle.frequency.value = 420;
+    const flutter = ctx.createGain();           // its gain wobbles 22 times a second: the snore's rattle
+    flutter.gain.value = 0.6;
+    const rattle = ctx.createOscillator();
+    rattle.frequency.value = 22;
+    const rattleDepth = ctx.createGain();
+    rattleDepth.gain.value = 0.4;
+    rattle.connect(rattleDepth).connect(flutter.gain);
+    buzz.connect(muffle).connect(flutter).connect(bellEnvelope(ctx, start, 0.9, 0.6)).connect(out);
+    buzz.start(start);
+    rattle.start(start);
+    buzz.stop(start + 0.95);
+    rattle.stop(start + 0.95);
+
+    const exhale = ctx.createBufferSource();
+    exhale.buffer = noiseBuffer(ctx);
+    const exhaleFilter = ctx.createBiquadFilter();
+    exhaleFilter.type = 'bandpass';
+    exhaleFilter.frequency.value = 1100;
+    exhale.connect(exhaleFilter).connect(bellEnvelope(ctx, start + 1, 0.7, 0.12)).connect(out);
+    exhale.start(start + 1);
+    exhale.stop(start + 1.75);
+    tone(ctx, out, { from: 1400, to: 1150, at: 1.05, duration: 0.6, peak: 0.03, attack: 0.2 });
   },
 
   // The POP as the spirit vanishes into the pot.

@@ -9,26 +9,27 @@
        GitHub Pages lets browsers cache files for 10 minutes, so this makes a phone fetch all the new
        files together instead of mixing a new page with an old script. The import map applies the
        version to module imports inside the scripts. -->
-  <link rel="stylesheet" href="css/styles.css?v=9">
+  <link rel="stylesheet" href="css/styles.css?v=10">
   <script type="importmap">
     {
       "imports": {
-        "./js/audio.js": "./js/audio.js?v=9",
-        "./js/clock.js": "./js/clock.js?v=9",
-        "./js/dev.js": "./js/dev.js?v=9",
-        "./js/effects.js": "./js/effects.js?v=9",
-        "./js/hints.js": "./js/hints.js?v=9",
-        "./js/motion.js": "./js/motion.js?v=9",
-        "./js/objects.js": "./js/objects.js?v=9",
-        "./js/soundscape.js": "./js/soundscape.js?v=9",
-        "./js/stories/broom.js": "./js/stories/broom.js?v=9",
-        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=9",
-        "./js/synth.js": "./js/synth.js?v=9",
-        "./js/timeline.js": "./js/timeline.js?v=9"
+        "./js/audio.js": "./js/audio.js?v=10",
+        "./js/clock.js": "./js/clock.js?v=10",
+        "./js/dev.js": "./js/dev.js?v=10",
+        "./js/effects.js": "./js/effects.js?v=10",
+        "./js/hints.js": "./js/hints.js?v=10",
+        "./js/motion.js": "./js/motion.js?v=10",
+        "./js/objects.js": "./js/objects.js?v=10",
+        "./js/soundscape.js": "./js/soundscape.js?v=10",
+        "./js/stories/broom.js": "./js/stories/broom.js?v=10",
+        "./js/stories/cauldron.js": "./js/stories/cauldron.js?v=10",
+        "./js/stories/cottage.js": "./js/stories/cottage.js?v=10",
+        "./js/synth.js": "./js/synth.js?v=10",
+        "./js/timeline.js": "./js/timeline.js?v=10"
       }
     }
   </script>
-  <script type="module" src="js/main.js?v=9"></script>
+  <script type="module" src="js/main.js?v=10"></script>
 </head>
 <body>
   <noscript><p>Virtual Hallo-weenie needs JavaScript to run.</p></noscript>
@@ -198,6 +199,14 @@
         <symbol id="tuft" viewBox="0 0 20 12">
           <path d="M0 12 L4 2 L6 12 L9 0 L11 12 L14 3 L16 12 L20 5 L19 12 Z"/>
         </symbol>
+        <!-- The Cottage Wakes: the doorway's warm inside (its mouth), and the panes its eyes are clipped to -->
+        <radialGradient id="door-inside" cx="0.5" cy="0.7" r="0.7">
+          <stop offset="0" stop-color="#FFD98A"/>
+          <stop offset="0.6" stop-color="#E07A26"/>
+          <stop offset="1" stop-color="#5A2208"/>
+        </radialGradient>
+        <clipPath id="pane-clip-left"><rect x="152" y="360" width="26" height="32"/></clipPath>
+        <clipPath id="pane-clip-right"><rect x="212" y="360" width="26" height="32"/></clipPath>
       </defs>
 
       <!-- 1. Sky, stars, moon -->
@@ -365,12 +374,23 @@
           <path d="M136 334 Q190 322 258 328 M160 312 Q195 304 238 310 M178 286 Q196 280 218 284"
                 fill="none" stroke="#0E1426" stroke-width="1.2"/>
           <path d="M195 234 Q216 300 280 336" fill="none" stroke="#DCE6F2" stroke-opacity="0.3" stroke-width="1.5"/>
-          <!-- Door, slightly ajar with a sliver of warm light -->
+          <!-- Door, slightly ajar with a sliver of warm light. In The Cottage Wakes it is the mouth: the
+               panel swings open on its left hinge to show the warm inside and a tongue, and the doorway
+               stretches as the cottage yawns (js/stories/cottage.js). -->
           <g id="door">
-            <path d="M180 480 L180 440 Q195 418 210 440 L210 480 Z" fill="#1A120C"/>
-            <path d="M190 426 L190 480 M200 426 L200 480" stroke="#0E0906" stroke-width="1"/>
-            <line x1="209" y1="438" x2="209" y2="480" stroke="#FFB547" stroke-width="1.5" stroke-opacity="0.8"/>
-            <circle cx="185" cy="456" r="1.5" fill="#FFB547"/>
+            <g id="door-yawn">
+              <g id="door-mouth">
+                <path d="M180 480 L180 440 Q195 418 210 440 L210 480 Z" fill="url(#door-inside)"/>
+                <path d="M184 480 Q186 468 195 467 Q204 468 206 480 Z" fill="#B8423A"/>
+                <path d="M195 470 V478" stroke="#7A2622" stroke-width="1"/>
+              </g>
+              <g id="door-panel">
+                <path d="M180 480 L180 440 Q195 418 210 440 L210 480 Z" fill="#1A120C"/>
+                <path d="M190 426 L190 480 M200 426 L200 480" stroke="#0E0906" stroke-width="1"/>
+                <circle cx="205" cy="456" r="1.5" fill="#FFB547"/>
+              </g>
+              <line x1="209" y1="438" x2="209" y2="480" stroke="#FFB547" stroke-width="1.5" stroke-opacity="0.8"/>
+            </g>
             <rect x="176" y="478" width="38" height="4" fill="#141B28"/>
           </g>
         </g>
@@ -386,9 +406,9 @@
 
         <!-- Window glows spill onto the wall behind the panes -->
         <g id="window-glows">
-          <circle id="window-glow-left" cx="165" cy="376" r="34" fill="url(#window-glow)"/>
-          <circle id="window-glow-right" cx="225" cy="376" r="34" fill="url(#window-glow)"/>
-          <circle id="window-glow-attic" cx="195" cy="302" r="26" fill="url(#window-glow)"/>
+          <circle id="window-glow-left" opacity="0.25" cx="165" cy="376" r="34" fill="url(#window-glow)"/>
+          <circle id="window-glow-right" opacity="0.25" cx="225" cy="376" r="34" fill="url(#window-glow)"/>
+          <circle id="window-glow-attic" opacity="0.25" cx="195" cy="302" r="26" fill="url(#window-glow)"/>
         </g>
 
         <!-- Raven perched on the roof peak: the hint giver. Revision R2 (playtest 1: it blended into the
@@ -420,11 +440,13 @@
           </g>
         </g>
 
-        <!-- Three windows: Phase 2 story "The Cottage Wakes" -->
+        <!-- Three windows: they burn low until tapped; light all three to start "The Cottage Wakes"
+             (js/stories/cottage.js). Each pane's shade sets how low it burns (js/effects.js). -->
         <g id="window-attic" class="scene-object" role="button" tabindex="0" aria-label="Attic window">
           <rect class="hit" x="170" y="275" width="50" height="50" rx="10"/>
           <g class="art">
             <path d="M185 314 L185 298 Q195 286 205 298 L205 314 Z" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
+            <path class="window-shade" d="M185 314 L185 298 Q195 286 205 298 L205 314 Z" fill="#1A0E06" opacity="0.75"/>
             <path d="M195 290 V314 M185 303 H205" stroke="#070A14" stroke-width="2"/>
           </g>
         </g>
@@ -457,14 +479,38 @@
           <rect class="hit" x="140" y="351" width="50" height="50" rx="10"/>
           <g class="art" transform="rotate(-3 165 376)">
             <rect x="152" y="360" width="26" height="32" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
+            <rect class="window-shade" x="152" y="360" width="26" height="32" fill="#1A0E06" opacity="0.75"/>
             <path d="M165 360 V392 M152 376 H178" stroke="#070A14" stroke-width="2.5"/>
+            <!-- The Cottage Wakes: this window's eye, hidden until the story -->
+            <g class="window-eye" clip-path="url(#pane-clip-left)" opacity="0">
+              <g class="pupil">
+                <ellipse cx="165" cy="378" rx="4.5" ry="6" fill="#070A14"/>
+                <circle cx="166.5" cy="375.5" r="1.3" fill="#FFF3D0"/>
+              </g>
+              <g class="eyelid">
+                <path d="M150 352 H180 V386 Q165 398 150 386 Z" fill="#120C08" stroke="#5A4128" stroke-width="1.5"/>
+                <path d="M157 391 l-2 3.5 M165 392 v4 M173 391 l2 3.5" stroke="#120C08" stroke-width="1.6" stroke-linecap="round"/>
+              </g>
+            </g>
           </g>
         </g>
         <g id="window-right" class="scene-object" role="button" tabindex="0" aria-label="Right window">
           <rect class="hit" x="200" y="351" width="50" height="50" rx="10"/>
           <g class="art" transform="rotate(2 225 376)">
             <rect x="212" y="360" width="26" height="32" fill="url(#window-pane)" stroke="#070A14" stroke-width="2"/>
+            <rect class="window-shade" x="212" y="360" width="26" height="32" fill="#1A0E06" opacity="0.75"/>
             <path d="M225 360 V392 M212 376 H238" stroke="#070A14" stroke-width="2.5"/>
+            <!-- The Cottage Wakes: this window's eye, hidden until the story -->
+            <g class="window-eye" clip-path="url(#pane-clip-right)" opacity="0">
+              <g class="pupil">
+                <ellipse cx="225" cy="378" rx="4.5" ry="6" fill="#070A14"/>
+                <circle cx="226.5" cy="375.5" r="1.3" fill="#FFF3D0"/>
+              </g>
+              <g class="eyelid">
+                <path d="M210 352 H240 V386 Q225 398 210 386 Z" fill="#120C08" stroke="#5A4128" stroke-width="1.5"/>
+                <path d="M217 391 l-2 3.5 M225 392 v4 M233 391 l2 3.5" stroke="#120C08" stroke-width="1.6" stroke-linecap="round"/>
+              </g>
+            </g>
           </g>
         </g>
 
@@ -671,6 +717,12 @@
           <stop offset="0.5" stop-color="#FFF6D0" stop-opacity="0.28"/>
           <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
         </linearGradient>
+        <!-- The Cottage Wakes: the clearing dims around the cottage -->
+        <radialGradient id="cottage-dim-gradient" gradientUnits="userSpaceOnUse" cx="195" cy="370" r="330">
+          <stop offset="0" stop-color="#05060D" stop-opacity="0"/>
+          <stop offset="0.35" stop-color="#05060D" stop-opacity="0.08"/>
+          <stop offset="1" stop-color="#05060D" stop-opacity="0.85"/>
+        </radialGradient>
         <radialGradient id="vignette" cx="0.5" cy="0.45" r="0.75">
           <stop offset="0.6" stop-color="#000" stop-opacity="0"/>
           <stop offset="1" stop-color="#000" stop-opacity="0.5"/>
@@ -708,6 +760,7 @@
       <!-- Story layer (Cauldron Brew): all hidden until the sequence runs; js/stories/cauldron.js animates it -->
       <g id="story-layer" class="effect">
         <rect id="story-dim" width="390" height="844" fill="url(#story-dim-gradient)" opacity="0"/>
+        <rect id="cottage-dim" width="390" height="844" fill="url(#cottage-dim-gradient)" opacity="0"/>
         <circle id="story-flash" cx="195" cy="575" r="60" fill="url(#story-flash-gradient)" opacity="0"/>
         <g id="story-puff" fill="#C9D2E0" opacity="0">
           <circle cx="195" cy="560" r="12"/>
@@ -761,6 +814,18 @@
           </g>
         </g>
 
+        <!-- The Cottage Wakes: smoke rings puffed from the chimney, and a snore of Z's from the door -->
+        <g id="smoke-rings" fill="none" stroke="#C9D2E0" stroke-width="2.5">
+          <ellipse cx="156" cy="244" rx="6" ry="2.5" opacity="0"/>
+          <ellipse cx="156" cy="244" rx="6" ry="2.5" opacity="0"/>
+          <ellipse cx="156" cy="244" rx="6" ry="2.5" opacity="0"/>
+        </g>
+        <g id="snore-zs" fill="none" stroke="#DCE6F2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M-4 -4 H4 L-4 4 H4" opacity="0"/>
+          <path d="M-4 -4 H4 L-4 4 H4" opacity="0"/>
+          <path d="M-4 -4 H4 L-4 4 H4" opacity="0"/>
+        </g>
+
         <!-- Ingredient 3: a silver thread spools from the web into the pot -->
         <path id="silk-thread" d="M100 385 Q140 470 195 574" fill="none" stroke="#E8F0FF" stroke-width="1.6"
               stroke-linecap="round" opacity="0"/>
@@ -785,6 +850,7 @@
     <div class="dev-triggers dev-only">
       <button class="dev-trigger" id="dev-brew" type="button">Brew (dev)</button>
       <button class="dev-trigger" id="dev-fly" type="button">Fly (dev)</button>
+      <button class="dev-trigger" id="dev-wake" type="button">Wake (dev)</button>
     </div>
   </div>
 

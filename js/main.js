@@ -1,7 +1,7 @@
 // Virtual Hallo-weenie: boot, app state, and input wiring.
 // State machine, Enter (starts sound and motion), Play/Pause of everything, auto-pause, ambient
 // effects and soundscape, one input path that gives every scene object its own response, the
-// stories with their triggers (Cauldron Brew, Broomstick Flight), and the raven's hints.
+// stories with their triggers (Cauldron Brew, Broomstick Flight, The Cottage Wakes), and the raven's hints.
 
 import { clock } from './clock.js';
 import { startEffects } from './effects.js';
@@ -10,7 +10,8 @@ import { startAudio, pauseAudio, resumeAudio, onAudioInterrupted } from './audio
 import { startAmbience, playUiSound } from './soundscape.js';
 import { initCauldron, offerIngredient, playCauldronBrew, tapCauldron } from './stories/cauldron.js';
 import { initBroom, playBroomstickFlight, tapBroom } from './stories/broom.js';
-import { flickerWindow, tapBlueMushrooms } from './objects.js';
+import { initCottage, playCottageWakes, tapWindow } from './stories/cottage.js';
+import { tapBlueMushrooms } from './objects.js';
 import { noteStoryPlayed, noteStoryStarted, positionHint, showHint, startHints, tapRaven } from './hints.js';
 import { applyShowParam, initDevView } from './dev.js';
 
@@ -129,6 +130,7 @@ function pauseFromOutside() {
 const STORIES = {
   cauldron: { play: playCauldronBrew, focusAfter: 'cauldron' },
   broom: { play: playBroomstickFlight, focusAfter: 'broom' },
+  cottage: { play: playCottageWakes, focusAfter: 'window-attic' },
 };
 const storyRuns = [];   // { story, ms } measured on the clock, for the dev readout
 
@@ -153,6 +155,7 @@ function startStory(id) {
 }
 initCauldron({ onComplete: () => startStory('cauldron') });
 initBroom({ onComplete: () => startStory('broom') });
+initCottage({ onComplete: () => startStory('cottage') });
 
 // ---------- Scene input: one path for touch, mouse, and keyboard ----------
 
@@ -177,9 +180,9 @@ const OBJECT_ACTIONS = {
   cauldron: tapCauldron,
   'blue-mushrooms': tapBlueMushrooms,
   raven: tapRaven,
-  'window-left': () => flickerWindow('left'),
-  'window-right': () => flickerWindow('right'),
-  'window-attic': () => flickerWindow('attic'),
+  'window-left': () => tapWindow('left'),
+  'window-right': () => tapWindow('right'),
+  'window-attic': () => tapWindow('attic'),
   broom: tapBroom,
 };
 

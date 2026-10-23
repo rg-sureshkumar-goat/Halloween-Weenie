@@ -1,5 +1,5 @@
 // Ambient effects: fog, candlelight, chimney smoke and cauldron bubbles, fireflies, bats, plus the
-// sparkles, window flares, and brew bubbles that the story and objects trigger.
+// sparkles, window flares and lighting, and brew bubbles that the stories and objects trigger.
 // Every effect moves on the shared clock, so stopping the clock freezes all of them at once.
 // Each has a reduced-motion version, chosen on every frame so a settings change applies live.
 // Motion uses only transform and opacity (no blur filters), and particle counts are capped.
@@ -65,19 +65,43 @@ function fog() {
 // ---------- Candlelight: irregular flicker of the window glows ----------
 // Three sine waves at unrelated speeds never line up, so the flicker never visibly repeats.
 // A tapped window (flareWindow) dips dark for a moment, then flares bright and wide.
+// Each window also has a brightness: it burns low until The Cottage Wakes lights it
+// (setWindowLit). Brightness scales the glow and sets how dark the pane's shade is.
 // Reduced motion: a slow, gentle pulse.
 
 const WINDOWS = { left: 34, right: 34, attic: 26 };   // window name → resting glow radius
+const WINDOW_LOW = 0.3;                                // a low window's brightness (1 = lit)
+const SHADE_AT_LOW = 0.75;                             // pane shade opacity when the window is low
 const flareStarts = {};                                // window name → clock seconds of last tap
+const windowLight = {};                                // window name → { from, to, at, seconds }
 
 export function flareWindow(name) {
   flareStarts[name] = clock.now / 1000;
 }
 
+// Lights a window (or lets it burn low again), easing there over `seconds` of clock time.
+export function setWindowLit(name, lit, seconds = 0.4) {
+  const t = clock.now / 1000;
+  windowLight[name] = { from: windowBrightness(name, t), to: lit ? 1 : WINDOW_LOW, at: t, seconds };
+}
+
+function windowBrightness(name, t) {
+  const light = windowLight[name];
+  if (!light) return WINDOW_LOW;
+  const progress = clamp((t - light.at) / light.seconds, 0, 1);
+  return light.from + (light.to - light.from) * progress;
+}
+
 function candlelight() {
-  const glows = Object.keys(WINDOWS).map(name => ({ name, glow: document.getElementById(`window-glow-${name}`) }));
+  const glows = Object.keys(WINDOWS).map(name => ({
+    name,
+    glow: document.getElementById(`window-glow-${name}`),
+    shade: document.querySelector(`#window-${name} .window-shade`),
+  }));
   return (t, reduced) => {
-    glows.forEach(({ name, glow }, i) => {
+    glows.forEach(({ name, glow, shade }, i) => {
+      const brightness = windowBrightness(name, t);
+      shade.setAttribute('opacity', fixed(SHADE_AT_LOW * (1 - brightness) / (1 - WINDOW_LOW)));
       const level = reduced
         ? 0.88 + 0.08 * Math.sin(TAU * t / 6 + i * 2)
         : 0.82 + 0.1 * Math.sin(t * 7.3 + i) + 0.06 * Math.sin(t * 13.7 + i * 2) + 0.04 * Math.sin(t * 23.1 + i * 3);
@@ -86,7 +110,7 @@ function candlelight() {
       if (age < 0.15) flare = -age / 0.15;
       else if (age < 0.6) flare = Math.sin(Math.PI * (age - 0.15) / 0.45);
       const opacity = flare < 0 ? clamp(level * (1 + 0.65 * flare), 0.25, 1) : clamp(level + 0.3 * flare, 0.6, 1);
-      glow.setAttribute('opacity', fixed(opacity));
+      glow.setAttribute('opacity', fixed(opacity * brightness));
       glow.setAttribute('r', fixed(WINDOWS[name] + 12 * Math.max(flare, 0)));
     });
   };

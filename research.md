@@ -42,7 +42,7 @@ Reasons recorded in the brief: SVG stays sharp at any phone size, and a static s
 ### Creative direction (approved through CP1–CP6)
 
 - **Concept: "The Witch's Hollow."** A moonlit clearing with a glowing crooked cottage and a simmering cauldron, where the forest "waits for someone to stir things up." The tone is storybook-spooky and playful for ages 10+, with no gore, no menace toward people, and no branding.
-- **Why it serves the client's weenie goal:** the warm cottage glow pulls the eye first. The three ingredients sit in three different corners (ring, pond, tree), so finding them rewards looking beyond the focal point.
+- **Why it serves the client's weenie goal:** the warm cottage glow pulls the eye first (from Phase 2 its windows burn low until the User lights them, so the glow grows as they play). The three ingredients sit in three different corners (ring, pond, tree), so finding them rewards looking beyond the focal point.
 - **Style:** layered "cut-paper storybook" silhouettes, made of flat shapes, soft gradients, and glows. Light comes only from the moon (cool) and from magic (warm windows, green cauldron). The palette is in `Weenie Project-Brief.md` › *Visual style*. **Approved Oct 17** after the Developer reviewed the CP1 art on the iPhone. Only the three ingredients glow (toadstool, moonflower, web), which backs up the first raven hint ("hungry for things that glow").
 - **Environmental features (4):** cauldron, mushroom ring, pond with moonflower, crooked tree with web.
 - **Ambient effects:** 5 candidates (fog, fireflies, bats, candle flicker, smoke and bubbles). Build them and keep the best 3+ after seeing them on the iPhone.
@@ -84,7 +84,7 @@ Reasons recorded in the brief: SVG stays sharp at any phone size, and a static s
 | Raven caws (2–3) | [raven x3](https://freesound.org/people/nielstii/sounds/346318) | nielstii · 3 s | Three calls in one clip, so three variants from one file | ☐ |
 | | [Common Raven, Yellowstone](https://freesound.org/people/Nivatius/sounds/519591) | Nivatius · 13 s | A real raven's croak, deeper than a crow's caw | ☐ |
 
-**Generated in code (no files, no external credit):** the wind layer under the crickets, cauldron bubbling loop, toadstool "poink", moonflower chime, web twang (plucked-string synthesis), wrong-order "blorp", window flicker, broom twitch, Enter and Play/Pause clicks, boil-over rumble, spirit whoosh, suction "fwoop", and pop.
+**Generated in code (no files, no external credit):** the wind layer under the crickets, cauldron bubbling loop, toadstool "poink", moonflower chime, web twang (plucked-string synthesis), wrong-order "blorp", window candle "fwip" with its own note, broom rustle, cottage yawn, smoke-ring poofs, snore, Enter and Play/Pause clicks, boil-over rumble, spirit whoosh, suction "fwoop", and pop.
 
 Downloads go in `assets/audio/source/`. Processing (trim, fade, convert, level) happens once files arrive; tooling choice pending (ffmpeg needs installing; macOS's built-in `afconvert` is the alternative).
 
@@ -99,6 +99,7 @@ Downloads go in `assets/audio/source/`. Processing (trim, fade, convert, level) 
 | Ingredient order: required or any order | **Decided Oct 17:** required (toadstool, moonflower, web); revisit after the playtest | Phase 2 playtest |
 | Hint timing and final rhymes | **Revised Oct 22 after playtest 1 (P1, P3):** 12 s / +30 s / +30 s, each shown 8 s (was 20 / 45 / 45); the brief's three rhymes | Phase 2 re-test |
 | Broomstick Flight trigger and hints | **Decided Oct 22:** 3 broom taps, progress holds; hints aim at the next unplayed story (cauldron, then broom), first broom hint 20 s after the previous story, then +30 s each; the drafted rhymes | Phase 2 re-test |
+| The Cottage Wakes trigger and hints | **Decided Oct 22:** the windows burn low until tapped and stay lit (any order, progress holds); hints follow the broom's (20 s after the previous story, then +30 s each) with the drafted rhymes. Trade-off accepted: the cottage glows less at the start (it still flickers), so lit windows read as progress (playtest P1: less guessing) | Phase 2 re-test |
 | Hint bubble placement | **Decided Oct 17:** above the raven (3 lines for the longest hint vs 7 beside it); the left option was removed at CP7 | — |
 | Start-screen title | **Decided Oct 17:** "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | — |
 | Final palette and look | **Decided Oct 17:** the brief's palette, approved on the Developer's iPhone | — |

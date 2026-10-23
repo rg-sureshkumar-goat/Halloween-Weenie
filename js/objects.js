@@ -1,18 +1,11 @@
-// Tap feedback for scene objects that aren't story triggers yet: the blue mushrooms (decoys around
-// the green toadstool) and the three windows (The Cottage Wakes, coming next). Each gives its own
-// small response so every tap is answered. The broom's taps live in js/stories/broom.js.
+// Tap feedback for scene objects that aren't story triggers: the blue mushrooms, decoys around the
+// green toadstool, give their own small response so every tap is answered. Story triggers live
+// with their stories: ingredients and cauldron in js/stories/cauldron.js, the broom in
+// js/stories/broom.js, the windows in js/stories/cottage.js.
 
-import { emitSparkle, flareWindow } from './effects.js';
+import { emitSparkle } from './effects.js';
 import { playTapSound } from './soundscape.js';
 import { reducedMotion } from './motion.js';
-
-// Each window has its own note, so the three sound distinct (a rising triad).
-const WINDOW_NOTES = { left: 660, right: 784, attic: 988 };
-
-export function flickerWindow(name) {
-  flareWindow(name);
-  playTapSound('candle', { note: WINDOW_NOTES[name] });
-}
 
 // A blue mushroom bounces and puffs blue spores with a soft "boop". The one nearest the tap
 // responds; from the keyboard, a random one does. No progress: only the green toadstool counts.
