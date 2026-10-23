@@ -1,3 +1,10 @@
+6af82b5 2026-10-22 22:45:17 -0500 Phase 2: record the final iPhone check and doc approval
+ac19b5d 2026-10-22 22:40:10 -0500 Checkpoint 10: shared story frame, trigger fix, docs pass
+5f5c771 2026-10-22 21:40:58 -0500 Checkpoint 9: The Cottage Wakes
+d6b6276 2026-10-22 21:23:49 -0500 Checkpoint 8: Broomstick Flight
+3a4f400 2026-10-22 21:14:24 -0500 Playtest 1 revisions verified on iPhone
+56bcdbe 2026-10-22 21:10:45 -0500 Playtest 1 revisions R1-R3: clearer ingredients and a visible raven
+a0c2cac 2026-10-17 01:24:20 -0500 Phase 1: add iOS version to the iPhone log
 d5a0cf1 2026-10-17 01:23:01 -0500 Phase 1: record iPhone verification and doc approval
 85a9325 2026-10-17 01:15:37 -0500 Phase 1: save the build session transcript
 9f7a6d8 2026-10-17 01:12:56 -0500 Phase 1: export git log

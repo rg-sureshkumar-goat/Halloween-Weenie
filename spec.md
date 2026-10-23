@@ -175,8 +175,8 @@ Agent evidence: screenshots in the built-in browser at 390×844 and 375×667, a 
 Record excluded ideas, the next behavior that must work, and consequential requirement changes with their evidence.
 
 - **Phase 1 scope:** scene, ambience, start screen, Play/Pause, Cauldron Brew, hints, credits, deploy.
-- **Phase 2 scope:** playtest revisions R1–R3 (done), Broomstick Flight (CP8), The Cottage Wakes (CP9), then polish, full re-verification, playtest 2, and the debrief (CP10). Still excluded: raster art, frameworks or a build step, 3D.
-- **Next behavior that must work:** CP10: every requirement re-verified on the iPhone at the live URL with all three stories, then playtest 2.
+- **Phase 2 scope:** playtest revisions R1–R3 (done), Broomstick Flight (CP8), The Cottage Wakes (CP9), then polish, full re-verification, and the debrief (CP10; playtest 2 skipped by the Developer's decision (Oct 22)). Still excluded: raster art, frameworks or a build step, 3D.
+- **Next behavior that must work:** none. Every requirement was re-verified on the Developer's iPhone on Oct 22; what remains is delivery (the debrief and the zip).
 - **Requirement changes:** *none yet.*
 
 ## Saving the transcript

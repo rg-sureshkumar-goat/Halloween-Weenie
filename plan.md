@@ -52,14 +52,14 @@ Test each result before continuing, including related behavior that already work
 
 ### Phase 2 checkpoints (due Mon, Oct 26, 2026)
 
-> **Status (Oct 22, 2026):** R1–R3, CP8, and CP9 are built and verified on the Developer's iPhone. CP10 is under way: the code cleanup, the docs pass, and the Developer's full iPhone check (all 12 rows, Oct 22) are done, and the Developer approved the updated docs (Oct 22); playtest 2, the debrief, and the zip remain.
+> **Status (Oct 22, 2026):** R1–R3, CP8, and CP9 are built and verified on the Developer's iPhone. CP10 is under way: the code cleanup, the docs pass, and the Developer's full iPhone check (all 12 rows, Oct 22) are done, and the Developer approved the updated docs (Oct 22). Playtest 2 was skipped by the Developer's decision (Oct 22). The debrief and the zip remain.
 
 | # | Produces | Main risk | Verify by | Status |
 | --- | --- | --- | --- | --- |
 | R | Playtest 1 revisions R1–R3 | Making it clearer without solving it for Users | Browser regression; iPhone | Done (Oct 22) |
 | 8 | Broomstick Flight: 3-tap trigger with progress, 8.5 s flight, hints | The loop over the moon reads as a mess, or the broom trigger collides with the cauldron story | Browser: touch, keyboard, timing, pause, replay, hints, reduced motion; iPhone | Done: Developer verified on iPhone (Oct 22) |
 | 9 | The Cottage Wakes: light 3 windows, the cottage wakes and dozes | Three stories competing for attention and sound | Same checks | Done: Developer verified on iPhone (Oct 22) |
-| 10 | Polish, full re-verification on the iPhone, playtest 2, docs, git log, debrief, zip | Last-minute regressions | Every requirement on the iPhone at the live URL | In progress: cleanup, docs, and the final iPhone check done (Oct 22); playtest 2, debrief, zip to come |
+| 10 | Polish, full re-verification on the iPhone, playtest 2, docs, git log, debrief, zip | Last-minute regressions | Every requirement on the iPhone at the live URL | In progress: cleanup, docs, and the final iPhone check done (Oct 22); playtest 2 skipped by the Developer's decision (Oct 22); debrief and zip to come |
 
 ## Evidence and revisions
 
@@ -114,6 +114,8 @@ Keep implementation progress and verification here. Update `research.md` when ev
 
 **Re-check (Oct 22):** the Developer played the revised build on the iPhone at the live URL (`56bcdbe`) and reported "Everything is good". That was the Developer's own check, not a cold re-test with a new tester; one is still worth running after the Phase 2 stories are in (playtest 2).
 
+**Playtest 2 (Oct 22):** not run, by the Developer's decision. Broomstick Flight and The Cottage Wakes were verified by the Agent in the browser and by the Developer on the iPhone (CP8, CP9, and the CP10 final check), not by peers.
+
 ### Phase 1 delivery checklist (`Weenie Project-Brief.md` › Deliverables)
 
 Agent evidence is in the log above; boxes marked *Developer* are yours to tick.
@@ -159,7 +161,7 @@ Agent evidence is in the log above; *Developer* items are yours to confirm. Rows
 | Public HTTPS URL, verified on a physical phone | https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ | Developer verified on iPhone (Oct 22) (final check) |
 | Developer and all external assets credited | `CREDITS.md` and the Credits panel (no external assets) | Agent verified |
 | Polished, cohesive, stable | Shared story frame; one trigger rule; dead-end fixed | Developer verified on iPhone (Oct 22) (final check) |
-| **Deliverable 1:** peer-playtest notes, sustained testing, consequential revisions, final verification | Playtest 1 → R1–R3; Agent evidence CP8–CP10; iPhone log | Final iPhone check done (Oct 22); playtest 2 to come |
+| **Deliverable 1:** peer-playtest notes, sustained testing, consequential revisions, final verification | Playtest 1 → R1–R3; Agent evidence CP8–CP10; iPhone log | Done: final iPhone check (Oct 22). Playtest 2 skipped by the Developer's decision (Oct 22), so the Phase 2 stories were tested by the Agent and the Developer, not by peers |
 | **Deliverable 2:** the completed app | Live URL above | Developer verified on iPhone (Oct 22) (final check) |
 | **Deliverable 3:** docs, sources and credits, git log, completed debrief | Docs updated and approved by the Developer (Oct 22: `spec.md`, `research.md`, `plan.md`, `CREDITS.md`, `AGENTS.md`); `CREDITS.md`; `git-log.txt` refresh, debrief transcript, and zip to come | To come |
 
