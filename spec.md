@@ -176,7 +176,7 @@ Record excluded ideas, the next behavior that must work, and consequential requi
 
 - **Phase 1 scope:** scene, ambience, start screen, Play/Pause, Cauldron Brew, hints, credits, deploy.
 - **Phase 2 scope:** playtest revisions R1–R3 (done), Broomstick Flight (CP8), The Cottage Wakes (CP9), then polish, full re-verification, and the debrief (CP10; playtest 2 skipped by the Developer's decision (Oct 22)). Still excluded: raster art, frameworks or a build step, 3D.
-- **Next behavior that must work:** none. Every requirement was re-verified on the Developer's iPhone on Oct 22; what remains is delivery (the debrief and the zip).
+- **Next behavior that must work:** none. Every requirement was re-verified on the Developer's iPhone on Oct 22; the debrief is done (Oct 22), and only the Developer's zip download remains.
 - **Requirement changes:** *none yet.*
 
 ## Saving the transcript
