@@ -25,7 +25,7 @@ Define only enough to build and verify the current direction:
 
 Reference the brief's fixed requirements rather than copying them. Specify your decisions precisely enough that the Developer and Agent can judge the same result. Leave untested details open until they are needed, and distinguish provisional ideas from approved behavior.
 
-> **Status (Oct 22, 2026):** **Phase 2** contract. Phase 1 was approved by the Developer on Oct 17, 2026. Phase 2 added the playtest 1 revisions (R1–R3), Broomstick Flight, and The Cottage Wakes, each verified on the Developer's iPhone on Oct 22 (see `plan.md`). Final approval comes with the CP10 re-verification. Everything below describes the current build. Full creative detail lives in `Weenie Project-Brief.md`; this file holds the rules and the checks.
+> **Status (Oct 22, 2026):** **Phase 2** contract. Phase 1 was approved by the Developer on Oct 17, 2026. Phase 2 added the playtest 1 revisions (R1–R3), Broomstick Flight, and The Cottage Wakes, each verified on the Developer's iPhone on Oct 22 (see `plan.md`). After the CP10 re-verification on the iPhone, the Developer **approved this version on Oct 22, 2026**. Everything below describes the current build. Full creative detail lives in `Weenie Project-Brief.md`; this file holds the rules and the checks.
 
 ### User experience
 

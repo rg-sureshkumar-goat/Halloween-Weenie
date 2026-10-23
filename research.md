@@ -24,7 +24,7 @@ Record only what informs the next build decisions:
 
 Investigate unfamiliar techniques or asset sources as needed. Verify usage terms and keep source links and required credits here. Distinguish evidence from assumptions; the Agent's recommendation alone is not evidence.
 
-> **Status (Oct 22, 2026):** Phase 1 was **approved by the Developer on Oct 17, 2026**. Phase 2 decisions (playtest 1 revisions, the broom and window triggers, hint order) are recorded in *Open decisions* and *Revisions* below; final approval comes with CP10.
+> **Status (Oct 22, 2026):** Phase 1 was **approved by the Developer on Oct 17, 2026**. Phase 2 decisions (playtest 1 revisions, the broom and window triggers, hint order) are recorded in *Open decisions* and *Revisions* below. The Developer **approved this version on Oct 22, 2026**.
 
 ### Approved direction
 

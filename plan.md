@@ -52,14 +52,14 @@ Test each result before continuing, including related behavior that already work
 
 ### Phase 2 checkpoints (due Mon, Oct 26, 2026)
 
-> **Status (Oct 22, 2026):** R1–R3, CP8, and CP9 are built and verified on the Developer's iPhone. CP10 is under way: the code cleanup and docs pass are done; the Developer's full iPhone check, playtest 2, the debrief, and the zip remain.
+> **Status (Oct 22, 2026):** R1–R3, CP8, and CP9 are built and verified on the Developer's iPhone. CP10 is under way: the code cleanup, the docs pass, and the Developer's full iPhone check (all 12 rows, Oct 22) are done, and the Developer approved the updated docs (Oct 22); playtest 2, the debrief, and the zip remain.
 
 | # | Produces | Main risk | Verify by | Status |
 | --- | --- | --- | --- | --- |
 | R | Playtest 1 revisions R1–R3 | Making it clearer without solving it for Users | Browser regression; iPhone | Done (Oct 22) |
 | 8 | Broomstick Flight: 3-tap trigger with progress, 8.5 s flight, hints | The loop over the moon reads as a mess, or the broom trigger collides with the cauldron story | Browser: touch, keyboard, timing, pause, replay, hints, reduced motion; iPhone | Done: Developer verified on iPhone (Oct 22) |
 | 9 | The Cottage Wakes: light 3 windows, the cottage wakes and dozes | Three stories competing for attention and sound | Same checks | Done: Developer verified on iPhone (Oct 22) |
-| 10 | Polish, full re-verification on the iPhone, playtest 2, docs, git log, debrief, zip | Last-minute regressions | Every requirement on the iPhone at the live URL | In progress: cleanup and docs done (Oct 22); iPhone check, playtest 2, debrief, zip to come |
+| 10 | Polish, full re-verification on the iPhone, playtest 2, docs, git log, debrief, zip | Last-minute regressions | Every requirement on the iPhone at the live URL | In progress: cleanup, docs, and the final iPhone check done (Oct 22); playtest 2, debrief, zip to come |
 
 ## Evidence and revisions
 
@@ -74,6 +74,7 @@ Keep implementation progress and verification here. Update `research.md` when ev
 | Oct 17, 2026 | Phase 1 final build (CP0–CP7), live URL | iOS 26.6.2 (model not given) | **Pass:** all applicable checks | Developer tested the final build at https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ and reported: "everything looks exactly as it is supposed to look" and "all checks passed today". Recorded by the Agent at the Developer's request. |
 | Oct 22, 2026 | CP8 Broomstick Flight, live URL (`d6b6276`) | Not restated (Oct 17: iOS 26.6.2) | **Pass** | Developer tested Broomstick Flight at the live URL and reported: "Broomstick Flight works on my iPhone." Recorded by the Agent at the Developer's request. |
 | Oct 22, 2026 | CP9 The Cottage Wakes, live URL (`5f5c771`) | Not restated (Oct 17: iOS 26.6.2) | **Pass** | Developer tested The Cottage Wakes at the live URL and reported: "Alright all of this looks really good." Recorded by the Agent at the Developer's request. |
+| Oct 22, 2026 | CP10 final build, all three stories, live URL (`ac19b5d`) | Not restated (Oct 17: iOS 26.6.2) | **Pass:** all 12 rows of the iPhone Safari checklist (row 3 n/a) | Developer reported "I ran through the game and it works just fine," then confirmed: "I checked all 12 rows, including silent mode, locking the phone mid-story, the notch and home bar, and Reduce Motion." Recorded by the Agent at the Developer's request. |
 
 ### Agent evidence log
 
@@ -138,46 +139,46 @@ Agent evidence is in the log above; boxes marked *Developer* are yours to tick.
 
 ### Phase 2 delivery checklist (`brief.md` › Requirements and Phase 2 deliverables)
 
-Agent evidence is in the log above; *Developer* items are yours to confirm. Rows marked **final check** are re-verified on the iPhone at the live URL with all three stories (the iPhone Safari checklist below).
+Agent evidence is in the log above; *Developer* items are yours to confirm. Rows marked *final check* were re-verified by the Developer on the iPhone at the live URL with all three stories on Oct 22 (`ac19b5d`; the iPhone Safari checklist below).
 
 | Requirement | Evidence | Status |
 | --- | --- | --- |
-| One vertical scene, no scrolling or page changes | CP1, CP2, CP9: 390×844 and 375×667, 11 tap areas none clipped; landscape message | Agent verified; **final check** |
+| One vertical scene, no scrolling or page changes | CP1, CP2, CP9: 390×844 and 375×667, 11 tap areas none clipped; landscape message | Agent verified; Developer verified on iPhone (Oct 22) (final check) |
 | Strong focal point and 3+ environmental features | CP1 (cottage, cauldron, mushroom ring, pond, tree and web); R1 blue ring | Developer approved (CP1, R1) |
 | 3+ ambient effects | CP3: fog, candlelight, smoke and bubbles, fireflies, bats | Developer approved (CP3) |
-| Looping ambient background sound | CP4: crickets, wind, bubbling, looped gaplessly | Developer verified (Oct 17); **final check** |
+| Looping ambient background sound | CP4: crickets, wind, bubbling, looped gaplessly | Developer verified (Oct 17); Developer verified on iPhone (Oct 22) (final check) |
 | Sounds: CC0, public domain, or original, sources verified | All sound generated in code (`research.md` › Sound sources) | Agent verified |
-| Three stories with a beginning, middle, and end; 5–10 s; replayable | CP5, CP8, CP9, CP10: 8.50 s each, 3+ replays each | Agent verified; Developer verified CP8, CP9 (Oct 22); **final check** |
+| Three stories with a beginning, middle, and end; 5–10 s; replayable | CP5, CP8, CP9, CP10: 8.50 s each, 3+ replays each | Agent verified; Developer verified CP8, CP9 (Oct 22); Developer verified on iPhone (Oct 22) (final check) |
 | Triggered by interaction; unique triggers that show progress; every interaction gives feedback | Ingredients in order (brew color, runes); broom ×3 (glow); windows in any order (stay lit); blue mushrooms, cauldron, raven respond | Agent verified; Developer approved (CP6, CP8, CP9) |
 | Progressive text hints that hint rather than instruct | Three ladders, each 3 rhymes; reset by progress; stop after all three stories | Agent verified timing; Developer approved rhymes (Oct 17, Oct 22) |
-| Other interactions disabled during a story; clear return | Shared `startStory()`: scene inert, shimmer, caw, focus returns; CP10 dead-end fix | Agent verified; **final check** |
+| Other interactions disabled during a story; clear return | Shared `startStory()`: scene inert, shimmer, caw, focus returns; CP10 dead-end fix | Agent verified; Developer verified on iPhone (Oct 22) (final check) |
 | Browser-based HTML, CSS, and JavaScript | Plain ES modules, no build step | Agent verified |
-| Start screen; Enter starts audio and animation; reduced motion honored before it | CP4; reduced versions of every effect and story | Developer verified (Oct 17); **final check** |
-| One Play/Pause for motion, sound, effects, timers, interaction | CP4–CP10: pause mid-story for all three | Agent verified; **final check** |
-| Touch and keyboard; readable text; contrast; tap targets | Keyboard reaches all three stories; hint text 15.1:1; tap areas ≥ 48 px | Agent verified; **final check** |
-| Public HTTPS URL, verified on a physical phone | https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ | Developer: **final check** |
+| Start screen; Enter starts audio and animation; reduced motion honored before it | CP4; reduced versions of every effect and story | Developer verified (Oct 17); Developer verified on iPhone (Oct 22) (final check) |
+| One Play/Pause for motion, sound, effects, timers, interaction | CP4–CP10: pause mid-story for all three | Agent verified; Developer verified on iPhone (Oct 22) (final check) |
+| Touch and keyboard; readable text; contrast; tap targets | Keyboard reaches all three stories; hint text 15.1:1; tap areas ≥ 48 px | Agent verified; Developer verified on iPhone (Oct 22) (final check) |
+| Public HTTPS URL, verified on a physical phone | https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ | Developer verified on iPhone (Oct 22) (final check) |
 | Developer and all external assets credited | `CREDITS.md` and the Credits panel (no external assets) | Agent verified |
-| Polished, cohesive, stable | Shared story frame; one trigger rule; dead-end fixed | Developer: **final check** |
-| **Deliverable 1:** peer-playtest notes, sustained testing, consequential revisions, final verification | Playtest 1 → R1–R3; Agent evidence CP8–CP10; iPhone log | Playtest 2 and the final iPhone check to come |
-| **Deliverable 2:** the completed app | Live URL above | After the final check |
-| **Deliverable 3:** docs, sources and credits, git log, completed debrief | Docs updated Oct 22 (Developer approval pending); `CREDITS.md`; `git-log.txt` refresh, debrief transcript, and zip to come | To come |
+| Polished, cohesive, stable | Shared story frame; one trigger rule; dead-end fixed | Developer verified on iPhone (Oct 22) (final check) |
+| **Deliverable 1:** peer-playtest notes, sustained testing, consequential revisions, final verification | Playtest 1 → R1–R3; Agent evidence CP8–CP10; iPhone log | Final iPhone check done (Oct 22); playtest 2 to come |
+| **Deliverable 2:** the completed app | Live URL above | Developer verified on iPhone (Oct 22) (final check) |
+| **Deliverable 3:** docs, sources and credits, git log, completed debrief | Docs updated and approved by the Developer (Oct 22: `spec.md`, `research.md`, `plan.md`, `CREDITS.md`, `AGENTS.md`); `CREDITS.md`; `git-log.txt` refresh, debrief transcript, and zip to come | To come |
 
 ### iPhone Safari checklist (Developer, at the live URL)
 
 | # | Check (`Weenie Project-Brief.md` › iPhone Safari checklist) | Phase 1 | Final, all three stories (CP10) |
 | --- | --- | --- | --- |
-| 1 | Audio starts only after Enter and is audible at normal volume | Pass (Developer, Oct 17) | |
-| 2 | With the ringer switch on silent, sound still plays (or the start screen says to turn silent mode off) | Pass (Developer, Oct 17) | |
+| 1 | Audio starts only after Enter and is audible at normal volume | Pass (Developer, Oct 17) |Pass (Developer, Oct 22) |
+| 2 | With the ringer switch on silent, sound still plays (or the start screen says to turn silent mode off) | Pass (Developer, Oct 17) |Pass (Developer, Oct 22) |
 | 3 | Sound files are MP3 for Safari | n/a: no audio files ship; all sound is generated | n/a |
-| 4 | Locking the phone or switching apps pauses; returning shows the paused state and resumes cleanly | Pass (Developer, Oct 17) | |
-| 5 | No scrolling, rubber-banding, accidental zoom, or text-selection pop-ups | Pass (Developer, Oct 17) | |
-| 6 | Nothing hidden under the notch, Dynamic Island, or home bar | Pass (Developer, Oct 17) | |
-| 7 | Reduce Motion (Settings › Accessibility › Motion) changes the experience before Enter | Pass (Developer, Oct 17) | |
-| 8 | Every object registers taps reliably on the first try | Pass (Developer, Oct 17) | |
-| 9 | Animation stays smooth during the story | Pass (Developer, Oct 17) | |
-| 10 | Each story starts from its trigger by touch, plays smoothly, and replays | (Phase 2) | |
-| 11 | The sound mix is balanced across all three stories | (Phase 2) | |
-| 12 | The raven's hints lead to each story in turn and stop after all three | (Phase 2) | |
+| 4 | Locking the phone or switching apps pauses; returning shows the paused state and resumes cleanly | Pass (Developer, Oct 17) |Pass (Developer, Oct 22) |
+| 5 | No scrolling, rubber-banding, accidental zoom, or text-selection pop-ups | Pass (Developer, Oct 17) |Pass (Developer, Oct 22) |
+| 6 | Nothing hidden under the notch, Dynamic Island, or home bar | Pass (Developer, Oct 17) |Pass (Developer, Oct 22) |
+| 7 | Reduce Motion (Settings › Accessibility › Motion) changes the experience before Enter | Pass (Developer, Oct 17) |Pass (Developer, Oct 22) |
+| 8 | Every object registers taps reliably on the first try | Pass (Developer, Oct 17) |Pass (Developer, Oct 22) |
+| 9 | Animation stays smooth during the story | Pass (Developer, Oct 17) |Pass (Developer, Oct 22) |
+| 10 | Each story starts from its trigger by touch, plays smoothly, and replays | (Phase 2) |Pass (Developer, Oct 22) |
+| 11 | The sound mix is balanced across all three stories | (Phase 2) |Pass (Developer, Oct 22) |
+| 12 | The raven's hints lead to each story in turn and stop after all three | (Phase 2) |Pass (Developer, Oct 22) |
 
 ## Saving transcripts
 
