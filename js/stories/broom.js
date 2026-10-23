@@ -11,15 +11,14 @@
 // silhouette appears in front of the moon while the bats fade in, then the broom fades back.
 
 import { clock } from '../clock.js';
-import { playTimeline, catmullRom, ease, lerp } from '../timeline.js';
+import { catmullRom, ease, lerp } from '../timeline.js';
 import { BAT_SHAPE, emitSparkle } from '../effects.js';
-import { setAmbienceLevel } from '../audio.js';
 import { playStorySound, playTapSound, playVoice } from '../soundscape.js';
 import { noteProgress } from '../hints.js';
 import { reducedMotion } from '../motion.js';
+import { finishTrigger, playStoryTimeline } from './frame.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const STORY_LENGTH_MS = 8500;
 const TAPS_TO_FLY = 3;
 const DOOR = { x: 266, y: 445 };              // where the broom leans, takes off, and lands
 const HOVER = { x: 266, y: 400 };             // above the door (reduced motion)
@@ -63,13 +62,8 @@ export function tapBroom() {
     for (let i = 0; i < taps * 6; i++) emitSparkle(262 + (Math.random() - 0.5) * 26, 474 + (Math.random() - 0.5) * 10, 'gold');
   }
   noteProgress();
-  if (taps === TAPS_TO_FLY) {
-    playTapSound('twinkle');
-    // A beat to see the rattle, then lift-off. If a story is already playing, the broom settles.
-    clock.after(450, () => {
-      if (!onAllTaps()) resetBroom();
-    });
-  }
+  // A twinkle and a beat to see the rattle, then lift-off. If a story is already playing, the broom settles.
+  if (taps === TAPS_TO_FLY) finishTrigger({ start: onAllTaps, reset: resetBroom, chime: true });
 }
 
 function resetBroom() {
@@ -86,7 +80,6 @@ export function playBroomstickFlight({ onDone }) {
   const broomArt = byId('broom').querySelector('.art');
   const glow = byId('broom-glow');
   const dim = byId('story-dim');
-  const shimmer = byId('story-shimmer');
   const bats = makeBats(batGroup, 6);
   const trail = [];                                  // recent witch positions, newest first
   let previous = { ...DOOR };
@@ -134,7 +127,6 @@ export function playBroomstickFlight({ onDone }) {
       broomArt.setAttribute('opacity', (1 - p).toFixed(3));
       glow.setAttribute('opacity', (1 - p).toFixed(3));
     } },
-    { at: 0, duration: 1000, update: p => dim.setAttribute('opacity', (0.55 * ease(p)).toFixed(3)) },
     { at: 0, duration: 2000, update: p => {
       if (reduced) {
         placeWitch(HOVER.x, HOVER.y, 0.85, (p - 0.1) / 0.5, { steer: false });
@@ -174,40 +166,22 @@ export function playBroomstickFlight({ onDone }) {
       placeWitch(x, y, 0.85, p < 0.85 ? 1 : 1 - (p - 0.85) / 0.15);
       flyBats(1 - p * 2);
     } },
-    { at: 7200, duration: 1000, update: p => dim.setAttribute('opacity', (0.55 * (1 - ease(p))).toFixed(3)) },
     { at: 7700, duration: 700, update: p => broomArt.setAttribute('opacity', ease(p).toFixed(3)) },
-    { at: 7600, duration: 900, update: p => {
-      if (reduced) {
-        shimmer.setAttribute('transform', 'translate(-5 0) scale(2 1)');
-        shimmer.setAttribute('opacity', (Math.sin(Math.PI * p) * 0.6).toFixed(3));
-      } else {
-        shimmer.setAttribute('transform', `translate(${lerp(-220, 410, p).toFixed(1)} 0)`);
-        shimmer.setAttribute('opacity', Math.sin(Math.PI * p).toFixed(3));
-      }
-    } },
   ];
 
   const cues = [
-    { at: 0, run: () => { setAmbienceLevel(0.4); playStorySound('whoosh', { duration: 1.8, panFrom: 0.2, panTo: 0.5 }); } },
+    { at: 0, run: () => playStorySound('whoosh', { duration: 1.8, panFrom: 0.2, panTo: 0.5 }) },
     { at: 2100, run: () => playStorySound('flutter', { duration: 3.6, panFrom: 0.6, panTo: -0.6 }) },
     { at: 2600, run: () => playVoice('cackle') },
     { at: 3400, run: () => playStorySound('shimmer') },
     { at: 4600, run: () => playStorySound('whoosh', { duration: 1.4, panFrom: 0.5, panTo: -0.7 }) },
     { at: 6300, run: () => playStorySound('whoosh', { duration: 1.5, panFrom: -0.6, panTo: 0.4 }) },
-    { at: 7600, run: () => setAmbienceLevel(1, 0.8) },
     { at: 7900, run: () => playStorySound('thump') },
     { at: 8100, run: () => playVoice('caw', { pitch: 0.85 }) },
   ];
 
-  return playTimeline({
-    length: STORY_LENGTH_MS,
-    tracks,
-    cues,
-    onDone: elapsed => {
-      resetScene();
-      onDone(elapsed);
-    },
-  });
+  // The shared frame adds the dim, the closing shimmer, and the ambience dip (frame.js).
+  return playStoryTimeline({ dim, dimTo: 0.55, reduced, tracks, cues, reset: resetScene, onDone });
 
   // Puts every story element back to rest and lets the broom be woken again.
   function resetScene() {
@@ -215,8 +189,6 @@ export function playBroomstickFlight({ onDone }) {
     witch.setAttribute('transform', `translate(${DOOR.x} ${DOOR.y})`);
     batGroup.setAttribute('opacity', '0');
     batGroup.replaceChildren();
-    dim.setAttribute('opacity', '0');
-    shimmer.setAttribute('opacity', '0');
     broomArt.removeAttribute('opacity');
     resetBroom();
   }

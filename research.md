@@ -24,7 +24,7 @@ Record only what informs the next build decisions:
 
 Investigate unfamiliar techniques or asset sources as needed. Verify usage terms and keep source links and required credits here. Distinguish evidence from assumptions; the Agent's recommendation alone is not evidence.
 
-> **Status (Oct 17, 2026):** Final Phase 1 version, **approved by the Developer on Oct 17, 2026**. Every Phase 1 decision below is settled (see *Open decisions*); items still open are for Phase 2.
+> **Status (Oct 22, 2026):** Phase 1 was **approved by the Developer on Oct 17, 2026**. Phase 2 decisions (playtest 1 revisions, the broom and window triggers, hint order) are recorded in *Open decisions* and *Revisions* below; final approval comes with CP10.
 
 ### Approved direction
 
@@ -86,11 +86,11 @@ Reasons recorded in the brief: SVG stays sharp at any phone size, and a static s
 
 **Generated in code (no files, no external credit):** the wind layer under the crickets, cauldron bubbling loop, toadstool "poink", moonflower chime, web twang (plucked-string synthesis), wrong-order "blorp", window candle "fwip" with its own note, broom rustle, cottage yawn, smoke-ring poofs, snore, Enter and Play/Pause clicks, boil-over rumble, spirit whoosh, suction "fwoop", and pop.
 
-Downloads go in `assets/audio/source/`. Processing (trim, fade, convert, level) happens once files arrive; tooling choice pending (ffmpeg needs installing; macOS's built-in `afconvert` is the alternative).
+Not used: the app ships with generated sound only (decided Oct 17 and unchanged in Phase 2), so no files were downloaded or processed. The shortlist stays as the record of the search and a ready path if recordings are ever added (process into `assets/audio/` with macOS `afconvert` or ffmpeg, then credit each).
 
 ### Fonts
 
-**Decided Oct 17:** system fonts throughout, so there is nothing to load or credit. A display font for the title (OFL, credited) remains a Phase 2 polish option.
+**Decided Oct 17:** system fonts throughout, so there is nothing to load or credit. System fonts were kept through Phase 2; no display font was added.
 
 ### Open decisions (raise at the checkpoint where each matters)
 
@@ -104,14 +104,16 @@ Downloads go in `assets/audio/source/`. Processing (trim, fade, convert, level) 
 | Start-screen title | **Decided Oct 17:** "Virtual Hallo-weenie", subtitle "The Witch's Hollow" | — |
 | Final palette and look | **Decided Oct 17:** the brief's palette, approved on the Developer's iPhone | — |
 | Which ambient effects to keep | **Decided Oct 17:** all five (fog, candlelight, smoke and bubbles, fireflies, bats); the Developer checked them on the iPhone and said "this is good" | — |
-| Recorded sounds in Phase 1 | **Decided Oct 17:** ship Phase 1 with generated sound only; the CC0 shortlist stays ready for Phase 2. If recordings are added, commit only the processed files and keep `assets/audio/source/` out of git (proposed) | Phase 2 |
+| Recorded sounds | **Decided Oct 17:** ship with generated sound only; the CC0 shortlist stays on record. No recordings were added in Phase 2 | — |
 | Phase 2 due date | **Mon, Oct 26, 2026** (Developer, Oct 22) | — |
 
 ## Revisions
 
 Update decisions when new evidence changes the direction, linking to playtest observations in `plan.md` rather than copying them. Keep chosen behavior and asset requirements in `spec.md`. The Developer confirms when the inquiry is sufficient to continue building; exhaustive research is not a prerequisite.
 
-*None yet.*
+- **Oct 22, playtest 1** (`plan.md` › *Playtest observations* P1–P3): Users guessed at what to tap and missed the raven. Revisions R1–R3: a ring of blue decoy mushrooms around the one green toadstool, a visible moonlit raven, pulsing ingredients, and hints at 12 / +30 / +30 s instead of 20 / 45 / 45 s (*Hint timing* above).
+- **Oct 22, The Cottage Wakes:** the windows now burn low until lit, which softens the "warm cottage glow pulls the eye first" rationale at the start in exchange for visible progress (*Open decisions* above).
+- **Oct 22, CP10:** a trigger completed while another story plays now resets instead of sticking (found while reviewing the trigger code and reproduced in the browser; `spec.md` › *Stories: shared rules*).
 
 ## Saving the transcript
 

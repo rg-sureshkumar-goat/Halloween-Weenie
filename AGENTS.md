@@ -50,7 +50,7 @@ Fill in as the project takes shape: how to run it locally, how to test it, and a
 - `js/effects.js`: ambient effects, plus sparkles, window flares and lighting, and brew bubbles.
 - `js/audio.js`: AudioContext, channels, file loading. `js/synth.js`: every generated sound. `js/soundscape.js`: ambience, one-shots, and sound helpers.
 - `js/hints.js`: raven hint ladders and the speech bubble. `js/objects.js`: the blue mushrooms (decoy taps).
-- `js/stories/`: each story with its trigger. `cauldron.js` (ingredients and Cauldron Brew), `broom.js` (three broom taps and Broomstick Flight), `cottage.js` (three windows and The Cottage Wakes).
+- `js/stories/`: each story with its trigger. `cauldron.js` (ingredients and Cauldron Brew), `broom.js` (three broom taps and Broomstick Flight), `cottage.js` (three windows and The Cottage Wakes), and `frame.js`, which they share (length, the dim, shimmer, and ambience dip, and how a finished trigger starts its story or resets).
 - `js/motion.js`: the reduced-motion preference. `js/dev.js`: developer tools.
 
 **Dev switches** (add to the URL): `?dev=1` shows the readout (viewport, visible scene, tap-area checks, fps, audio level and one-shots, story lengths), **Brew**, **Fly**, and **Wake (dev)** buttons that play each story, and `devClock.advance(ms)` in the console to fast-forward time. `?show=scene|pause|hint` opens straight to that state (no sound, since Enter is skipped). `?motion=reduce` forces reduced motion.

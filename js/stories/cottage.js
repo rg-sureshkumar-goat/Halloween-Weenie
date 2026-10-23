@@ -11,15 +11,13 @@
 // Reduced motion keeps the beats and length: eyelids, door, rings, and Z's fade in place, and
 // nothing slides, stretches, or travels.
 
-import { clock } from '../clock.js';
-import { playTimeline, ease, lerp } from '../timeline.js';
+import { ease, lerp } from '../timeline.js';
 import { flareWindow, setWindowLit } from '../effects.js';
-import { setAmbienceLevel } from '../audio.js';
 import { playStorySound, playTapSound, playVoice } from '../soundscape.js';
 import { noteProgress } from '../hints.js';
 import { reducedMotion } from '../motion.js';
+import { STORY_LENGTH_MS, finishTrigger, playStoryTimeline } from './frame.js';
 
-const STORY_LENGTH_MS = 8500;
 const WINDOW_NAMES = ['left', 'right', 'attic'];
 const WINDOW_NOTES = { left: 660, right: 784, attic: 988 };   // a rising triad, one note per window
 const CHIMNEY = { x: 156, y: 244 };
@@ -70,14 +68,9 @@ export function tapWindow(name) {
   lit.add(name);
   setWindowLit(name, true);
   noteProgress();
-  if (lit.size === WINDOW_NAMES.length) {
-    playTapSound('twinkle');
-    // A beat to see the third window catch, then the cottage stirs. If a story is already
-    // playing, the windows burn low again.
-    clock.after(450, () => {
-      if (!onAllLit()) resetWindows();
-    });
-  }
+  // A twinkle and a beat to see the third window catch, then the cottage stirs. If a story is
+  // already playing, the windows burn low again.
+  if (lit.size === WINDOW_NAMES.length) finishTrigger({ start: onAllLit, reset: resetWindows, chime: true });
 }
 
 function resetWindows(seconds) {
@@ -98,7 +91,6 @@ export function playCottageWakes({ onDone }) {
   const rings = [...byId('smoke-rings').children];
   const zs = [...byId('snore-zs').children];
   const dim = byId('cottage-dim');
-  const shimmer = byId('story-shimmer');
 
   // The face: eyes and mouth, all read from the choreography tables at time `ms`.
   function placeFace(ms) {
@@ -173,40 +165,21 @@ export function playCottageWakes({ onDone }) {
       placeRings(ms);
       placeZs(ms);
     } },
-    { at: 0, duration: 1000, update: p => dim.setAttribute('opacity', (0.8 * ease(p)).toFixed(3)) },
-    { at: 7200, duration: 1000, update: p => dim.setAttribute('opacity', (0.8 * (1 - ease(p))).toFixed(3)) },
-    { at: 7600, duration: 900, update: p => {
-      if (reduced) {
-        shimmer.setAttribute('transform', 'translate(-5 0) scale(2 1)');
-        shimmer.setAttribute('opacity', (Math.sin(Math.PI * p) * 0.6).toFixed(3));
-      } else {
-        shimmer.setAttribute('transform', `translate(${lerp(-220, 410, p).toFixed(1)} 0)`);
-        shimmer.setAttribute('opacity', Math.sin(Math.PI * p).toFixed(3));
-      }
-    } },
   ];
 
   const cues = [
-    { at: 0, run: () => { setAmbienceLevel(0.4); playVoice('creak'); } },      // the old house groans awake
+    { at: 0, run: () => playVoice('creak') },                                   // the old house groans awake
     { at: 300, run: () => flareWindow('attic') },                               // a raised brow
     { at: 1850, run: () => { flareWindow('left'); flareWindow('right'); } },    // eyes wide open
     { at: 2000, run: () => playStorySound('yawn', { duration: 2.2 }) },
     ...RINGS.starts.map((at, i) => ({ at, run: () => playStorySound('poof', { pitch: 1 + 0.15 * i }) })),
     { at: 6400, run: () => playVoice('creak') },                                // the door swings shut
     { at: 6900, run: () => { playStorySound('snore'); resetWindows(1.2); } },   // dozing; windows sink low
-    { at: 7600, run: () => setAmbienceLevel(1, 0.8) },
     { at: 8200, run: () => playVoice('caw', { pitch: 1.05 }) },
   ];
 
-  return playTimeline({
-    length: STORY_LENGTH_MS,
-    tracks,
-    cues,
-    onDone: elapsed => {
-      resetScene();
-      onDone(elapsed);
-    },
-  });
+  // The shared frame adds the dim, the closing shimmer, and the ambience dip (frame.js).
+  return playStoryTimeline({ dim, dimTo: 0.8, reduced, tracks, cues, reset: resetScene, onDone });
 
   // Puts every story element back to rest; the windows are already low, ready to be lit again.
   function resetScene() {
@@ -220,8 +193,6 @@ export function playCottageWakes({ onDone }) {
     doorPanel.removeAttribute('opacity');
     doorYawn.removeAttribute('transform');
     for (const element of [...rings, ...zs]) element.setAttribute('opacity', '0');
-    dim.setAttribute('opacity', '0');
-    shimmer.setAttribute('opacity', '0');
   }
 }
 

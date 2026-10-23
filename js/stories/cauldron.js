@@ -8,12 +8,10 @@
 
 import { playTimeline, catmullRom, ease, lerp, scaleAbout } from '../timeline.js';
 import { burstBubble, emitSparkle, setBrewBubbles } from '../effects.js';
-import { setAmbienceLevel } from '../audio.js';
 import { playStorySound, playTapSound, playVoice } from '../soundscape.js';
 import { noteProgress, showReaction } from '../hints.js';
 import { reducedMotion } from '../motion.js';
-
-const STORY_LENGTH_MS = 8500;
+import { finishTrigger, playStoryTimeline } from './frame.js';
 
 const POT = { x: 195, y: 575 };
 const BREW = { x: 195, y: 580 };
@@ -52,9 +50,10 @@ const RUNE_LIT = '#E7CCFF';
 let progress = 0;
 let ingredientInFlight = false;
 const inPot = new Set();
-let onAllIngredients = () => {};
+let onAllIngredients = () => true;
 
-// main.js passes the function that starts the story once all three ingredients are in.
+// main.js passes the function that starts the story once all three ingredients are in; it returns
+// false if a story couldn't start.
 export function initCauldron({ onComplete }) {
   onAllIngredients = onComplete;
 }
@@ -79,7 +78,8 @@ export function offerIngredient(name) {
     progress++;
     showProgress(progress);
     noteProgress();
-    if (progress === ORDER.length) onAllIngredients();
+    // The brew starts, or, if another story began while this ingredient was on its way, the pot empties.
+    if (progress === ORDER.length) finishTrigger({ start: onAllIngredients, reset: resetBrew });
   });
 }
 
@@ -156,8 +156,9 @@ function regrowIngredients() {
   }
 }
 
-// After the story: the brew clears, the runes go dark, and the ingredients grow back.
-function settleAfterStory() {
+// The pot empties: the brew clears, the runes go dark, and the ingredients grow back (after the
+// story, or when the brew couldn't start).
+function resetBrew() {
   progress = 0;
   showProgress(0);
   regrowIngredients();
@@ -319,7 +320,6 @@ export function playCauldronBrew({ onDone }) {
   const dim = byId('story-dim');
   const flash = byId('story-flash');
   const puff = byId('story-puff');
-  const shimmer = byId('story-shimmer');
   const ravenArt = document.querySelector('#raven .art');
   const shakeLayers = ['scene-interactive', 'particles', 'scene-front'].map(byId);
   let previous = { x: POT.x, y: POT.y };   // last spirit position, for tilt and the sparkle trail
@@ -345,7 +345,6 @@ export function playCauldronBrew({ onDone }) {
       set(flash, 'opacity', Math.sin(Math.PI * p) * 0.9);
       set(flash, 'transform', reduced ? '' : scaleAbout(POT.x, POT.y, lerp(0.4, 2.2, p)));
     } },
-    { at: 0, duration: 1000, update: p => set(dim, 'opacity', 0.6 * ease(p)) },
     { at: 200, duration: 700, update: p => set(gold, 'opacity', ease(p)) },
     { at: 200, duration: 1600, update: p => {
       if (reduced) return;
@@ -413,47 +412,30 @@ export function playCauldronBrew({ onDone }) {
         set(fire, 'transform', scaleAbout(FIRE.x, FIRE.y, lerp(1.35, 1, ease(p))));
       }
     } },
-    { at: 7200, duration: 1000, update: p => set(dim, 'opacity', 0.6 * (1 - ease(p))) },
-    { at: 7600, duration: 900, update: p => {
-      if (reduced) {
-        set(shimmer, 'transform', 'translate(-5 0) scale(2 1)');      // a gentle full-width wash
-        set(shimmer, 'opacity', Math.sin(Math.PI * p) * 0.6);
-      } else {
-        set(shimmer, 'transform', `translate(${lerp(-220, 410, p).toFixed(1)} 0)`);   // sweeps left to right
-        set(shimmer, 'opacity', Math.sin(Math.PI * p));
-      }
-    } },
     { at: 7800, duration: 600, update: p => {
       if (!reduced) set(ravenArt, 'transform', `translate(0 ${(-5 * Math.abs(Math.sin(TAU * p))).toFixed(2)})`);
     } },
   ];
 
   const cues = [
-    { at: 0, run: () => { setAmbienceLevel(0.4); playStorySound('rumble', { duration: 2 }); } },
+    { at: 0, run: () => playStorySound('rumble', { duration: 2 }) },
     { at: 2000, run: () => playStorySound('whoosh', { duration: 1.4, panFrom: -0.7, panTo: 0.7 }) },
     { at: 2400, run: () => playVoice('cackle') },
     { at: 3400, run: () => playStorySound('shimmer') },
     { at: 4400, run: () => playStorySound('whoosh', { duration: 1.2, panFrom: 0.7, panTo: -0.5 }) },
     { at: 6000, run: () => playStorySound('fwoop', { duration: 1.2 }) },
-    { at: 7200, run: () => { playStorySound('pop'); settleAfterStory(); } },
-    { at: 7600, run: () => { setAmbienceLevel(1, 0.8); playStorySound('shimmer'); } },
+    { at: 7200, run: () => { playStorySound('pop'); resetBrew(); } },
+    { at: 7600, run: () => playStorySound('shimmer') },
     { at: 7900, run: () => playVoice('caw', { pitch: 0.85 }) },
     { at: 8150, run: () => playVoice('caw', { pitch: 0.8 }) },
   ];
 
-  return playTimeline({
-    length: STORY_LENGTH_MS,
-    tracks,
-    cues,
-    onDone: elapsed => {
-      resetScene();
-      onDone(elapsed);
-    },
-  });
+  // The shared frame adds the dim, the closing shimmer, and the ambience dip (frame.js).
+  return playStoryTimeline({ dim, dimTo: 0.6, reduced, tracks, cues, reset: resetScene, onDone });
 
   // Puts every story element back to its resting state, whatever frame the story ended on.
   function resetScene() {
-    for (const element of [dim, flash, puff, shimmer, spirit, gold, spill]) set(element, 'opacity', 0);
+    for (const element of [flash, puff, spirit, gold, spill]) set(element, 'opacity', 0);
     for (const element of [brew, gold, fire, spill, flash, puff, ravenArt]) element.removeAttribute('transform');
     set(spiritGlow, 'opacity', 1);
     for (const layer of shakeLayers) layer.style.transform = '';

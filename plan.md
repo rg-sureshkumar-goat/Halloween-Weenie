@@ -52,12 +52,14 @@ Test each result before continuing, including related behavior that already work
 
 ### Phase 2 checkpoints (due Mon, Oct 26, 2026)
 
+> **Status (Oct 22, 2026):** R1–R3, CP8, and CP9 are built and verified on the Developer's iPhone. CP10 is under way: the code cleanup and docs pass are done; the Developer's full iPhone check, playtest 2, the debrief, and the zip remain.
+
 | # | Produces | Main risk | Verify by | Status |
 | --- | --- | --- | --- | --- |
 | R | Playtest 1 revisions R1–R3 | Making it clearer without solving it for Users | Browser regression; iPhone | Done (Oct 22) |
 | 8 | Broomstick Flight: 3-tap trigger with progress, 8.5 s flight, hints | The loop over the moon reads as a mess, or the broom trigger collides with the cauldron story | Browser: touch, keyboard, timing, pause, replay, hints, reduced motion; iPhone | Done: Developer verified on iPhone (Oct 22) |
-| 9 | The Cottage Wakes: light 3 windows, the cottage wakes and dozes | Three stories competing for attention and sound | Same checks | Built; iPhone check pending |
-| 10 | Polish, full re-verification on the iPhone, playtest 2, docs, git log, debrief, zip | Last-minute regressions | Every requirement on the iPhone at the live URL | Not started |
+| 9 | The Cottage Wakes: light 3 windows, the cottage wakes and dozes | Three stories competing for attention and sound | Same checks | Done: Developer verified on iPhone (Oct 22) |
+| 10 | Polish, full re-verification on the iPhone, playtest 2, docs, git log, debrief, zip | Last-minute regressions | Every requirement on the iPhone at the live URL | In progress: cleanup and docs done (Oct 22); iPhone check, playtest 2, debrief, zip to come |
 
 ## Evidence and revisions
 
@@ -71,6 +73,7 @@ Keep implementation progress and verification here. Update `research.md` when ev
 | --- | --- | --- | --- | --- |
 | Oct 17, 2026 | Phase 1 final build (CP0–CP7), live URL | iOS 26.6.2 (model not given) | **Pass:** all applicable checks | Developer tested the final build at https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ and reported: "everything looks exactly as it is supposed to look" and "all checks passed today". Recorded by the Agent at the Developer's request. |
 | Oct 22, 2026 | CP8 Broomstick Flight, live URL (`d6b6276`) | Not restated (Oct 17: iOS 26.6.2) | **Pass** | Developer tested Broomstick Flight at the live URL and reported: "Broomstick Flight works on my iPhone." Recorded by the Agent at the Developer's request. |
+| Oct 22, 2026 | CP9 The Cottage Wakes, live URL (`5f5c771`) | Not restated (Oct 17: iOS 26.6.2) | **Pass** | Developer tested The Cottage Wakes at the live URL and reported: "Alright all of this looks really good." Recorded by the Agent at the Developer's request. |
 
 ### Agent evidence log
 
@@ -86,6 +89,7 @@ Keep implementation progress and verification here. Update `research.md` when ev
 | Oct 17, 2026 | 7 | Credits: `CREDITS.md` plus a Credits panel (opens with focus on Close, start screen inert behind it; Escape and Close both close it and return focus). Cleanup: left-of-raven bubble code and `?bubble=` removed, the dev view reads the longest hint from the real ladders, unused exports made private, stale checkpoint notes rewritten; title kept on one line at 375 px. Full regression on asset version 7: touch path with audio running (story 8.50 s, all ingredients back, focus on the cauldron); pause mid-story frozen 2 s with audio suspended, then 8.50 s; keyboard path to the story; hints at 20 / 65 / 110 s; longest hint 3 lines above the raven at 375×667; tap areas smallest 48 / 50 / 45 px at 375×667 / 390×664 / desktop, none clipped or overlapping; landscape message; no console errors. | this commit |
 | Oct 22, 2026 | 8 | Broom by real clicks: glow 0.4 → 0.75 → 1 with growing shakes and gold dust; story 0.45 s after tap 3. Flight screenshots at 1.2 s (rising from the door, scene dimmed), 3.6 s (loop over the moon with bats and sparkles), 5.3 s (sweeping left), 7.2 s (gliding to the door). Three replays: 8.51 s each. Paused mid-flight: frozen 2 s, then finished with focus on the broom. Keyboard (Enter, Space, Enter on the focused broom) reaches the story. Hints: broom played first → cauldron hint 2 at 53.6 s (its ladder kept its place); after the brew → first broom hint 20.0 s later; both played → "Caw! Again! Again!". Reduced motion: the witch only fades at the door and the moon. Cauldron regression passes. No console errors. | this commit |
 | Oct 22, 2026 | 9 | Windows start low (shade 0.75, glow about 0.25). Real clicks in any order (right, right again, attic, left): each lights for good (shade 0 → stays), the repeat tap adds nothing, and the story starts 0.45 s after the third. Screenshots at 1.0 s (heavy lids), 2.2 s (eyes open, pupils looking), 3.3 s (yawning door-mouth, squint), 5.3 s (three smoke rings, eyes up), 7.4 s (eyes shut, door closed, Z's). End: back to SCENE, everything reset, windows low, focus on the attic window. Paused mid-yawn: frozen 2 s with the scene inert, then finished. Keyboard (Enter, Space, Enter on focused windows) reaches the story. Runs: 8.50 s ×3 (Wake dev) and 8.50 s from real taps; reduced motion 8.50 s with no transforms on lids, pupils, or door. Hints from a fresh load: cauldron and broom by real taps (8.50 s each), first cottage hint 20.00 s after the flight, hint 2 +30.0 s, a window tap resets the countdown (hint 3 30.00 s later); after all three stories no hint in 2 min and the raven says "Caw! Again! Again!". Offline render: yawn lowered to the rumble's loudness (−25.5 dB RMS); poof −28.4, snore −29.9. 375×667: tap areas clean, story in frame. No console errors. | this commit |
+| Oct 22, 2026 | 10 | **Cleanup:** the dim, closing shimmer, and ambience dip copied in three stories became one shared frame (`js/stories/frame.js`), and the broom and windows share one trigger ending. **Bug found in review and fixed:** reproduced twice on the old code (toadstool, moonflower, web, then 3 fast broom taps): the broom flew while the web was still on its way, the brew never started, and all three ingredients stayed hidden with the runes lit, a dead end until reload. After the fix the same taps empty the pot and regrow the ingredients. **Same output as before:** dim at 0.5 / 1.0 / 7.7 / 8.05 s: broom 0.275 / 0.55 / 0.275 / 0.025, cauldron 0.3 / 0.6 / 0.3 / 0.027, cottage 0.4 at 7.7 s; shimmer at 7.7 s translate(−150) 0.342 and at 8.05 s translate(95) 1.0 in all three; reduced motion: the full-width wash at 0.6 in all three. Ambience channel 0.140 mid-story (0.35 × 0.4), 0.349 after. Lengths 8.50 s (8.51 when stepped in 10 ms). Cottage paused at 5.3 s: frozen 2 s, scene inert, then finished. Mid-beat screenshots of all three match CP5, CP8, and CP9. No unused imports; no console errors. | this commit |
 
 ### Playtest observations
 
@@ -132,19 +136,48 @@ Agent evidence is in the log above; boxes marked *Developer* are yours to tick.
 | Verified on the physical iPhone (date and iOS version) | iPhone log below: Oct 17, 2026, iOS 26.6.2 | Developer verified |
 | Code and assets pushed; docs current; brief, AGENTS.md, CREDITS.md; git log; transcripts | All pushed; `git-log.txt`; `transcripts/build-2026-10-17_011502.md` | Done; docs approved by the Developer (Oct 17) |
 
+### Phase 2 delivery checklist (`brief.md` › Requirements and Phase 2 deliverables)
+
+Agent evidence is in the log above; *Developer* items are yours to confirm. Rows marked **final check** are re-verified on the iPhone at the live URL with all three stories (the iPhone Safari checklist below).
+
+| Requirement | Evidence | Status |
+| --- | --- | --- |
+| One vertical scene, no scrolling or page changes | CP1, CP2, CP9: 390×844 and 375×667, 11 tap areas none clipped; landscape message | Agent verified; **final check** |
+| Strong focal point and 3+ environmental features | CP1 (cottage, cauldron, mushroom ring, pond, tree and web); R1 blue ring | Developer approved (CP1, R1) |
+| 3+ ambient effects | CP3: fog, candlelight, smoke and bubbles, fireflies, bats | Developer approved (CP3) |
+| Looping ambient background sound | CP4: crickets, wind, bubbling, looped gaplessly | Developer verified (Oct 17); **final check** |
+| Sounds: CC0, public domain, or original, sources verified | All sound generated in code (`research.md` › Sound sources) | Agent verified |
+| Three stories with a beginning, middle, and end; 5–10 s; replayable | CP5, CP8, CP9, CP10: 8.50 s each, 3+ replays each | Agent verified; Developer verified CP8, CP9 (Oct 22); **final check** |
+| Triggered by interaction; unique triggers that show progress; every interaction gives feedback | Ingredients in order (brew color, runes); broom ×3 (glow); windows in any order (stay lit); blue mushrooms, cauldron, raven respond | Agent verified; Developer approved (CP6, CP8, CP9) |
+| Progressive text hints that hint rather than instruct | Three ladders, each 3 rhymes; reset by progress; stop after all three stories | Agent verified timing; Developer approved rhymes (Oct 17, Oct 22) |
+| Other interactions disabled during a story; clear return | Shared `startStory()`: scene inert, shimmer, caw, focus returns; CP10 dead-end fix | Agent verified; **final check** |
+| Browser-based HTML, CSS, and JavaScript | Plain ES modules, no build step | Agent verified |
+| Start screen; Enter starts audio and animation; reduced motion honored before it | CP4; reduced versions of every effect and story | Developer verified (Oct 17); **final check** |
+| One Play/Pause for motion, sound, effects, timers, interaction | CP4–CP10: pause mid-story for all three | Agent verified; **final check** |
+| Touch and keyboard; readable text; contrast; tap targets | Keyboard reaches all three stories; hint text 15.1:1; tap areas ≥ 48 px | Agent verified; **final check** |
+| Public HTTPS URL, verified on a physical phone | https://rg-sureshkumar-goat.github.io/Halloween-Weenie/ | Developer: **final check** |
+| Developer and all external assets credited | `CREDITS.md` and the Credits panel (no external assets) | Agent verified |
+| Polished, cohesive, stable | Shared story frame; one trigger rule; dead-end fixed | Developer: **final check** |
+| **Deliverable 1:** peer-playtest notes, sustained testing, consequential revisions, final verification | Playtest 1 → R1–R3; Agent evidence CP8–CP10; iPhone log | Playtest 2 and the final iPhone check to come |
+| **Deliverable 2:** the completed app | Live URL above | After the final check |
+| **Deliverable 3:** docs, sources and credits, git log, completed debrief | Docs updated Oct 22 (Developer approval pending); `CREDITS.md`; `git-log.txt` refresh, debrief transcript, and zip to come | To come |
+
 ### iPhone Safari checklist (Developer, at the live URL)
 
-| # | Check (`Weenie Project-Brief.md` › iPhone Safari checklist) | Result |
-| --- | --- | --- |
-| 1 | Audio starts only after Enter and is audible at normal volume | Pass (Developer, Oct 17) |
-| 2 | With the ringer switch on silent, sound still plays (or the start screen says to turn silent mode off) | Pass (Developer, Oct 17) |
-| 3 | Sound files are MP3 for Safari | n/a: no audio files ship; all sound is generated |
-| 4 | Locking the phone or switching apps pauses; returning shows the paused state and resumes cleanly | Pass (Developer, Oct 17) |
-| 5 | No scrolling, rubber-banding, accidental zoom, or text-selection pop-ups | Pass (Developer, Oct 17) |
-| 6 | Nothing hidden under the notch, Dynamic Island, or home bar | Pass (Developer, Oct 17) |
-| 7 | Reduce Motion (Settings › Accessibility › Motion) changes the experience before Enter | Pass (Developer, Oct 17) |
-| 8 | Every object registers taps reliably on the first try | Pass (Developer, Oct 17) |
-| 9 | Animation stays smooth during the story | Pass (Developer, Oct 17) |
+| # | Check (`Weenie Project-Brief.md` › iPhone Safari checklist) | Phase 1 | Final, all three stories (CP10) |
+| --- | --- | --- | --- |
+| 1 | Audio starts only after Enter and is audible at normal volume | Pass (Developer, Oct 17) | |
+| 2 | With the ringer switch on silent, sound still plays (or the start screen says to turn silent mode off) | Pass (Developer, Oct 17) | |
+| 3 | Sound files are MP3 for Safari | n/a: no audio files ship; all sound is generated | n/a |
+| 4 | Locking the phone or switching apps pauses; returning shows the paused state and resumes cleanly | Pass (Developer, Oct 17) | |
+| 5 | No scrolling, rubber-banding, accidental zoom, or text-selection pop-ups | Pass (Developer, Oct 17) | |
+| 6 | Nothing hidden under the notch, Dynamic Island, or home bar | Pass (Developer, Oct 17) | |
+| 7 | Reduce Motion (Settings › Accessibility › Motion) changes the experience before Enter | Pass (Developer, Oct 17) | |
+| 8 | Every object registers taps reliably on the first try | Pass (Developer, Oct 17) | |
+| 9 | Animation stays smooth during the story | Pass (Developer, Oct 17) | |
+| 10 | Each story starts from its trigger by touch, plays smoothly, and replays | (Phase 2) | |
+| 11 | The sound mix is balanced across all three stories | (Phase 2) | |
+| 12 | The raven's hints lead to each story in turn and stop after all three | (Phase 2) | |
 
 ## Saving transcripts
 
